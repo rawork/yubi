@@ -15,7 +15,7 @@ function exception_handler($exception)
 	$statusCode = $exception instanceof \Fuga\Component\Exception\NotFoundHttpException 
 			? $exception->getStatusCode() 
 			: 500;
-	$message = $statusCode != 500 || PRJ_ENV == 'dev'? $exception->getMessage() : 'Произошла внутренняя ошибка сервера. Обратитесь к администратору';
+	$message = $statusCode != 500 || PRJ_ENV == 'prod'? 'Произошла внутренняя ошибка сервера. Обратитесь к администратору' : $exception->getMessage();
 
 	if (isset($_SERVER['REQUEST_URI'])) {
 		$controller = new Fuga\CommonBundle\Controller\ExceptionController();
