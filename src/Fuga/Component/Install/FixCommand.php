@@ -20,7 +20,6 @@ class FixCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-    	var_dump(PRJ_DIR);
         $this->chmod_R(PRJ_DIR.'/app/logs/', 644, 755, $output);
 		chmod(PRJ_DIR.'/app/logs/.gitkeep', 0644);
 		$this->chmod_R(PRJ_DIR.'/app/cache/', 644, 755, $output);
