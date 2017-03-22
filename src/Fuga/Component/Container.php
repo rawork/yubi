@@ -531,7 +531,6 @@ class Container
 					$this->services[$name] = \Doctrine\ORM\EntityManager::create($conn, $config);
 					break;
 				case 'connection':
-					var_dump('test_connection');
 					\Doctrine\DBAL\Types\Type::addType('money', 'Fuga\Component\DBAL\Types\MoneyType');
 					$config = new \Doctrine\DBAL\Configuration();
 					$conn = array(

@@ -20,21 +20,21 @@ class FixCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->chmod_R(__DIR__.'/../../../../app/logs/', 666, 777, $output);  
-		chmod(__DIR__.'/../../../../app/logs/.gitkeep', 0644);
-		$this->chmod_R(__DIR__.'/../../../../app/cache/', 666, 777, $output);  
-		chmod(__DIR__.'/../../../../app/cache/.gitkeep', 0644);
-		chmod(__DIR__.'/../../../../app/cache/twig/.gitkeep', 0644);
-		chmod(__DIR__.'/../../../../app/cache/proxies/.gitkeep', 0644);
-		chmod(__DIR__.'/../../../../app/cache/hydrators/.gitkeep', 0644);
-		$this->chmod_R(__DIR__.'/../../../../files/', 666, 777, $output);  
-		chmod(__DIR__.'/../../../../files/.htaccess', 0644);
-		$this->chmod_R(__DIR__.'/../../../../thumbs/', 666, 777, $output);  
-		chmod(__DIR__.'/../../../../thumbs/.htaccess', 0644);
-		$this->chmod_R(__DIR__.'/../../../../upload/', 666, 777, $output);
-		chmod(__DIR__.'/../../../../upload/.htaccess', 0644);
-		$this->chmod_R(__DIR__.'/../../../../app/backup/', 666, 777, $output);
-		chmod(__DIR__.'/../../../../app/backup/.gitkeep', 0644);
+        $this->chmod_R(PRJ_DIR.'/app/logs/', 644, 755, $output);
+		chmod(PRJ_DIR.'/app/logs/.gitkeep', 0644);
+		$this->chmod_R(PRJ_DIR.'/app/cache/', 644, 755, $output);
+		chmod(PRJ_DIR.'/app/cache/.gitkeep', 0644);
+		chmod(PRJ_DIR.'/app/cache/twig/.gitkeep', 0644);
+		chmod(PRJ_DIR.'/app/cache/proxies/.gitkeep', 0644);
+		chmod(PRJ_DIR.'/app/cache/hydrators/.gitkeep', 0644);
+		$this->chmod_R(PRJ_DIR.'/files/', 644, 755, $output);
+		chmod(PRJ_DIR.'/files/.htaccess', 0644);
+		$this->chmod_R(PRJ_DIR.'/thumbs/', 644, 755, $output);
+		chmod(PRJ_DIR.'/thumbs/.htaccess', 0644);
+		$this->chmod_R(PRJ_DIR.'/upload/', 644, 755, $output);
+		chmod(PRJ_DIR.'/upload/.htaccess', 0644);
+		$this->chmod_R(PRJ_DIR.'/app/backup/', 644, 755, $output);
+		chmod(PRJ_DIR.'/app/backup/.gitkeep', 0644);
 				
 		$output->writeln('<info>Paths are fixed</info>');
     }

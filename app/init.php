@@ -1,7 +1,7 @@
 <?php
 
-define('LIB_VERSION', '7.5.0');
-define('LIB_DATE', '2016.12.30');
+define('LIB_VERSION', '7.6.0');
+define('LIB_DATE', '2017.03.22');
 
 mb_http_input('UTF-8'); 
 mb_http_output('UTF-8'); 
@@ -63,6 +63,5 @@ $container = new Fuga\Component\Container($loader);
 
 // инициализация переменных
 if ('cli' != php_sapi_name()) {
-	var_dump('here');
 	$container->initialize();
 }
