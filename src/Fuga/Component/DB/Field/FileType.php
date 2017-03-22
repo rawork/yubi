@@ -7,7 +7,7 @@ class FileType extends Type
 	public function __construct($params, $entity = null)
 	{
 		parent::__construct($params, $entity);
-		$this->setParam('disalloed', ['.htaccess']);
+		$this->setParam('disallowed', ['.htaccess']);
 	}
 
 	public function getSQLValue($inputName = '')
@@ -23,6 +23,7 @@ class FileType extends Type
 		if (!empty($_FILES[$inputName]['name'])
 			&& !empty($_FILES[$inputName]['name'])
 			&& !in_array($_FILES[$inputName]['name'], $this->getParam('disallowed'))
+			&& !preg_match('/\.(php|js)$/i', $_FILES[$inputName]['name'])
 		) {
 			$this->get('filestorage')->remove($fileName);
 			$fileName = $this->get('filestorage')->save($_FILES[$inputName]['name'], $_FILES[$inputName]['tmp_name']);
