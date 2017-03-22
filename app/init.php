@@ -59,17 +59,10 @@ if (file_exists(__DIR__.'/config/config.php')) {
 	require_once __DIR__.'/config/config.php';
 }
 
-var_dump(php_sapi_name());
 $container = new Fuga\Component\Container($loader);
 
 // инициализация переменных
-if (php_sapi_name() != 'cli') {
-	echo 'here';
-	$stmt = $container->get('connection')->query('SELECT name, value FROM config_variable');
-	$stmt->execute();
-	while ($var = $stmt->fetch()) {
-		define($var['name'], $var['value']);
-	}
-
+if ('cli' != php_sapi_name()) {
+	var_dump('here');
 	$container->initialize();
 }

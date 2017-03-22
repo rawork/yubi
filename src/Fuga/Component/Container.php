@@ -114,6 +114,13 @@ class Container
 	
 	public function initialize()
 	{
+		$stmt = $this->get('connection')->query('SELECT name, value FROM config_variable');
+		$stmt->execute();
+
+		while ($var = $stmt->fetch()) {
+			define($var['name'], $var['value']);
+		}
+
 		$this->tables = $this->getAllTables();
 	}
 
@@ -524,6 +531,7 @@ class Container
 					$this->services[$name] = \Doctrine\ORM\EntityManager::create($conn, $config);
 					break;
 				case 'connection':
+					var_dump('test_connection');
 					\Doctrine\DBAL\Types\Type::addType('money', 'Fuga\Component\DBAL\Types\MoneyType');
 					$config = new \Doctrine\DBAL\Configuration();
 					$conn = array(
