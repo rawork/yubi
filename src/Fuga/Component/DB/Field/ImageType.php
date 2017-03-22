@@ -4,9 +4,10 @@ namespace Fuga\Component\DB\Field;
 
 class ImageType extends FileType
 {
-	public function __construct(&$params, $entity = null)
+	public function __construct($params, $entity = null)
 	{
 		parent::__construct($params, $entity);
+		$this->setParam('allowed', ['image/gif', 'image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml']);
 	}
 	
 	public function getStatic()
@@ -32,17 +33,25 @@ class ImageType extends FileType
 		return $fileName ? '<a target="_blank" href="'.$fileName.'"><img width="50" src="'.$fileName.'"></a>' : '';
 	}
 
-	public function getSQLValue($inputName = '') {
+	public function getSQLValue($inputName = '')
+	{
 		$this->get('imagestorage')->setOptions(['sizes' => $this->getParam('sizes')]);
 		$inputName = $inputName ? $inputName : $this->getName();
 		$fileName = $this->dbValue;
+
 		if ($fileName && $this->get('request')->request->get($inputName.'_delete')) {
 			$this->get('imagestorage')->remove($fileName);
 			$fileName = '';
 		}
-		if (!empty($_FILES[$inputName]) && !empty($_FILES[$inputName]['name'])) {
+
+		if (!empty($_FILES[$inputName])
+			&& !empty($_FILES[$inputName]['name'])
+			&& in_array($_FILES[$inputName]['type'], $this->getParam('allowed'))
+		) {
 			$this->get('imagestorage')->remove($fileName);
 			$fileName = $this->get('imagestorage')->save($_FILES[$inputName]['name'], $_FILES[$inputName]['tmp_name']);
+		} else {
+			$fileName = '';
 		}
 
 		return $fileName;

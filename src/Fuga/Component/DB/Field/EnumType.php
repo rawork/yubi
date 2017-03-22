@@ -4,7 +4,7 @@ namespace Fuga\Component\DB\Field;
 
 class EnumType extends Type
 {
-	public function __construct(&$params, $entity = null)
+	public function __construct($params, $entity = null)
 	{
 		parent::__construct($params, $entity);
 	}

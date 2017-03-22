@@ -16,12 +16,18 @@ class FileStorage implements StorageInterface
 	
 	public function save($filename, $sourcePath)
 	{
+		if ('.htaccess' == $filename) {
+			return '';
+		}
+
 		$createFileName = $this->unique($this->createPath().$filename);
+
 		if (is_uploaded_file($sourcePath)) {
 			move_uploaded_file($sourcePath, $this->realPath($createFileName));
 		} else {
 			$this->copy($createFileName, $sourcePath);
 		}
+
 		chmod($this->realPath($createFileName), 0666);
 
 		return $createFileName;

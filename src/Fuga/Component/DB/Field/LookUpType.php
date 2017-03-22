@@ -6,7 +6,7 @@ class LookUpType extends Type
 {
 	protected $type = 'integer';
 
-	public function __construct(&$params, $entity = null)
+	public function __construct($params, $entity = null)
 	{
 		parent::__construct($params, $entity);
 		$this->dbValue = intval($this->dbValue);

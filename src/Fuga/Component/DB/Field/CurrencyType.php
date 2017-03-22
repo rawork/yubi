@@ -6,7 +6,7 @@ class CurrencyType extends Type
 {
 	protected $type = 'money';
 
-	public function __construct(&$params, $entity = null)
+	public function __construct($params, $entity = null)
 	{
 		parent::__construct($params, $entity);
 	}

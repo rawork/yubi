@@ -21,7 +21,7 @@ tinymce.init({
 	filemanager_title:"Файловый менеджер" ,
 	external_plugins: { "filemanager" : window.prj_ref+"/bundles/filemanager/plugin.min.js"},
 	content_css: [
-		'/bundles/public/css/app.css'
+        window.prj_ref+'/bundles/public/css/app.css'
 	]
 });
 

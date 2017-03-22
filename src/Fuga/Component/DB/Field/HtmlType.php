@@ -6,7 +6,7 @@ class HtmlType extends Type
 {
 	protected $type = 'text';
 
-	public function __construct(&$params, $entity = null)
+	public function __construct($params, $entity = null)
 	{
 		parent::__construct($params, $entity);
 	}

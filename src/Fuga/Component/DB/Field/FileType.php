@@ -4,22 +4,30 @@ namespace Fuga\Component\DB\Field;
     
 class FileType extends Type
 {
-	public function __construct(&$params, $entity = null)
+	public function __construct($params, $entity = null)
 	{
 		parent::__construct($params, $entity);
+		$this->setParam('disalloed', ['.htaccess']);
 	}
 
 	public function getSQLValue($inputName = '')
 	{
 		$inputName = $inputName ? $inputName : $this->getName();
 		$fileName = $this->dbValue;
+
 		if ($this->get('request')->request->get($inputName.'_delete')) {
 			$this->get('filestorage')->remove($fileName);
 			$fileName = '';
 		}
-		if (!empty($_FILES[$inputName]) && !empty($_FILES[$inputName]['name'])) {
+
+		if (!empty($_FILES[$inputName]['name'])
+			&& !empty($_FILES[$inputName]['name'])
+			&& !in_array($_FILES[$inputName]['name'], $this->getParam('disallowed'))
+		) {
 			$this->get('filestorage')->remove($fileName);
 			$fileName = $this->get('filestorage')->save($_FILES[$inputName]['name'], $_FILES[$inputName]['tmp_name']);
+		} else {
+			$fileName = '';
 		}
 
 		return $fileName;

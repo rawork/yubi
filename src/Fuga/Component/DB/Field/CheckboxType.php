@@ -6,7 +6,7 @@ class CheckboxType extends Type
 {
 	protected $type = 'boolean';
 
-	public function __construct(&$params, $entity = null)
+	public function __construct($params, $entity = null)
 	{
 		parent::__construct($params, $entity);
 	}

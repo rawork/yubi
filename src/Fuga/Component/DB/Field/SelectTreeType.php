@@ -4,7 +4,7 @@ namespace Fuga\Component\DB\Field;
 
 class SelectTreeType extends LookUpType
 {
-	public function __construct(&$params, $entity = null)
+	public function __construct($params, $entity = null)
 	{
 		parent::__construct($params, $entity);
 	}

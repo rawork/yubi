@@ -26,13 +26,13 @@ class Form {
 			),
 			'name' => array (
 				'name' => 'name',
-				'title' => 'Имя (англ.)',
+				'title' => 'Идентификатор',
 				'type' => 'string',
 				'width' => '22%',
 			),
 			'email' => array (
 				'name' => 'email',
-				'title' => 'E-mail',
+				'title' => 'E-mail получателя',
 				'type' => 'text',
 				'width' => '22%',
 			),
@@ -44,7 +44,7 @@ class Form {
 			),
 			'is_defense' => array (
 				'name' => 'is_defense',
-				'title' => 'CAPTCHA',
+				'title' => 'Captcha',
 				'type' => 'checkbox',
 				'width' => '1%',
 				'group_update' => true

@@ -4,7 +4,7 @@ namespace Fuga\Component\DB\Field;
 
 class Type
 {
-	protected $params = array();
+	protected $params = [];
 	protected $dbValue = null;
 	protected $dbId = 0;
 	protected $type = 'string';
