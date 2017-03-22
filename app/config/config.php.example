@@ -2,8 +2,8 @@
 
 define('PRJ_ENV', 'dev'); // prod, dev
 define('PRJ_REF', '');
-define('PRJ_DIR', $_SERVER['DOCUMENT_ROOT'].PRJ_REF);
-define('PRJ_LOGO', PRJ_REF.'/bundles/public/img/logo.png');
+define('PRJ_DIR', __DIR__.'/../../'.PRJ_REF);
+define('PRJ_LOGO', PRJ_REF.'/bundles/public/img/logo_.png');
 
 define('RES_REF', PRJ_REF.'/files');
 define('RES_DIR', PRJ_DIR.'/files');
@@ -19,23 +19,6 @@ define('AUTH_TTL', 86400000);
 
 define('TWIG_PATH', '/app/Resources/views');
 define('TWIG_CACHE_PATH', '/app/cache/twig');
-
-define('GAMER_GROUP', 2);
-define('FAN_GROUP', 3);
-
-define('HELPER_ROLE', 1);
-define('MARINE_ROLE', 2);
-define('COOK_ROLE', 3);
-define('DOCTOR_ROLE', 4);
-define('BOATSWAIN_ROLE', 5);
-define('CARPENTER_ROLE', 6);
-define('QUARTERMASTER_ROLE', 7);
-define('SAILMASTER_ROLE', 8);
-define('GUNNER_ROLE', 9);
-define('NAVIGATOR_ROLE', 10);
-define('SHIPBOY_ROLE', 11);
-define('MONKEY_ROLE', 12);
-define('CAPTAIN_ROLE', 13);
 
 define('VK_APP_ID', '');
 define('VK_APP_SHARED_SECRET', '');
