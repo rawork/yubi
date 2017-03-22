@@ -11,6 +11,8 @@ class SecurityHandler
 	private $user;
 	private $hash;
 	private $container;
+	private $loginTries = 3;
+	private $lockPeriod = 900; //seconds
 
 	public function __construct(Container $container) {
 		$this->container = $container;
@@ -110,6 +112,58 @@ class SecurityHandler
 		return false;
 	}
 
+	public function unlock()
+	{
+		$this->container->get('session')->remove('bruteforce');
+
+		return true;
+	}
+
+	public function lock()
+	{
+		$times = 1;
+
+		if ($this->container->get('session')->has('bruteforce')) {
+			$times = $this->container->get('session')->get('bruteforce');
+			$times++;
+			if ($times >= $this->loginTries) {
+				$this->container->get('session')->remove('bruteforce');
+
+				$this->container->get('connection')->insert(
+					'user_secure',
+					[
+						'ip_addr' => ip2long($_SERVER['REMOTE_ADDR']),
+						'unlocktime' => time() + $this->lockPeriod,
+						'created' => new \DateTime()
+					],
+					[
+						\PDO::PARAM_INT,
+						\PDO::PARAM_INT,
+						'datetime'
+					]
+				);
+
+				return true;
+			}
+		}
+
+		$this->container->get('session')->set('bruteforce', $times);
+
+		return false;
+	}
+
+	public function isLocked()
+	{
+		$sql = 'SELECT * FROM user_secure WHERE ip_addr = :ip_addr AND unlocktime > :ctime LIMIT 1';
+		$stmt = $this->container->get('connection')->prepare($sql);
+		$stmt->bindValue('ip_addr', ip2long($_SERVER['REMOTE_ADDR']));
+		$stmt->bindValue('ctime', time());
+		$stmt->execute();
+		$ip = $stmt->fetch();
+
+		return $ip ? true : false;
+	}
+
 	public function logout()
 	{
 		$this->container->get('session')->invalidate();
@@ -141,6 +195,7 @@ class SecurityHandler
 			$user = $stmt->fetch();
 		}
 		if ($user){
+			$this->unlock();
 			$token = $this->token($login, $passwordHash);
 			$response = new RedirectResponse($this->container->get('request')->getRequestUri());
 			$this->container->get('session')->set('fuga_user', $user['login']);
@@ -161,9 +216,11 @@ class SecurityHandler
 			}
 
 			return $response;
-		} else {
-			return false;
 		}
+
+		$this->lock();
+
+		return false;
 	}
 	
 	private function token($login, $password)

@@ -2,28 +2,32 @@
 
 namespace Fuga\CommonBundle\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
+
 use Symfony\Component\HttpFoundation\Response;
 
 class SecurityController extends Controller
 {
-	
 	public function login()
 	{
 		$message = null;
 		if ('POST' == $_SERVER['REQUEST_METHOD']) {
+			if ($this->get('security')->isLocked()) {
+				return $this->reload();
+			}
 			$login = $this->get('request')->request->get('_user');
 			$password = $this->get('request')->request->get('_password');
 			$is_remember = $this->get('request')->request->get('_remember_me');
 			
 			if (!$login || !$password){
 				$this->get('session')->set('danger', 'Неверный Логин или Пароль');
+				$this->get('security')->lock();
 			} elseif ($this->get('security')->isServer()) {
 				$res = $this->get('security')->login($login, $password, $is_remember);
 				if ($res) {
 					return $res;
 				} else {
 					$this->get('session')->set('danger', 'Неверный Логин или Пароль');
+					$this->get('security')->lock();
 				}
 			}
 			
@@ -32,7 +36,9 @@ class SecurityController extends Controller
 
 		$message = $this->flash('danger');
 
-		return new Response($this->render('admin/form/login', compact('message')));
+		$locked = $this->get('security')->isLocked();
+
+		return new Response($this->render('admin/form/login', compact('message', 'locked')));
 	}
 	
 	public function forget()
@@ -80,19 +86,28 @@ class SecurityController extends Controller
 	
 	public function logout()
 	{
+		$login = $this->get('session')->get('fuga_user');
+
+		if (!$login) {
+			return $this->redirect($this->generateUrl('admin_index'));
+		}
+
 		return $this->get('security')->logout();
 	}
 	
 	public function password($key)
 	{
 		$user = $this->get('container')->getItem('user_user', "hashkey='".$key."'");
+
 		if ($user && !empty($user['email'])) {
 			$password = $this->get('util')->genKey();
+
 			$this->get('container')->updateItem(
 					'user_user',
 					array('hashkey' => '', 'password' => hash('sha512', $password)),
 					array('id' => $user['id'])
 			);
+
 			$text = 'Информационное сообщение сайта '.$_SERVER['SERVER_NAME']."\n";
 			$text .= '------------------------------------------'."\n";
 			$text .= 'Вы запросили ваши регистрационные данные.'."\n";

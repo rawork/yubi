@@ -7,6 +7,19 @@
 {% endblock %}
 
 {% block content %}
+{% if locked %}
+    <div class="login-content">
+        <div class="login-header">Авторизация</div>
+        <div class="login-form">
+            Слишком много неудачных попыток входа.<br>Попробуйте через 15 минут.
+        </div>
+        <div class="login-footer">
+            <b>Забыли свой пароль?</b><br>
+            Следуйте на <a href="{{ path('security_forget') }}">форму для запроса пароля</a>.<br>
+            <a href="{{ path('public_page') }}" target="_blank">Перейти к просмотру сайта</a>.
+        </div>
+    </div>
+{% else %}
 <div class="login-content">
     <div class="login-header">Авторизация</div>
     <div class="login-form">
@@ -35,4 +48,5 @@
         <a href="{{ path('public_page') }}" target="_blank">Перейти к просмотру сайта</a>.
     </div>
 </div>
+{% endif %}
 {% endblock %}
