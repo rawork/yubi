@@ -1,0 +1,38 @@
+{% extends "admin/auth.html.twig" %}
+
+{% block message %}
+<div class="login-message">
+    {% if message.text is defined %}<div class="alert alert-{{ message.type }}">{{ message.text }}</div>{% endif %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="login-content">
+    <div class="login-header">Авторизация</div>
+    <div class="login-form">
+        <form method="post" role="form">
+            <div class="form-group">
+                <label for="inputLogin" class="control-label">Логин</label>
+                <input type="text" class="form-control" id="inputLogin" name="_user">
+            </div>
+            <div class="form-group">
+                <label for="inputPassword" class="control-label">Пароль</label>
+                <input type="password" class="form-control" id="inputPassword" name="_password">
+            </div>
+            <div class="form-group">
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" name="_remember_me"> Запомнить меня
+                  </label>
+                </div>
+            </div>
+            <button class="btn btn-default btn-lg">Войти</button>
+        </form>
+    </div>
+    <div class="login-footer">
+        <b>Забыли свой пароль?</b><br>
+        Следуйте на <a href="{{ path('security_forget') }}">форму для запроса пароля</a>.<br>
+        <a href="{{ path('public_page') }}" target="_blank">Перейти к просмотру сайта</a>.
+    </div>
+</div>
+{% endblock %}

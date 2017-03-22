@@ -1,0 +1,307 @@
+security_password:
+  path: /admin/password/{key}
+  defaults: { _controller: 'Fuga:Common:Security:password' }
+security_logout:
+  path: /admin/logout
+  defaults: { _controller: 'Fuga:Common:Security:logout' }
+security_forget:
+  path: /admin/forget
+  defaults: { _controller: 'Fuga:Common:Security:forget' }
+
+secureimage:
+  path: /secureimage
+  defaults: { _controller: 'Fuga:Public:Common:captcha' }
+fileupload:
+  path: /fileupload
+  defaults: { _controller: 'Fuga:Public:Common:fileupload' }
+
+admin_statemenu:
+  path: /admin/statemenu/{state}/{module}
+  defaults: { _controller: 'Fuga:Admin:Menu:state', module: '' }
+admin_modulemenu:
+  path: /admin/modulemenu/{module}
+  defaults: { _controller: 'Fuga:Admin:Menu:module' }
+
+admin_dialog_select:
+  path: /admin/dialog/select
+  defaults: { _controller: 'Fuga:Admin:Dialog:select' }
+admin_dialog_pagination:
+  path: /admin/dialog/pagination/{table}/{field}/{entity}/{page}
+  defaults: { _controller: 'Fuga:Admin:Dialog:pagination', page: 1}
+admin_dialog_tree:
+  path: /admin/dialog/tree
+  defaults: { _controller: 'Fuga:Admin:Dialog:tree' }
+admin_dialog_list:
+  path: /admin/dialog/list
+  defaults: { _controller: 'Fuga:Admin:Dialog:list2' }
+admin_dialog_template:
+  path: /admin/dialog/template
+  defaults: { _controller: 'Fuga:Admin:Dialog:template' }
+admin_gallery_delete:
+  path: /admin/gallery/delete
+  defaults: { _controller: 'Fuga:Admin:Gallery:delete'}
+
+admin_service:
+  path: /admin/services
+  defaults: { _controller: 'Fuga:Admin:Service:index' }
+admin_backup_create:
+  path: /admin/backup/create
+  defaults: { _controller: 'Fuga:Admin:Backup:create' }
+admin_backup_get:
+  path: /admin/backup/get/{file}
+  defaults: { _controller: 'Fuga:Admin:Backup:get' }
+admin_backup_delete:
+  path: /admin/backup/delete/{file}
+  defaults: { _controller: 'Fuga:Admin:Backup:delete' }
+admin_restore_file:
+  path: /admin/restore
+  defaults: { _controller: 'Fuga:Admin:Service:restore' }
+
+admin_module_setting:
+  path: /admin/{state}/{module}/setting
+  defaults: { _controller: 'Fuga:Admin:Common:setting' }
+  requirements:
+    state: (content|service|system)
+    module: \w+
+
+admin_game_management:
+  path: /admin/content/game/managment
+  defaults: { _controller: 'Fuga:Public:Admin:Game:index', state: 'content', module: 'game'}
+
+admin_crew_management:
+  path: /admin/content/crew/managment
+  defaults: { _controller: 'Fuga:Public:Admin:Crew:index', state: 'content', module: 'crew'}
+
+admin_crew_vacancy_create:
+  path: /ajax/admin/crew/vacancy/create
+  defaults: { _controller: 'Fuga:Public:Admin:Crew:vacancy' }
+
+
+admin_entity_index:
+  path: /admin/{state}/{module}/{entity}{suffix}
+  defaults: { _controller: 'Fuga:Admin:Crud:index', suffix: '' }
+  requirements:
+    state: (content|service|system)
+    module: \w+
+    entity: \w+
+admin_entity_add:
+  path: /admin/{state}/{module}/{entity}/add
+  defaults: { _controller: 'Fuga:Admin:Crud:add' }
+  requirements:
+    state: (content|service|system)
+    module: \w+
+    entity: \w+
+admin_entity_edit:
+  path: /admin/{state}/{module}/{entity}/{id}/edit
+  defaults: { _controller: 'Fuga:Admin:Crud:edit' }
+  requirements:
+    state: (content|service|system)
+    module: \w+
+    entity: \w+
+    id: \d+
+admin_entity_delete:
+  path: /admin/{state}/{module}/{entity}/{id}/delete
+  defaults: { _controller: 'Fuga:Admin:Crud:delete' }
+  requirements:
+    state: (content|service|system)
+    module: \w+
+    entity: \w+
+    id: \d+
+admin_entity_groupedit:
+  path: /admin/{state}/{module}/{entity}/groupedit
+  defaults: { _controller: 'Fuga:Admin:Crud:groupedit' }
+  requirements:
+    state: (content|service|system)
+    module: \w+
+    entity: \w+
+admin_entity_groupdelete:
+  path: /admin/{state}/{module}/{entity}/groupdelete
+  defaults: { _controller: 'Fuga:Admin:Crud:groupdelete' }
+  requirements:
+    state: (content|service|system)
+    module: \w+
+    entity: \w+
+
+admin_entity_rpp:
+  path: /admin/rpp
+  defaults: { _controller: 'Fuga:Admin:Admin:rpp' }
+
+admin_entity_copy_dialog:
+  path: /admin/copy/{id}
+  defaults: { _controller: 'Fuga:Admin:Copy:dialog' }
+  requirements:
+    id: \d+
+admin_entity_copy:
+  path: /admin/{state}/{module}/{entity}/{id}/copy/{quantity}
+  defaults: { _controller: 'Fuga:Admin:Copy:copy' }
+  requirements:
+    state: (content|service|system)
+    module: \w+
+    entity: \w+
+    id: \d+
+    quantity: \d+
+
+admin_entity_table_create:
+  path: /admin/{state}/{module}/{entity}/create
+  defaults: { _controller: 'Fuga:Admin:Table:create' }
+  requirements:
+    state: (content|service|system)
+    module: \w+
+    entity: \w+
+admin_entity_table_alter:
+  path: /admin/{state}/{module}/{entity}/alter
+  defaults: { _controller: 'Fuga:Admin:Table:alter' }
+  requirements:
+    state: (content|service|system)
+    module: \w+
+    entity: \w+
+
+admin_subscribe_send:
+  path: /admin/send
+  defaults: { _controller: 'Fuga:Public:Subscribe:send' }
+
+admin_cache_clear:
+  path: /admin/cache/clear
+  defaults: { _controller: 'Fuga:Admin:Cache:clear' }
+
+admin_index:
+  path: /admin
+  defaults: { _controller: 'Fuga:Admin:Common:state', state: 'content' }
+admin_state_index:
+  path: /admin/{state}
+  defaults: { _controller: 'Fuga:Admin:Common:state', state: 'content' }
+  requirements:
+    state: (content|service|system)
+admin_module_index:
+  path: /admin/{state}/{module}
+  defaults: { _controller: 'Fuga:Admin:Common:module' }
+  requirements:
+    state: (content|service|system)
+    module: \w+
+
+
+
+
+user_login:
+  path: /cabin/enter
+  defaults: { _controller: 'Fuga:Public:Cabin:enter' }
+user_register:
+  path: /ajax/user/register
+  defaults: { _controller: 'Fuga:Public:Cabin:register' }
+user_forget:
+  path: /ajax/user/forget
+  defaults: { _controller: 'Fuga:Public:Cabin:forget' }
+user_password_change:
+  path: /ajax/user/passchange
+  defaults: { _controller: 'Fuga:Public:Cabin:passchange' }
+user_current:
+  path: /ajax/user/current
+  defaults: { _controller: 'Fuga:Public:Cabin:current'}
+user_ship:
+  path: /ajax/user/ship
+  defaults: { _controller: 'Fuga:Public:Cabin:ship'}
+user_test:
+  path: /ajax/user/test
+  defaults: { _controller: 'Fuga:Public:Cabin:test'}
+user_prof:
+  path: /ajax/user/prof
+  defaults: { _controller: 'Fuga:Public:Cabin:prof'}
+user_purse:
+  path: /ajax/user/purse
+  defaults: { _controller: 'Fuga:Public:Cabin:purse'}
+user_avatar:
+  path: /ajax/user/avatar
+  defaults: { _controller: 'Fuga:Public:Cabin:avatar'}
+user_change:
+  path: /ajax/user/change
+  defaults: { _controller: 'Fuga:Public:Cabin:change'}
+  methods:  [POST]
+
+ship_change:
+  path: /ajax/ship/change
+  defaults: { _controller: 'Fuga:Public:Ship:change'}
+  methods:  [POST]
+ship_hire:
+  path: /ajax/ship/hire
+  defaults: { _controller: 'Fuga:Public:Ship:hire'}
+ship_captain:
+  path: /ajax/ship/captain
+  defaults: { _controller: 'Fuga:Public:Ship:captain'}
+ship_money:
+  path: /ajax/ship/money
+  defaults: { _controller: 'Fuga:Public:Ship:money'}
+
+crew_reply:
+  path: /ajax/crew/reply
+  defaults: { _controller: 'Fuga:Public:Crew:reply'}
+  methods:  [POST]
+crew_like:
+  path: /ajax/crew/like
+  defaults: { _controller: 'Fuga:Public:Crew:like'}
+  methods:  [POST]
+
+pirate_like:
+  path: /ajax/pirate/like
+  defaults: { _controller: 'Fuga:Public:Pirate:like'}
+
+news_fresh:
+  path: /ajax/news/fresh
+  defaults: { _controller: 'Fuga:Public:Tavern:fresh'}
+
+game_task_data:
+  path: /ajax/sandbox/task/data
+  defaults: { _controller: 'Fuga:Public:Game:taskdata'}
+game_pexeso_data:
+  path: /ajax/sandbox/pexeso/data
+  defaults: { _controller: 'Fuga:Public:Game:pexesodata'}
+game_map_data:
+  path: /ajax/sandbox/map/data
+  defaults: { _controller: 'Fuga:Public:Game:mapdata'}
+game_labirint_data:
+  path: /ajax/sandbox/labirint/data
+  defaults: { _controller: 'Fuga:Public:Game:labirintdata'}
+game_market_data:
+  path: /ajax/sandbox/market/data
+  defaults: { _controller: 'Fuga:Public:Game:marketdata'}
+game_market_question:
+  path: /ajax/sandbox/market/question
+  defaults: { _controller: 'Fuga:Public:Game:marketquestion'}
+game_battle_data:
+  path: /ajax/sandbox/battle/data
+  defaults: { _controller: 'Fuga:Public:Game:battledata'}
+game_duel_data:
+  path: /ajax/sandbox/duel/data
+  defaults: { _controller: 'Fuga:Public:Game:dueldata'}
+
+chat_common_data:
+  path: /ajax/chat/common
+  defaults: { _controller: 'Fuga:Public:Chat:common'}
+chat_common_history:
+  path: /ajax/chat/common/history
+  defaults: { _controller: 'Fuga:Public:Chat:commonhistory'}
+chat_common_message:
+  path: /ajax/chat/common/message
+  defaults: { _controller: 'Fuga:Public:Chat:commonmessage'}
+
+chat_ship_data:
+  path: /ajax/chat/ship
+  defaults: { _controller: 'Fuga:Public:Chat:ship'}
+chat_ship_history:
+  path: /ajax/chat/ship/history
+  defaults: { _controller: 'Fuga:Public:Chat:shiphistory'}
+chat_ship_message:
+  path: /ajax/chat/ship/message
+  defaults: { _controller: 'Fuga:Public:Chat:shipmessage'}
+
+ship_page:
+  path: /{node}/ship/{id}
+  defaults: { _controller: 'Fuga:Public:Common:index', node: '', action: 'ship'}
+  requirements:
+    id: \d+
+
+public_page:
+  path: /{node}
+  defaults: { _controller: 'Fuga:Public:Common:index', node: '', action: '' }
+public_page_dinamic:
+  path: /{node}/{action}
+  defaults: { _controller: 'Fuga:Public:Common:index', node: '', action: '' }

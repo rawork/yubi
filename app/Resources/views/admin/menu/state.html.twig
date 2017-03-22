@@ -1,0 +1,6 @@
+{% for mod in modules %}
+  <div>
+    <a href="#" class="module" data-url="{{ path('admin_modulemenu', {module: mod.name}) }}"><span class="glyphicon glyphicon glyphicon-folder-close"></span> {{ mod.title }}</a>
+    <div class="admin-submenu{% if module != mod.name %} closed{% endif %}">{% if module == mod.name %}{{ mod.submenu }}{% endif %}</div>
+  </div>
+{% endfor %}

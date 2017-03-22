@@ -1,0 +1,45 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block content %}
+{# need title here #}
+{% if message %}
+    <div class="alert alert-success alert-dismissible" id="archive_info" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        {{ message }}
+    </div>
+{% endif %}
+<input type="button" class="btn btn-success btn-create-backup" data-url="{{ path('admin_backup_create') }}" value="Создать архив" />
+<br><br>
+<table class="table table-condensed">
+    <thead><tr>
+        <th width="55%">Имя</th>
+        <th width="22%">Размер файла</th>
+        <th width="22%">Создан</th>
+        <th><span class="glyphicon glyphicon-menu-hamburger"></span></th>
+    </tr></thead>
+
+    {% for file in finder %}
+    <tr>
+        <td>{{ file.getFilename() }}</td>
+        <td>{{ file.getSize()|file_size }}</td>
+        <td>{{ file.getCTime()|date('Y-m-d H:i:s')|format_date('d.m.Y H:i') }}</td>
+        <td>
+            <div class="btn-group pull-right">
+                <a class="btn btn-small dropdown-toggle admin-dropdown-toggle" id="drop'.md5($file).'" data-toggle="dropdown" href="#">
+                    <span class="glyphicon glyphicon-menu-hamburger"></span>
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu admin-dropdown-menu">
+                    <li><a href="{{ path('admin_backup_get', {'file': file.getFilename()}) }}"><span class="glyphicon glyphicon-download-alt"></span> Скачать</a></li>
+                    <li><a href="{{ path('admin_backup_delete', {'file': file.getFilename()}) }}"><span class="glyphicon glyphicon-trash"></span> Удалить</a></li>
+                </ul>
+            </div>
+        </td>
+    </tr>
+    {% endfor %}
+    </table>
+<a href="{{ path('admin_restore_file') }}">Скачать скрипт восстановления системы</a>
+
+<br><br><input type="button" class="btn btn-danger btn-clear-cache" data-url="{{ path('admin_cache_clear') }}" value="Очистить кэш" />
+<br><br><div class="well closed" id="cache_info"></div>
+{% endblock %}

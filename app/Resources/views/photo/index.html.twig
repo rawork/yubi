@@ -1,0 +1,21 @@
+{% for event in events %}
+<div class="event">
+    <div class="title">{{ event.name }}</div>
+    {% if event.date != '0000-00-00' %}<div class="date">{{ event.date|format_date('j F, Y г.') }}</div>{% endif %}
+    {% if event.content %}<div class="text">{{ event.content }}</div>{% endif %}
+    <div class="fotorama"
+         data-nav="thumbs"
+         data-thumbwidth="100"
+         data-thumbheight="66"
+         data-width="100%"
+         data-ratio="900/600"
+         data-allowfullscreen="false"
+         data-click="true"
+         data-swipe="true"
+    >
+        {% for image in event.gallery_value %}
+            <a href="{{ image.extra.main.path }}"><img src="{{ image.extra.thumb.path }}"></a>
+        {% endfor %}
+    </div>
+</div>
+{% endfor %}

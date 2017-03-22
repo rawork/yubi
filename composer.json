@@ -1,0 +1,27 @@
+{
+    "config": {
+        "platform": {
+            "php": "5.6"
+        }
+    },
+    "require": {
+        "monolog/monolog": "1.17.*",
+        "twig/twig": "1.23.*",
+        "doctrine/orm": "2.4.*",
+        "doctrine/mongodb-odm": "1.0.*",
+        "symfony/http-foundation": "2.8.*",
+        "symfony/routing": "2.8.*",
+        "symfony/filesystem": "2.8.*",
+        "symfony/finder": "2.8.*",
+        "symfony/yaml": "2.8.*",
+        "symfony/config": "2.8.*",
+        "symfony/form": "2.8.*",
+        "symfony/validator": "2.8.*",
+        "symfony/security": "2.8.*",
+        "symfony/event-dispatcher": "2.8.*",
+        "gregwar/captcha": "1.1.*"
+    },
+    "autoload": {
+        "psr-4": {"Fuga\\": "src/Fuga/"}
+    }
+}

@@ -1,0 +1,28 @@
+{% if frmMessage %}<div class="alert alert-{{ frmMessage[0] }}">{{ frmMessage[1] }}</div>{% endif %}
+<form name="frm{{ dbform.name }}" id="frm{{ dbform.name }}" action="{{ action }}" method="post" onsubmit="return checkForm(this)" enctype="multipart/form-data">
+    <table border="0" width="100%" id="table1" cellspacing="1" cellpadding="2">
+        <tbody>
+        <tr>
+            <td width="35%">Имя отправителя <font color="red">*</font>:</td>
+            <td><input type="text" title="Имя отправителя" name="name" size="30" style="width:95%;" maxlength="70"></td></tr>
+        <tr>
+            <td>E-mail отправителя <font color="red">*</font>:</td>
+            <td><input type="text" title="E-mail отправителя" name="email" size="30" style="width:95%;" maxlength="70"></td>
+        </tr>
+        <tr>
+            <td>Тема письма:</td>
+            <td><input type="text" name="theme" size="30" style="width:95%;" maxlength="70"></td>
+        </tr>
+        <tr>
+            <td valign="top">Текст сообщения <font color="red">*</font>:</td>
+            <td><textarea rows="7" name="message" cols="30" style="width:95%;"></textarea></td></tr>
+        <tr><td>Код безопасности <font color="red">*</font>:</td>
+            <td>
+                <input type="text" id="inputSucure" title="Код безопасности" name="securecode" placeholder="Введите цифры *">
+                <div><img id="secure_image" src="/secureimage?{{ now }}"> <a href="#" onclick="document.getElementById('secure_image').src='/secureimage?'+Math.random();return false">обновить код</a></div>
+            </td>
+        </tr>
+        <tr><td colspan="2" align="center"><br><input type="submit" value="Отправить сообщение"></td></tr>
+        </tbody>
+    </table>
+</form>

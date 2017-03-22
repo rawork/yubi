@@ -1,0 +1,55 @@
+<?php
+
+define('PRJ_ENV', 'dev'); // prod, dev
+define('PRJ_REF', '');
+define('PRJ_DIR', $_SERVER['DOCUMENT_ROOT'].PRJ_REF);
+define('PRJ_LOGO', PRJ_REF.'/bundles/public/img/logo.png');
+
+define('RES_REF', PRJ_REF.'/files');
+define('RES_DIR', PRJ_DIR.'/files');
+define('UPLOAD_REF', PRJ_REF.'/upload');
+define('UPLOAD_DIR', PRJ_DIR.'/upload');
+define('BACKUP_REF', PRJ_REF.'/app/backup');
+define('BACKUP_DIR', PRJ_DIR.'/app/backup');
+define('PCRE_RES_REF', str_replace('/', '\/', RES_REF));
+define('THEME_REF', PRJ_REF.'/bundles');
+define('PRJ_LOCALE', 'ru');
+
+define('AUTH_TTL', 86400000);
+
+define('TWIG_PATH', '/app/Resources/views');
+define('TWIG_CACHE_PATH', '/app/cache/twig');
+
+define('GAMER_GROUP', 2);
+define('FAN_GROUP', 3);
+
+define('HELPER_ROLE', 1);
+define('MARINE_ROLE', 2);
+define('COOK_ROLE', 3);
+define('DOCTOR_ROLE', 4);
+define('BOATSWAIN_ROLE', 5);
+define('CARPENTER_ROLE', 6);
+define('QUARTERMASTER_ROLE', 7);
+define('SAILMASTER_ROLE', 8);
+define('GUNNER_ROLE', 9);
+define('NAVIGATOR_ROLE', 10);
+define('SHIPBOY_ROLE', 11);
+define('MONKEY_ROLE', 12);
+define('CAPTAIN_ROLE', 13);
+
+define('VK_APP_ID', '');
+define('VK_APP_SHARED_SECRET', '');
+define('VK_APP_REDIRECT_URI', '');
+define('VK_OAUTH_URL', '');
+
+define('FB_APP_ID', '');
+define('FB_APP_SHARED_SECRET', '');
+define('FB_APP_REDIRECT_URI', '');
+define('FB_OAUTH_URL', '');
+
+define('CACHE_DRIVER', 'file'); // file | memcached | redis
+define('CACHE_HOST', 'localhost');
+define('CACHE_PORT', 0);   // 0 | 11211 | 6379
+
+require_once('database.php');
+require_once('parameters.php');

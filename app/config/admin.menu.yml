@@ -1,0 +1,8 @@
+game:
+  module: game
+  title: "Управление играми"
+  route: admin_game_management
+crew:
+  module: crew
+  title: "Управление командами"
+  route: admin_crew_management

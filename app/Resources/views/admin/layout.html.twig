@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Управление сайтом - {{ prj_name }}.{{ currentLocale }}</title>
+	<link href="{{ asset('/bundles/bootstrap3/css/bootstrap.min.css') }}" type="text/css" rel="stylesheet">
+
+	<link href="{{ asset('/bundles/admin/css/colorpicker.css" type="text/css') }}'" rel="stylesheet">
+	<link href="{{ asset('/bundles/treeview/jquery.treeview.css') }}'" type="text/css" rel="stylesheet">
+	<link href="{{ asset('/bundles/pickadate/themes/default.css') }}'" type="text/css" rel="stylesheet">
+	<link href="{{ asset('/bundles/pickadate/themes/default.date.css') }}'" type="text/css" rel="stylesheet">
+	<link href="{{ asset('/bundles/pickadate/themes/default.time.css') }}'" type="text/css" rel="stylesheet">
+    {#<link href="{{ asset('/bundles/calendar/calendar.css" type="text/css') }}" rel="stylesheet">#}
+
+	<link href="{{ asset('/bundles/admin/css/app.admin.css') }}" type="text/css" rel="stylesheet">
+
+
+
+</head>
+<body data-state="{{ state }}" data-theme="{{ theme_ref }}" data-ref="{{ prj_ref }}">
+	<div class="container">
+		<nav class="navbar navbar-default navbar-fixed-top navbar-inverse" role="navigation">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+						<span class="sr-only">Управление</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<div id="state-menu-icon">
+						<button type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span></button>
+					</div>
+					<a class="navbar-brand" target="_blank" href="{{ path('public_page', {}, currentLocale) }}">{{ prj_name }}.{{ prj_zone }}</a>
+				</div>
+
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+					<ul class="nav navbar-nav">
+						<li class="divider"></li>
+						{% for stateName,stateTitle in states %}
+							<li><a class="state pointer" data-url="{{ path('admin_statemenu', {state: stateName, module: module}) }}">{{ stateTitle }}</a></li>
+							{#<li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ stateTitle }} <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+
+                                    <li class="nav-header">Nav header</li>
+                                    <li><a href="#">Action</a></li>
+                                    <li><a href="#">Another action</a></li>
+                                    <li><a href="#">Something else here</a></li>
+                                    <li class="divider"></li>
+
+                                </ul>
+                            </li>#}
+							<li class="divider"></li>
+						{% endfor %}
+						<li>
+							<a class="filemanager-link" href="/bundles/filemanager/dialog.php?type=0&fldr=" data-target="#modalDialog">Файлы</a>
+						</li>
+						<li class="divider"></li>
+						{% for lcl in locales %}
+							<li>
+								{% if lcl == currentLocale %}
+									<a class="locale" data-locale="{{ lcl }}"><span class="label label-info">{{ lcl }}</span></a>
+								{% else %}
+									<a class="locale" data-locale="{{ lcl }}"><span class="label pointer" >{{ lcl }}</span></a>
+								{% endif %}
+							</li>
+						{% endfor %}
+					</ul>
+					<ul class="nav navbar-nav navbar-right">
+						<li class="user-menu"><a href="{{ path('security_logout') }}" title="Выйти из Управление сайтом"><span class="glyphicon glyphicon-user" title="{{ user.name }} {{ user.lastname }}"></span> выйти</a></li>
+					</ul>
+				</div><!-- /.navbar-collapse -->
+			</div>
+		</nav>
+		<div class="row">
+			<div class="col-xs-12">
+				{% block content %}{% endblock %}
+				<form id="formLocale" method="post"><input type="hidden" name="locale" value="ru"></form>
+			</div>
+		</div>
+		<div class="navbar navbar-default navbar-fixed-bottom footer">FugaCMS &copy; 2005-2017</div>
+	</div>
+	<!-- left menu bar -->
+	<div class="statebar">
+		<div id="module-menu">{{ render('Fuga:Admin:Menu:state', {'state': state, 'module': module}) }}</div>
+	</div>
+	<!-- process window -->
+	<div id="waiting"><img src="{{ asset('/bundles/admin/img/loading.gif', false) }}">Операция выполняется&hellip;</div>
+	<!-- modal window -->
+	<div class="modal fade" id="modalDialog" tabindex="-1" role="dialog" aria-labelledby="popupTitle" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="popupTitle"></h4>
+				</div>
+				<div class="modal-body" id="popupContent"></div>
+				<div class="modal-footer" id="popupButtons"></div>
+			</div>
+		</div>
+	</div>
+	<script src="{{ asset('/bundles/jquery/jquery.js') }}"></script>
+    <script src="{{ asset('/bundles/bootstrap3/js/bootstrap.js') }}"></script>
+	<script src="{{ asset('/bundles/treeview/lib/jquery.cookie.js') }}"></script>
+
+	<script src="{{ asset('/bundles/treeview/jquery.treeview.js') }}"></script>
+	<script src="{{ asset('/bundles/multifile/jquery.MultiFile.js') }}"></script>
+	<script src="{{ asset('/bundles/multifile/jquery.form.js') }}"></script>
+	<script src="{{ asset('/bundles/multifile/jquery.blockUI.js') }}"></script>
+	<script src="{{ asset('/bundles/admin/js/jquery.colorpicker.js') }}"></script>
+
+
+	<script src="{{ asset('/bundles/admin/js/app.admin.js') }}"></script>
+</body>
+</html>

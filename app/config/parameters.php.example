@@ -1,0 +1,8 @@
+<?php
+define('TEMPLATE_VERSION_QUANTITY', 10);
+define('CAPTCHA_KEY', 'secretkey'); // change it
+
+// Developer user 
+define('DEV_USER', 'dev');
+define('DEV_PASS', ''); // sha1 password hash
+define('DEV_EMAIL', 'rawork@yandex.ru');

@@ -1,0 +1,30 @@
+<div id="filter">
+    <form method="post" id="form-filter" action="{{ baseRef }}">
+        <input type="hidden" id="filter-type" name="filter_type" value="set" />
+        <h6>Фильтры</h6>
+        <table class="table table-condensed">
+            <thead>
+                <tr>
+                <th></th>
+                <th></th>
+                </tr>
+            </thead>
+            <tr>
+                <td align="left" width="100">Id</td>
+                <td><input class="form-control" type="text" name="search_filter_id" value="{{ search_filter_id }}"></td>
+            </tr>
+            {% for field in fields %}
+            {% if field.search %}
+            <tr>
+                <td align="left" width="100">{{ field.title }}</td>
+                <td>{{ field.searchinput }}</td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </table>
+        <div class="btn-group">
+            <button class="btn btn-default">Искать</button>
+            <button class="btn btn-default" id="btn-filter-cancel" data-type="cancel">Отменить фильтры</button>
+        </div>
+    </form>
+</div>

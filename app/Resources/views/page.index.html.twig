@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Спортивный комплекс &quot;Юбилейный&quot; город Галич - {{ title }}</title>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,700&amp;subset=latin,cyrillic' rel='stylesheet' type='text/css'>
+    <link type="text/css" rel="stylesheet" href="/bundles/fotorama/fotorama.css" />
+    <link type="text/css" rel="StyleSheet" href="{{ asset('/bundles/public/css/app.css') }}" />
+    {{ renderCSS() }}
+
+    <!--[if lt IE 9]>
+    <script src="/bundles/ie/html5shiv.js"></script>
+    <script src="/bundles/ie/respond.min.js"></script>
+    <![endif]-->
+
+<script type="text/javascript">(function (d, w, c) {(w[c] = w[c] || []).push(function() {try {w.yaCounter39883200 = new Ya.Metrika({id:39883200,clickmap:true,trackLinks:true,accurateTrackBounce:true,ut:"noindex"});} catch(e) { }});var n = d.getElementsByTagName("script")[0],s = d.createElement("script"),f = function () { n.parentNode.insertBefore(s, n); };s.type = "text/javascript";s.async = true;s.src = "https://mc.yandex.ru/metrika/watch.js";if (w.opera == "[object Opera]") {d.addEventListener("DOMContentLoaded", f, false);} else { f(); }})(document, window, "yandex_metrika_callbacks");</script>
+
+</head>
+
+<body>
+<div class="container">
+    <div class="header">
+        <div class="phone pull-left">+7 (49437) 72-143</div>
+        <div class="time pull-right">с 9.00 до 21.00<br>без перерывов<br> и выходных</div>
+        <a href="/"><img src="/bundles/public/img/logo_.png" class="logo"></a>
+        <div class="header-title"><small>Муниципальное учреждение</small>Спортивный комплекс &laquo;Юбилейный&raquo;<small>город Галич Костромской области</small></div>
+    </div>
+    <div class="menu">
+        <span class="menu-left"></span>
+        <span class="menu-right"></span>
+        <div id="uNMenuDiv1" class="uMenuV">
+            <ul class="uMenuRoot">
+                <li><a class="uMenuItemA" href="/"><span>Главная</span></a></li>
+                {% for menuitem in links %}
+                <li><a href="{{ menuitem.ref }}"><span>{{ menuitem.title }}</span></a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="content">
+
+        <div class="news">
+            {{ render('Fuga:Public:Common:block', {name: 'alert'}) }}
+        </div>
+
+        <h1>{{ title }}</h1>
+
+        {{ maincontent }}
+    </div>
+</div>
+<div class="footer-content">
+    Copyright &copy; 2012&mdash;{{ "now"|date("Y") }} СК Юбилейный, город Галич<br />
+</div>
+<script type="text/javascript" src="/bundles/jquery/jquery.js"></script>
+<script type="text/javascript" src="/bundles/fotorama/fotorama.js"></script>
+{{ appjs }}
+</body>
+</html>
