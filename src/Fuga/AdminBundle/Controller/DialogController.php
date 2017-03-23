@@ -16,7 +16,7 @@ class DialogController extends Controller
 		$entityId  = $this->get('request')->request->getInt('value', 0);
 		$title 	   = $this->get('request')->request->get('title');
 
-		$table = $this->get('container')->getTable($tableName);
+		$table = $this->getTable($tableName);
 		$fieldName = str_replace($entityId, '', $fieldName);
 		$fieldName = str_replace('search_filter_', '', $fieldName);
 		$field = $table->fields[$fieldName];
@@ -30,7 +30,7 @@ class DialogController extends Controller
 
 		$paginator = $this->get('paginator');
 		$paginator->paginate(
-			$this->get('container')->getTable($field['l_table']),
+			$this->getTable($field['l_table']),
 			rawurldecode($this->generateUrl('admin_dialog_pagination', array('table' => $tableName, 'field' => $fieldName, 'entity' => $entityId > 0 ? $entityId : 0, 'page' => '###'))),
 			$criteria,
 			10,
@@ -62,7 +62,7 @@ class DialogController extends Controller
 	public function pagination($table, $field, $entity, $page)
 	{
 		$locale = $this->get('session')->get('locale');
-		$tableEntity = $this->get('container')->getTable($table);
+		$tableEntity = $this->getTable($table);
 		$fieldData = $tableEntity->fields[$field];
 		$criteria = '';
 		if (!empty($fieldData['l_lang'])) {
@@ -70,7 +70,7 @@ class DialogController extends Controller
 		}
 		$paginator = $this->get('paginator');
 		$paginator->paginate(
-			$this->get('container')->getTable($fieldData['l_table']),
+			$this->getTable($fieldData['l_table']),
 			rawurldecode($this->generateUrl('admin_dialog_pagination', array('table' => $table, 'field' => $field, 'entity' => $entity, 'page' => '###'))),
 			$criteria,
 			10,
@@ -115,7 +115,7 @@ class DialogController extends Controller
 		$entityId = $this->get('request')->request->get('value');
 		$title = $this->get('request')->request->get('title');
 		$locale = $this->get('session')->get('locale');
-		$table = $this->get('container')->getTable($tableName);
+		$table = $this->getTable($tableName);
 		$fieldName = str_replace($entityId, '', $fieldName);
 		$fieldName = str_replace('search_filter_', '', $fieldName);
 		$field = $table->fields[$fieldName];
@@ -173,7 +173,7 @@ class DialogController extends Controller
 		$fieldName = $this->get('request')->request->get('field_name');
 		$value = $this->get('request')->request->get('value');
 		$values = explode(',', $value);
-		$table = $this->get('container')->getTable($tableName);
+		$table = $this->getTable($tableName);
 		$field = $table->fields[$fieldName];
 		$lang_where = !empty($field['l_lang']) ? "locale='".$this->get('session')->get('locale')."'" : '';
 		if (!empty($field['query'])) {

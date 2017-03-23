@@ -12,8 +12,8 @@ class Table
 	public $title;
 	public $fields;
 	public $params;
-	public  $moduleName;
-	public  $tableName;
+	public $moduleName;
+	public $tableName;
 
 	private $dbname;
 	private $stmt;
@@ -389,12 +389,12 @@ class Table
 		return false;
 	}
 	
-	private function drop()
+	public function drop()
 	{
 		return $this->container->get('connection')->query('DROP TABLE '.$this->dbName());
 	}
 	
-	private function truncate()
+	public function truncate()
 	{
 		return $this->container->get('connection')->query('TRUNCATE TABLE '.$this->dbName());
 	}

@@ -18,7 +18,7 @@ class GalleryController extends Controller
 		$response = new JsonResponse();
 
 		if ($file) {
-			$field = $this->get('container')->getTable($file['table_name'])->fields[$file['field_name']];
+			$field = $this->getTable($file['table_name'])->fields[$file['field_name']];
 			$params = json_decode($field['params'], true);
 			if (json_last_error() == JSON_ERROR_NONE && array_key_exists('sizes', $params)) {
 				$sizes = $params['sizes'];

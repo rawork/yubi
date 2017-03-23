@@ -52,12 +52,6 @@ class MenuManager extends ModelManager
 				'name' => 'Обслуживание'
 			);
 		}
-		if ($module['name'] == 'subscribe' && $this->get('security')->isSuperuser()) {
-			$ret[] = array (
-				'ref' => $this->get('routing')->getGenerator()->generate('admin_subscribe_export'),
-				'name' => 'Экспорт'
-			);
-		}
 
 		$config = $this->getConfig();
 

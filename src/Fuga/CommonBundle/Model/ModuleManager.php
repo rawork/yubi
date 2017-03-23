@@ -3,13 +3,8 @@
 namespace Fuga\CommonBundle\Model;
 
 
-use Fuga\CommonBundle\Model\ModelManager;
-use Symfony\Component\Yaml\Yaml;
-
 class ModuleManager extends ModelManager
 {
-	protected $config;
-	protected $initialized = false;
 	protected $states = [
 		'content' => 'Структура и контент',
 		'service' => 'Сервисы',
@@ -52,13 +47,19 @@ class ModuleManager extends ModelManager
 			'ctype' => 'service',
 			'entitites' => []
 		],
+		'page' => [
+			'name'  => 'page',
+			'title' => 'Структура сайта',
+			'ctype' => 'content',
+			'entitites' => []
+		],
 	];
 	protected $modules = [];
 	protected $personalModules = [];
 
 	public function getAll()
 	{
-		if (!$this->initialized) {
+		if (empty($this->modules)) {
 			$this->modules = $this->coreModules;
 			$sql = "SELECT id, sort, name, title, 'content' AS ctype FROM config_module ORDER BY sort, title";
 			$stmt = $this->get('connection')->prepare($sql);
@@ -73,8 +74,6 @@ class ModuleManager extends ModelManager
 					'entities' => array()
 				);
 			}
-
-			$this->initialized;
 		}
 
 		return $this->modules;

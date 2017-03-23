@@ -32,8 +32,7 @@ class Container
 			define($var['name'], $var['value']);
 		}
 
-		$this->getManager('Fuga:Common:Module')->getAll();
-//		$this->tables = $this->getAllTables();
+		$this->getManager('Fuga:Common:Table')->getAll($this->getManager('Fuga:Common:Module')->getAll());
 	}
 
 	public function getItemsRaw($sql)
@@ -54,63 +53,6 @@ class Container
 		return $ret;
 	}
 
-	// todo убрать все в Table
-	public function deleteItem($table, $query)
-	{
-		$ids = $this->deleteRelations($table, $this->getManager('Fuga:Common:Table')->getByName($table)->getItems(!empty($query) ? $query : '1<>1'));
-		if ($ids) {
-			return $this->getTable($table)->delete('id IN ('.implode(',', $ids).')');
-		}
-
-		return false;
-	}
-
-	// todo убрать все в Table
-	public function deleteRelations($table, $items = array())
-	{
-		$ids = array();
-
-		foreach ($items as $item) {
-			if ($this->getTable($table)->params['is_system']) {
-				foreach ($this->tables as $t) {
-					if ($t->moduleName != 'user' && $t->moduleName != 'template' && $t->moduleName != 'page') {
-						foreach ($t->fields as $field) {
-							$ft = $t->getFieldType($field);
-
-							if (stristr($ft->getParam('type'), 'select') && $ft->getParam('l_table') == $table) {
-								$this->deleteItem($t->dbName(), $ft->getName().'='.$item['id']);
-							}
-
-							$ft->free();
-						}
-					}
-				}
-			}
-
-			foreach ($this->getTable($table)->fields as $field) {
-				$this->getTable($table)->getFieldType($field, $item)->free();
-			}
-
-			$ids[] = $item['id'];
-		}
-
-		return $ids;
-	}
-
-	public function dropTable($table, $complex = false)
-	{
-		if ($complex) {
-			$this->get('connection')->delete('table_field', array('table_id' => $this->getTable($table)->id));
-			$this->get('connection')->delete('table_table', array('name' => $table));
-		}
-		return $this->get('connection')->query('DROP TABLE '.$table);
-	}
-
-	public function truncateTable($table)
-	{
-		return $this->get('connection')->query('DROP TRUNCATE '.$table);
-	}
-	
 	public function backupDB($filename)
 	{
 		system('mysqldump -u '.DB_USER.' -p'.DB_PASS.' -h '.DB_HOST.' '.DB_BASE.' > '.$filename);

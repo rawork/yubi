@@ -25,7 +25,9 @@ class SubscribeManager extends ModelManager {
 				$emails	
 			);
 			
-			$this->get('container')->deleteItem($this->entityTable, 'id='.$letter['id']);
+			$this->get('container')
+				->getManager('Fuga:Common:Table')
+				->deleteItem($this->entityTable, 'id='.$letter['id']);
 		}
 	}
 	

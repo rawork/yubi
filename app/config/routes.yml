@@ -1,12 +1,12 @@
 security_password:
   path: /admin/password/{key}
-  defaults: { _controller: 'Fuga:Common:Security:password' }
+  defaults: { _controller: 'Fuga:Common:Auth:password' }
 security_logout:
   path: /admin/logout
-  defaults: { _controller: 'Fuga:Common:Security:logout' }
+  defaults: { _controller: 'Fuga:Common:Auth:logout' }
 security_forget:
   path: /admin/forget
-  defaults: { _controller: 'Fuga:Common:Security:forget' }
+  defaults: { _controller: 'Fuga:Common:Auth:forget' }
 
 secureimage:
   path: /secureimage

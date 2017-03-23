@@ -88,39 +88,40 @@ class User {
 		));
 
 		$this->tables['group'] = array(
-		'name' => 'group',
-		'module' => 'user',
-		'title' => 'Группы пользователей',
-		'order_by' => 'title',
-		'fieldset' => array (
-			'title' => array (
-				'name' => 'title',
-				'title' => 'Название',
-				'type' => 'string',
-				'width' => '15%',
-			),
-			'name' => array (
-				'name' => 'name',
-				'title' => 'Системное имя',
-				'type' => 'string',
-				'width' => '15%',
-				'help' => 'англ. буквы без пробелов',
-				'search' => true,
-			),
-			'rules' => array (
-				'name' => 'rules',
-				'title' => 'Доступ к модулям',
-				'type' => 'select_list',
-				'l_table' => 'config_module',
-				'l_field' => 'title',
-				'view_type' => 'simple', // dialog
-				'link_table' => 'user_group_module',
-				'link_inversed' => 'group_id',
-				'link_mapped' => 'module_id',
-				'width' => '65%',
-				'search' => true,
+			'name' => 'group',
+			'module' => 'user',
+			'title' => 'Группы пользователей',
+			'order_by' => 'title',
+			'fieldset' => array (
+				'title' => array (
+					'name' => 'title',
+					'title' => 'Название',
+					'type' => 'string',
+					'width' => '15%',
+				),
+				'name' => array (
+					'name' => 'name',
+					'title' => 'Системное имя',
+					'type' => 'string',
+					'width' => '15%',
+					'help' => 'англ. буквы без пробелов',
+					'search' => true,
+				),
+				'rules' => array (
+					'name' => 'rules',
+					'title' => 'Доступ к модулям',
+					'type' => 'select_list',
+					'l_table' => 'config_module',
+					'l_field' => 'title',
+					'view_type' => 'simple', // dialog
+					'link_table' => 'user_group_module',
+					'link_inversed' => 'group_id',
+					'link_mapped' => 'module_id',
+					'width' => '65%',
+					'search' => true,
+				)
 			)
-		));
+		);
 		
 	}
 }

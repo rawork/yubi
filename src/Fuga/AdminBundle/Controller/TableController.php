@@ -6,7 +6,7 @@ class TableController extends AdminController
 {
 	public function create($state, $module, $entity)
 	{
-		$table = $this->get('container')->getTable($module.'_'.$entity);
+		$table = $this->getTable($module.'_'.$entity);
 		$this->get('session')->getFlashBag()->add(
 			'admin.message',
 			$table->create() ? 'Таблица создана' : 'Таблица уже существует'
@@ -14,13 +14,13 @@ class TableController extends AdminController
 
 		return $this->redirect($this->generateUrl(
 			'admin_entity_index',
-			array('state' => $state, 'module' => $module, 'entity' => $entity)
+			['state' => $state, 'module' => $module, 'entity' => $entity]
 		));
 	}
 
 	public function alter($state, $module, $entity)
 	{
-		$table = $this->get('container')->getTable($module.'_'.$entity);
+		$table = $this->getTable($module.'_'.$entity);
 		$this->get('session')->getFlashBag()->add(
 			'admin.message',
 			$table->alter() ? 'Структура таблицы обновлена' : 'Ошибка обновления структуры таблицы'
@@ -28,7 +28,41 @@ class TableController extends AdminController
 
 		return $this->redirect($this->generateUrl(
 			'admin_entity_index',
-			array('state' => $state, 'module' => $module, 'entity' => $entity)
+			['state' => $state, 'module' => $module, 'entity' => $entity]
+		));
+	}
+
+	public function drop($state, $module, $entity)
+	{
+		$table = $this->getTable($module.'_'.$entity);
+
+		$this->get('connection')->delete('table_field', ['table_id' => $table->id]);
+		$this->get('connection')->delete('table_table', ['id' => $table->id]);
+
+		$this->get('session')->getFlashBag()->add(
+			'admin.message',
+			$table->drop() ? 'Таблица удалена' : 'Ошибка удаления таблицы'
+		);
+
+		return $this->redirect($this->generateUrl(
+			'admin_entity_index',
+			['state' => $state, 'module' => $module, 'entity' => $entity]
+		));
+	}
+
+	public function truncate($state, $module, $entity)
+	{
+		$table = $this->getTable($module.'_'.$entity);
+
+
+		$this->get('session')->getFlashBag()->add(
+			'admin.message',
+			$table->truncate() ? 'Таблица очищена' : 'Ошибка очищения таблицы'
+		);
+
+		return $this->redirect($this->generateUrl(
+			'admin_entity_index',
+			['state' => $state, 'module' => $module, 'entity' => $entity]
 		));
 	}
 } 

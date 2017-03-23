@@ -52,14 +52,15 @@ class MenuController extends AdminController {
 		$entities = $this->getManager('Fuga:Admin:Menu')->getEntitiesByModule($module);
 
 		$text = $this->render('admin/menu/module', compact('entities'));
+
 		if ($this->get('request')->isXmlHttpRequest()) {
 			$response = new JsonResponse();
 			$response->setData(array('content' => $text));
 
 			return $response;
-		} else {
-			return $text;
 		}
+
+		return $text;
 	}
 
 	public function entity($links)

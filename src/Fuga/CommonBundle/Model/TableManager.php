@@ -8,56 +8,48 @@ use Fuga\Component\DB\Table;
 class TableManager extends ModelManager
 {
 	protected $tables = [];
+	protected $tableData = [];
 	protected $models = [];
 
-//	private function getAllTables()
-//	{
-//		// TODO кешировать инициализацию всех таблиц
-//		$ret = array();
-//		$this->modules = $this->tempmodules;
-//		$sql = "SELECT id, sort, name, title, 'content' AS ctype FROM config_module ORDER BY sort, title";
-//		$stmt = $this->get('connection')->prepare($sql);
-//		$stmt->execute();
-//		while ($module = $stmt->fetch()) {
-//			$this->modules[$module['name']] = array(
-//				'id'    => $module['id'],
-//				'name'  => $module['name'],
-//				'title' => $module['title'],
-//				'ctype' => $module['ctype'],
-//				'entities' => array()
-//			);
-//		}
-//		foreach ($this->modules as $module) {
-//			$className = 'Fuga\\CommonBundle\\Model\\'.ucfirst($module['name']);
-//
-//			if (class_exists($className)) {
-//				$model = new $className();
-//				foreach ($model->tables as $table) {
-//					$table['is_system'] = true;
-//					$ret[$table['module'].'_'.$table['name']] = new DB\Table($table, $this);
-//				}
-//			}
-//		}
-//		$sql = "SELECT t.*, m.name as module
-//				FROM table_table t
-//				JOIN config_module m ON t.module_id=m.id
-//				WHERE t.publish=1 ORDER BY t.sort";
-//		$stmt = $this->get('connection')->prepare($sql);
-//		$stmt->execute();
-//		$tables = $stmt->fetchAll();
-//		foreach ($tables as $table) {
-//			$ret[$table['module'].'_'.$table['name']] = new DB\Table($table, $this);
-//		}
-//
-//		return $ret;
-//	}
+	public function getAll($modules)
+	{
+		if (empty($this->tables)) {
+
+			foreach ($modules as $module) {
+				$className = 'Fuga\\CommonBundle\\Model\\'.ucfirst($module['name']);
+				if (class_exists($className)) {
+					$model = new $className();
+
+					foreach ($model->tables as $table) {
+						$table['is_system'] = true;
+						$this->tables[$table['module'].'_'.$table['name']] = new Table($table, $this->get('container'));
+					}
+				}
+			}
+			$sql = "SELECT t.*, m.name as module
+				FROM table_table t
+				JOIN config_module m ON t.module_id=m.id
+				WHERE t.publish=1 ORDER BY t.sort";
+			$stmt = $this->get('connection')->prepare($sql);
+			$stmt->execute();
+			while ($table = $stmt->fetch()) {
+				$this->tableData[$table['module'].'_'.$table['name']] = $table;
+				$this->tables[$table['module'].'_'.$table['name']] = new Table($table, $this->get('container'));
+			}
+		}
+
+		return $this->tables;
+	}
+
 
 	public function getByName($name)
 	{
 		// todo init table cache for prod
 		// todo init models cache for prod
 
-		if (!isset($this->tables[$name])) {
+		if (!isset($this->tables[$name]) && isset($this->tableData[$name])) {
+			$this->tables[$name] = new Table($this->tableData[$name], $this->get('container'));
+		} elseif (!isset($this->tables[$name])) {
 
 			list($module, $table) = explode('_', $name);
 
@@ -90,13 +82,16 @@ class TableManager extends ModelManager
 			$sql = "SELECT t.*, m.name as module
 				FROM table_table t
 				JOIN config_module m ON t.module_id=m.id
-				WHERE m.name = :module AND t.name = :table AND t.publish=1 ORDER BY t.sort LIMIT 1";
+				WHERE m.name = :module AND t.name = :table AND t.publish=1 ORDER BY t.sort";
 			$stmt = $this->get('connection')->prepare($sql);
 			$stmt->bindValue('module', $module);
 			$stmt->bindValue('table', $table);
 			$stmt->execute();
+
 			$tableData = $stmt->fetch();
-			if ($tableData) {
+			if ($tableData){
+				$tableData['module'] = $module;
+				$this->tableData[$name] = $tableData;
 				$this->tables[$module.'_'.$table] = new Table($tableData, $this->get('container'));
 			}
 		}
@@ -110,26 +105,54 @@ class TableManager extends ModelManager
 
 	public function getByModuleName($name)
 	{
-		$tables = array();
+		$tables = [];
 		foreach ($this->tables as $table) {
-			if ($table->moduleName == $name)
+			if ($table->moduleName == $name) {
 				$tables[$table->tableName] = $table;
+			}
 		}
+
 		return $tables;
 	}
 
-	public function setLocale($site)
+	public function deleteItem($table, $query)
 	{
-		if (!$this->get('session')->get('locale')) {
-			$this->get('session')->set('locale', PRJ_LOCALE);
+		$ids = $this->deleteRelations($table, $this->getByName($table)->getItems(!empty($query) ? $query : '1<>1'));
+		if ($ids) {
+			return $this->getByName($table)->delete('id IN ('.implode(',', $ids).')');
 		}
-		if ($_SERVER['REQUEST_METHOD'] == 'POST' && $this->get('request')->request->get('locale')) {
-			$this->get('session')->set('locale', $this->get('request')->request->get('locale'));
-			$response = new RedirectResponse($_SERVER['REQUEST_URI'], 302);
-			$response->send();
-			exit;
-		} elseif (substr($site['url'], 0, 6) != '/admin')  {
-			$this->get('session')->set('locale', $site['language']);
-		}
+
+		return false;
 	}
-} 
+
+	public function deleteRelations($table, $items = array())
+	{
+		$ids = array();
+
+		foreach ($items as $item) {
+			if ($this->getByName($table)->params['is_system']) {
+				foreach ($this->tables as $t) {
+					if ($t->moduleName != 'user' && $t->moduleName != 'template' && $t->moduleName != 'page') {
+						foreach ($t->fields as $field) {
+							$ft = $t->getFieldType($field);
+
+							if (stristr($ft->getParam('type'), 'select') && $ft->getParam('l_table') == $table) {
+								$this->deleteItem($t->dbName(), $ft->getName().'='.$item['id']);
+							}
+
+							$ft->free();
+						}
+					}
+				}
+			}
+
+			foreach ($this->getByName($table)->fields as $field) {
+				$this->getByName($table)->getFieldType($field, $item)->free();
+			}
+
+			$ids[] = $item['id'];
+		}
+
+		return $ids;
+	}
+}

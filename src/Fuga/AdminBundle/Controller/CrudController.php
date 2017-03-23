@@ -25,7 +25,7 @@ class CrudController extends AdminController
 
 	public function add($state, $module, $entity)
 	{
-		$table = $this->get('container')->getTable($module.'_'.$entity);
+		$table = $this->getTable($module.'_'.$entity);
 
 		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$lastId = $table->insertGlobals();
@@ -84,7 +84,7 @@ class CrudController extends AdminController
 
 	public function edit($state, $module, $entity, $id)
 	{
-		$table = $this->get('container')->getTable($module.'_'.$entity);
+		$table = $this->getTable($module.'_'.$entity);
 
 		if ('POST' == $_SERVER['REQUEST_METHOD']) {
 			$this->get('session')->getFlashBag()->add(
@@ -146,10 +146,10 @@ class CrudController extends AdminController
 	public function delete($state, $module, $entity, $id)
 	{
 		$id = 'id='.$id;
-		$table = $this->get('container')->getTable($module.'_'.$entity);
+		$table = $this->getTable($module.'_'.$entity);
 		$this->get('session')->getFlashBag()->add(
 			'admin.message',
-			$this->get('container')->deleteItem($table->dbName(), $id) ? 'Удалено' : 'Ошибка удаления'
+			$this->getManager('Fuga:Common:Table')->deleteItem($table->dbName(), $id) ? 'Удалено' : 'Ошибка удаления'
 		);
 
 		return $this->redirect($this->generateUrl(
@@ -161,7 +161,7 @@ class CrudController extends AdminController
 	public function groupedit($state, $module, $entity)
 	{
 		$ids = $this->get('request')->request->get('ids');
-		$table = $this->get('container')->getTable($module.'_'.$entity);
+		$table = $this->getTable($module.'_'.$entity);
 
 		if (!$ids || $this->get('request')->request->getInt('edited', 0) == 1) {
 			$this->get('session')->getFlashBag()->add(
@@ -224,7 +224,7 @@ class CrudController extends AdminController
 		$ids = explode(',', $this->get('request')->request->get('ids'));
 		if(is_array($ids)) {
 			$query = 'id IN('.implode(',', $ids).') ';
-			$isDeleted = $this->get('container')->deleteItem($module.'_'.$entity, $query);
+			$isDeleted = $this->getManager('Fuga:Common:Table')->deleteItem($module.'_'.$entity, $query);
 		} else {
 			$isDeleted = false;
 		}
