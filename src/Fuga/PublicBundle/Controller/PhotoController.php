@@ -9,7 +9,7 @@ class PhotoController extends Controller
 {
 	public function index()
 	{
-		$events = $this->get('container')->getItems('photo_events', 'publish=1');
+		$events = $this->getTable('photo_events')->getItems('publish=1');
 
 		return $this->render('photo/index', compact('events'));
 	}

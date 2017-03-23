@@ -18,16 +18,16 @@ class MetaManager extends ModelManager {
 		if (!$uri) {
 			$uri = $_SERVER['REQUEST_URI'];
 		}
-		$items = $this->get('container')->getItems($this->entityTable);
+		$items = $this->getTable($this->entityTable)->getItems();
 		foreach ($items as $item) {
-			$words = split(",", $item['words']);
+			$words = explode(',', $item['words']);
 			foreach ($words as $w) {
 				$w = trim($w);
 				if (!empty($w) && $uri == $w) {
 					return $item[$field];
 				}
 			}
-			$keywords = split(',', $item['keywords']);
+			$keywords = explode(',', $item['keywords']);
 			foreach ($keywords as $w) {
 				$w = trim($w);
 				if (!empty($w) && stristr($uri, $w)) {

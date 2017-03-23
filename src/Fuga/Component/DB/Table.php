@@ -373,6 +373,21 @@ class Table
 		}
 		
 	}
+
+	public function copy($id, $times = 1)
+	{
+		$entity = $this->getItem($id);
+
+		if ($entity) {
+			for ($i = 1; $i <= $times; $i++) {
+				$this->insertArray($entity);
+			}
+
+			return true;
+		}
+
+		return false;
+	}
 	
 	private function drop()
 	{
@@ -486,13 +501,15 @@ class Table
 				$this->container->get('connection')->insert('system_files', $file);
 			}
 		}
+
 		return true;
 	}
 
-	public function update($values, $criteria)
+	public function update(array $values, array $criteria)
 	{
 		$ret = $this->container->get('connection')->update($this->dbName(), $values, $criteria);
 		$this->updateNested();
+
 		return $ret;
 	}
 	
@@ -508,6 +525,7 @@ class Table
 		$stmt->bindValue('locale', $this->container->get('session')->get('locale'));
 		$stmt->execute();
 		$items = $stmt->fetchAll();
+
 		if ($items) {
 			foreach ($items as $item) {
 				$left_key++;
@@ -525,6 +543,7 @@ class Table
 		} else {
 			$right_key = $left_key;
 		}
+
 		return ++$right_key;
 	}
 	
@@ -573,6 +592,7 @@ class Table
 		} catch (\Exception $e) {
 			$this->container->get('log')->addError($sql);
 			$this->container->get('log')->addError($e->getMessage());
+
 			return false;
 		}	
 	}
@@ -607,6 +627,14 @@ class Table
 		$criteria = is_numeric($criteria) ? 'id='.$criteria : $criteria;
 		$this->select(array('where' => $criteria, 'select' => $select, 'order_by' => $sort, 'limit' => 1));
 		return $this->getNextArray($detailed);    
+	}
+
+	public function getItems($criteria = null, $sort = null, $limit = null, $select = null, $detailed = true)
+	{
+		$options = array('where' => $criteria, 'order_by' => $sort, 'limit' => $limit, 'select' => $select);
+		$this->select($options);
+
+		return $this->getNextArrays($detailed);
 	}
 	
 	public function getPrev($id, $parent = 'parent_id')

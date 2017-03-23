@@ -100,7 +100,10 @@ class SearchEngine {
 	function getResults($text) {
 		$text = $this->getMorphoForm($text);
 		$ret = array();
-		$pages = $this->container->getItems('page_page', "publish=1 AND module_id<>0");
+		$pages = $this->container
+			->getManager('Fuga:Common:Table')
+			->getByName('page_page')
+			->getItems('publish=1 AND module_id<>0');
 		if (is_array($pages)) {
 			foreach ($pages as $node) {
 				if (isset($this->options[$node['module_id_name']])) {

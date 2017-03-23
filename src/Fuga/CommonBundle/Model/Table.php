@@ -9,7 +9,7 @@ class Table {
 	public function __construct() {
 
 		$this->tables = array();
-		$this->tables[] = array(
+		$this->tables['table'] = array(
 			'name'			=> 'table',
 			'module'		=> 'table',
 			'title'			=> 'Таблицы',
@@ -93,7 +93,7 @@ class Table {
 			)
 		);
 
-	$this->tables[] = array(
+	$this->tables['field'] = array(
 			'name'		=> 'field',
 			'module' 	=> 'table',
 			'title'		=> 'Поля',

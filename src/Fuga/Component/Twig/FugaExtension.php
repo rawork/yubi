@@ -34,7 +34,7 @@ class FugaExtension  extends \Twig_Extension
 	public function renderJS()
 	{
 		$text = '';
-		$files = $GLOBALS['container']->getJS();
+		$files = $GLOBALS['container']->getManager('Fuga:Common:Template')->getJs();
 		foreach ($files as $file){
 			$text .= '<script src="'.$this->asset($file).'"></script>';
 		}
@@ -45,7 +45,7 @@ class FugaExtension  extends \Twig_Extension
 	public function renderCSS()
 	{
 		$text = '';
-		$files = $GLOBALS['container']->getCSS();
+		$files = $GLOBALS['container']->getManager('Fuga:Common:Template')->getCss();
 		foreach ($files as $file){
 			$text .= '<link href="'.$this->asset($file).'" rel="stylesheet" media="screen">';
 		}

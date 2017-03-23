@@ -4,8 +4,9 @@ namespace Fuga\CommonBundle\Controller;
 
 
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
-class SecurityController extends Controller
+class AuthController extends Controller
 {
 	public function login()
 	{
@@ -46,9 +47,9 @@ class SecurityController extends Controller
 		$message = null;
 		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$login  = $this->get('request')->request->get('_user');
-			$sql = "SELECT id, login, email FROM user_user WHERE login= :login OR email = :login ";
+			$sql = 'SELECT id, login, email FROM user_user WHERE login= :login OR email = :login ';
 			$stmt = $this->get('connection')->prepare($sql);
-			$stmt->bindValue("login", $login);
+			$stmt->bindValue('login', $login);
 			$stmt->execute();
 			$user = $stmt->fetch();
 			if ($user) {
@@ -92,18 +93,29 @@ class SecurityController extends Controller
 			return $this->redirect($this->generateUrl('admin_index'));
 		}
 
-		return $this->get('security')->logout();
+		$this->get('security')->logout();
+
+		if (empty($_SERVER['HTTP_REFERER']) || preg_match('/^'.(PRJ_REF ? '\\'.PRJ_REF : '').'\/admin\/logout/', $_SERVER['HTTP_REFERER'])) {
+			$uri = $this->generateUrl('admin_index');
+		} else {
+			$uri = $_SERVER['HTTP_REFERER'];
+		}
+
+		$response = new RedirectResponse($uri);
+		$response->headers->clearCookie('fuga_key');
+		$response->headers->clearCookie('fuga_user');
+
+		return $response;
 	}
 	
 	public function password($key)
 	{
-		$user = $this->get('container')->getItem('user_user', "hashkey='".$key."'");
+		$user = $this->getTable('user_user')->getItem("hashkey='".$key."'");
 
 		if ($user && !empty($user['email'])) {
 			$password = $this->get('util')->genKey();
 
-			$this->get('container')->updateItem(
-					'user_user',
+			$this->getTable('user_user')->update(
 					array('hashkey' => '', 'password' => hash('sha512', $password)),
 					array('id' => $user['id'])
 			);

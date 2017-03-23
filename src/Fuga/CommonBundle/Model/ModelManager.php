@@ -2,25 +2,32 @@
 
 namespace Fuga\CommonBundle\Model;
 
-class ModelManager implements ModelManagerInterface {
-	
+class ModelManager implements ModelManagerInterface
+{
 	protected $entityTable;
 	protected $connection;
 	
-	public function findAll() {
-		return $this->findBy();
+	public function findBy($criteria = '', $sort = null, $limit = null)
+	{
+		$this->getTable($this->entityTable)->getItems($criteria, $sort, $limit);
 	}
 	
-	public function findBy($criteria = '', $sort = null, $limit = null) {
-		$this->get('container')->getItems($this->entityTable, $criteria, $sort, $limit);
-	}
-	
-	public function get($name) {
+	public function get($name = null)
+	{
 		global $container;
-		if ($name == 'container') {
+
+		if (!$name || 'container' == $name) {
 			return $container;
-		} else {
-			return $container->get($name);
 		}
+
+		return $container->get($name);
+	}
+
+	/*
+	 * return Fuga\Component\Db\Table
+	 */
+	public function getTable($name)
+	{
+		return $this->get('container')->getManager('Fuga:Common:Table')->getByName($name);
 	}
 }

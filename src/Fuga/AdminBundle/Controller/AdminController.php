@@ -10,11 +10,11 @@ class AdminController extends Controller
 	public function render($template, $params = array())
 	{
 		$params['user'] = $this->get('security')->getCurrentUser();
-		$params['states'] = $this->getManager('Fuga:Admin:Module')->getStates();
+		$params['states'] = $this->getManager('Fuga:Common:Module')->getStates();
 		$params['locales'] = $this->getManager('Fuga:Common:Locale')->getLocales();
 		$params['currentLocale'] = $this->get('session')->get('locale');
 		$params['fugaVersion'] = LIB_VERSION;
-		$params['mainurl'] = $this->get('container')->getVar('mainurl');
+		$params['mainurl'] = $this->getManager('Fuga:Common:Template')->getVar('mainurl');
 
 		return parent::render($template, $params);
 	}

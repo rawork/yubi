@@ -19,12 +19,12 @@ class FormManager extends ModelManager {
 	
 	public function getForm($name)
 	{
-		$form = $this->get('container')->getItem('form_form', "name='$name' AND publish=1");
+		$form = $this->getTable('form_form')->getItem("name='$name' AND publish=1");
 		if (!$form) {
 			return null;
 		}
 
-		$form['fields'] = $this->get('container')->getItems('form_field', 'form_id='.$form['id']);
+		$form['fields'] = $this->getTable('form_field')->getItems('form_id='.$form['id']);
 		$builder = new FormBuilder($form, '');
 		$builder->items = $form['fields'];
 		$builder->message = $this->processForm($builder);

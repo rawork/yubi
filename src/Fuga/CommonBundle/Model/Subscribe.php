@@ -9,7 +9,7 @@ class Subscribe {
 	public function __construct() {
 
 		$this->tables = array();
-//		$this->tables[] = array(
+//		$this->tables['lists'] = array(
 //			'name' => 'lists',
 //			'module' => 'subscribe',
 //			'title' => 'Очередь рассылки',
@@ -52,7 +52,7 @@ class Subscribe {
 //			)
 //		));
 
-		$this->tables[] = array(
+		$this->tables['subscriber'] = array(
 			'name' => 'subscriber',
 			'module' => 'subscribe',
 			'title' => 'Подписчики',
@@ -100,7 +100,7 @@ class Subscribe {
 			)
 		));
 
-		$this->tables[] = array(
+		$this->tables['rubric'] = array(
 			'name' => 'rubric',
 			'module' => 'subscribe',
 			'title' => 'Списки рассылки',

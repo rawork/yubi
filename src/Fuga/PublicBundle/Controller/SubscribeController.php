@@ -10,7 +10,7 @@ class SubscribeController extends Controller
 {
 	public function index()
 	{
-		$rubrics = $this->get('container')->getItems('subscribe_rubric');
+		$rubrics = $this->getTable('subscribe_rubric')->getItems();
 
 		return $this->render('subscribe/form', compact('rubrics'));
 	}

@@ -23,16 +23,16 @@ class AppController extends Controller
 		$site = $this->getManager('Fuga:Common:Site')->detectSite($_SERVER['REQUEST_URI']);
 		$this->getManager('Fuga:Common:Locale')->setLocale($site);
 
-		$this->get('container')->setVar('mainurl', $site['url']);
+		$this->getManager('Fuga:Common:Template')->setVar('mainurl', $site['url']);
 
 		if ($this->get('security')->isSecuredArea() && !$this->get('security')->isAuthenticated()) {
-			$controller = new SecurityController();
+			$controller = new AuthController();
 
 			return $controller->login();
 		}
 
 		if ($this->get('security')->isClosedArea()) {
-			$controller = new SecurityController();
+			$controller = new AuthController();
 
 			return $controller->closed();
 		}

@@ -9,10 +9,10 @@ class SubscribeManager extends ModelManager {
 	protected $rubricTable = 'subscribe_subscriber_rubric';
 
 	public function processMessage() {
-		$letter = $this->get('container')->getItem($this->entityTable, 'TO_DAYS(date) <= TO_DAYS(NOW())');
+		$letter = $this->getTable($this->entityTable)->getItem('TO_DAYS(date) <= TO_DAYS(NOW())');
 		if ($letter) {
 			$emails = array();
-			$subscribers = $this->get('container')->getItems($this->subscriberTable, "is_active=1");
+			$subscribers = $this->getTable($this->subscriberTable)->getItems('is_active=1');
 			foreach ($subscribers as $subscriber) {
 				$emails[] = $subscriber['email'];
 			}
@@ -66,7 +66,7 @@ class SubscribeManager extends ModelManager {
 				$message = array(
 					'success' => 'Адрес '.htmlspecialchars($email).' занесен в список рассылки',
 				);
-			} elseif ($subscriberId = $this->get('container')->addItem($this->subscriberTable, $values)) {
+			} elseif ($subscriberId = $this->getTable($this->subscriberTable)->insert($values)) {
 				foreach ($rubrics as $rubric) {
 					$this->get('connection')->insert(
 						$this->rubricTable,
@@ -129,9 +129,9 @@ class SubscribeManager extends ModelManager {
 	
 	public function activate($key) {
 		$key = addslashes(trim($key));
-		$subscriber = $this->get('container')->getItem($this->subscriberTable, "hashkey='".$key."'");
+		$subscriber = $this->getTable('$this->subscriberTable')->getItem("hashkey='".$key."'");
 		if ($subscriber) {
-			$this->get('container')->updateItem($this->subscriberTable, 
+			$this->getTable($this->subscriberTable)->update(
 					array('is_active' => 1, 'hashkey' => ''), 
 					array('id' => $subscriber['id'])
 			);

@@ -2,11 +2,16 @@
 
 namespace Fuga\CommonBundle\Model;
 
-class TemplateManager extends ModelManager {
-	
-	protected $entityTable = 'template_template';
 
-	public function getByNode($name) {
+class TemplateManager extends ModelManager
+{
+	protected $entityTable = 'template_template';
+	protected $vars = [];
+	protected $javascripts = [];
+	protected $styles = [];
+
+	public function getByNode($name)
+	{
 		$sql = "
 			SELECT t.template 
 			FROM template_template t 
@@ -23,10 +28,50 @@ class TemplateManager extends ModelManager {
 		$stmt->bindValue("name", $name);
 		$stmt->execute();
 		$template = $stmt->fetch();
-		if ($template){
-			return $template['template'];
-		} else {
+
+		if (!$template){
 			throw new \Exception('Отсутствует шаблон для запрашиваемой страницы');
 		}
+
+		return $template['template'];
+	}
+
+	public function setVar($name, $value)
+	{
+		$this->vars[$name] = $value;
+	}
+
+	public function getVar($name)
+	{
+		return isset($this->vars[$name]) ? $this->vars[$name] : null;
+	}
+
+	public function getVars()
+	{
+		return $this->vars;
+	}
+
+	public function addJs($path)
+	{
+		if (!in_array($path, $this->javascripts)) {
+			$this->javascripts[] = $path;
+		}
+	}
+
+	public function getJs()
+	{
+		return $this->javascripts;
+	}
+
+	public function addCss($path)
+	{
+		if (!in_array($path, $this->styles)) {
+			$this->styles[] = $path;
+		}
+	}
+
+	public function getCss()
+	{
+		return $this->styles;
 	}
 }

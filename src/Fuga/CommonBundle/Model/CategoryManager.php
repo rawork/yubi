@@ -7,13 +7,19 @@ class CategoryManager extends ModelManager {
 	public function getPathNodes($id = 0){
 		$nodes = array();
 		if ($this->get('routing')->getParam('action') == 'product') {
-			$node = $this->get('container')->getItem('catalog_product', $id);
+			$node = $this->getTable('catalog_product')->getItem($id);
 			if ($node) {
-				$nodes = $this->get('container')->getTable('catalog_category')->getPrev($node['category_id']);
+				$nodes = $this->get('container')
+					->getManager('Fuga:Common:Table')
+					->getByName('catalog_category')
+					->getPrev($node['category_id']);
 				$nodes[] = $node; 
 			}
 		} else {
-			$nodes = $this->get('container')->getTable('catalog_category')->getPrev($id);
+			$nodes = $this->get('container')
+				->getManager('Fuga:Common:Table')
+				->getByName('catalog_category')
+				->getPrev($id);
 		}
 		foreach ($nodes as &$node) {
 			$node['title'] = $node['name'];

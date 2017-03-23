@@ -9,7 +9,7 @@ class Page {
 	public function __construct() {
 
 		$this->tables = array();
-		$this->tables[] = array(
+		$this->tables['page'] = array(
 			'name' => 'page',
 			'module' => 'page',
 			'title' => 'Разделы',
@@ -82,7 +82,7 @@ class Page {
 			)
 		));
 
-		$this->tables[] = array(
+		$this->tables['block'] = array(
 			'name' => 'block',
 			'module' => 'page',
 			'title' => 'Инфоблоки',
@@ -112,7 +112,7 @@ class Page {
 			)
 		));
 		
-		$this->tables[] = array(
+		$this->tables['seo'] = array(
 			'name' => 'seo',
 			'module' => 'page',
 			'title' => 'SEO',

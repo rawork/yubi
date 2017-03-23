@@ -63,12 +63,12 @@ class SelectTreeType extends LookUpType
 			foreach ($entities as $entity) {
 				$extra[] = $entity['id'];
 			}
-			$value['extra'] = array();
+			$value['extra'] = [];
 			if ($extra) {
-				$value['extra'] = $this->get('container')->getItems(
-					'direction_direction',
-					'id IN('.implode(',', $extra).')'
-				);
+				$value['extra'] = $this->get('container')
+					->getManager('Fuga:Common:Table')
+					->getByName($this->getParam('l_table'))
+					->getItems('id IN('.implode(',', $extra).')');
 			}
 		}
 

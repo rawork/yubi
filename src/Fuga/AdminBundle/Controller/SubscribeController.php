@@ -12,7 +12,7 @@ class SubscribeController extends AdminController
 	{
 		$state = 'service';
 		$module = 'subscribe';
-		$rubrics = $this->get('container')->getItems('subscribe_rubric');
+		$rubrics = $this->getTable('subscribe_rubric')->getItems();
 		$last_update = $this->getManager('Fuga:Common:Param')->getValue('subscribe', 'last_update');
 		if ($last_update == '0000-00-00 00:00:00') {
 			$last_update = 'Никогда';
@@ -37,7 +37,7 @@ class SubscribeController extends AdminController
 			$last_update = '0000-00-00 00:00:00';
 		}
 		$content = array('Выгрузка подписчиков от '.date('d.m.Y H:i:s', $time));
-		$rubrics = $this->get('container')->getItems('subscribe_rubric');
+		$rubrics = $this->getTable('subscribe_rubric')->getItems();
 		foreach ($rubrics as $rubric) {
 			$content[] = $rubric['name'];
 			$sql = 'SELECT t0.email FROM subscribe_subscriber t0 JOIN subscribe_subscriber_rubric t1 ON t0.id=t1.subscriber_id WHERE to.is_active=1 AND t1.rubric_id= :rubric AND t0.date > "'.$last_update.'"';

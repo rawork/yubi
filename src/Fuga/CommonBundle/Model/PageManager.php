@@ -29,7 +29,10 @@ class PageManager extends ModelManager {
 	
 	public function getPathNodes($id = 0) {
 		$titles = array('ru' => 'Главная', 'en' => 'Home');
-		$nodes = $this->get('container')->getTable('page_page')->getPrev($id);
+		$nodes = $this->get('container')
+			->getManager('Fuga:Common:Table')
+			->getByName('page_page')
+			->getPrev($id);
 		if ($nodes[0]['name'] != '/') {
 			array_unshift($nodes, array(
 				'name' => '/', 
@@ -48,11 +51,11 @@ class PageManager extends ModelManager {
 	}
 	
 	public function getNodeByName($name) {
-		return $this->get('container')->getItem('page_page', "name='".$name."'");
+		return $this->getTable('page_page')->getItem("name='".$name."'");
 	}
 	
 	public function getNode($id) {
-		return $this->get('container')->getItem('page_page', $id);
+		return $this->getTable('page_page')->getItem($id);
 	}
 	
 }

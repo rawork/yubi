@@ -9,7 +9,7 @@ class Config {
 	public function __construct() {
 
 		$this->tables = array();
-		$this->tables[] = array(
+		$this->tables['module'] = array(
 			'name' => 'module',
 			'module' => 'config',
 			'title' => 'Модули',
@@ -44,7 +44,7 @@ class Config {
 			)
 		));
 
-		$this->tables[] = array(
+		$this->tables['variable'] = array(
 			'name' => 'variable',
 			'module' => 'config',
 			'title' => 'Общие настройки',
@@ -72,7 +72,7 @@ class Config {
 			)
 		));
 
-		$this->tables[] = array(
+		$this->tables['version'] = array(
 			'name' => 'version',
 			'module' => 'config',
 			'title' => 'Версии сайта',

@@ -23,7 +23,7 @@ class DialogController extends Controller
 
 		$criteria = array();
 		if ($field['l_table'] == 'page_page' && isset($field['dir'])) {
-			$module = $this->get('container')->getModule($table->moduleName);
+			$module = $this->getManager('Fuga:Common:Module')->getByName($table->moduleName);
 			$criteria[] = 'module_id='.(isset($module['id']) ? $module['id'] : 0 );
 		}
 		$criteria = implode(' AND ', $criteria);
@@ -36,7 +36,7 @@ class DialogController extends Controller
 			10,
 			1,
 			6);
-		$items = $this->get('container')->getItems($field['l_table'], $criteria, $field['l_field'], $paginator->limit);
+		$items = $this->getTable($field['l_table'])->getItems($criteria, $field['l_field'], $paginator->limit);
 		$fields = explode(',', $field['l_field']);
 
 		$params = array(
@@ -77,7 +77,7 @@ class DialogController extends Controller
 			$page,
 			6
 		);
-		$items = $this->get('container')->getItems($fieldData['l_table'], $criteria, $fieldData['l_field'], $paginator->limit);
+		$items = $this->getTable($fieldData['l_table'])->getItems($criteria, $fieldData['l_field'], $paginator->limit);
 		$fields = explode(',', $fieldData['l_field']);
 		$text = '<table class="table table-condensed">
 <thead><tr>
@@ -130,7 +130,7 @@ class DialogController extends Controller
 			$criteria .= ($criteria ? ' AND ' : '').' id <> '.$entityId;
 		}
 
-		$nodes = $this->get('container')->getItems($field['l_table'], $criteria, 'left_key');
+		$nodes = $this->getTable($field['l_table'])->getItems($criteria, 'left_key');
 		foreach ($nodes as &$node) {
 			$complexname = array();
 			foreach ($fields as $fieldName) {
@@ -180,7 +180,7 @@ class DialogController extends Controller
 			$lang_where .= ($lang_where ? ' AND ' : '').'('.$field['query'].')';
 		}
 		$field['l_sort'] = !empty($field['l_sort']) ? $field['l_sort'] : $field['l_field'];
-		$items = $this->get('container')->getItems($field["l_table"], $lang_where, $field["l_sort"]);
+		$items = $this->getTable($field['l_table'])->getItems($lang_where, $field["l_sort"]);
 		$fields = explode(",", $field["l_field"]);
 
 		$params = array(
@@ -210,9 +210,10 @@ class DialogController extends Controller
 
 	function template()
 	{
-		$versionId = $this->get('request')->request->get('version_id');
-		$version = $this->get('container')->getItem('template_version', $versionId);
+		$id = $this->get('request')->request->get('version_id');
+		$version = $this->getTable('template_version')->getItem($id);
 		$text = @file_get_contents(PRJ_DIR.'/app/Resources/views/backup/'.$version['file']);
+
 		return json_encode( array(
 			'title' => 'Версия шаблона',
 			'button' => '<a class="btn btn-default" data-dismiss="modal" aria-hidden="true">Закрыть</a>',

@@ -9,7 +9,7 @@ class Form {
 	public function __construct() {
 
 		$this->tables = array();
-		$this->tables[] = array(
+		$this->tables['form'] = array(
 			'name' => 'form',
 			'module' => 'form',
 			'title' => 'Веб формы',
@@ -51,7 +51,7 @@ class Form {
 			)
 		));
 
-		$this->tables[] = array(
+		$this->tables['field'] = array(
 			'name' => 'field',
 			'module' => 'form',
 			'title' => 'Поля формы',

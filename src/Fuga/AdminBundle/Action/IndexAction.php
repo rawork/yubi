@@ -31,7 +31,7 @@ class IndexAction extends AdminController
 		$this->state = $state;
 		$this->module = $module;
 		$this->entity = $entity;
-		$this->table = $this->get('container')->getTable($module.'_'.$entity);
+		$this->table = $this->getManager('Fuga:Common:Table')->getByName($module.'_'.$entity);
 		$this->paginator = $this->get('paginator');
 		$this->baseRef = $this->generateUrl(
 			'admin_entity_index',
@@ -179,7 +179,7 @@ class IndexAction extends AdminController
 					}
 					if ($num == 0) {
 						if ($this->table->dbName() == 'page_page' && isset($node['module_id_value']['item'])) {
-							$module = $this->get('container')->getModule($node['module_id_value']['item']['name']);
+							$module = $this->getManager('Fuga:Common:Module')->getByName($node['module_id_value']['item']['name']);
 							if ( $module ) {
 								$tableHtml .= ' (тип &mdash; '.$module['title'].')';
 							}

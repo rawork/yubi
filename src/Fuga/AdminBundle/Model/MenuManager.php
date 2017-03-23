@@ -5,15 +5,9 @@ namespace Fuga\AdminBundle\Model;
 use Fuga\CommonBundle\Model\ModelManager;
 use Symfony\Component\Yaml\Yaml;
 
-class ModuleManager extends ModelManager
+class MenuManager extends ModelManager
 {
 	protected $config;
-
-	protected $states = [
-		'content' => 'Структура и контент',
-		'service' => 'Сервисы',
-		'system'  => 'Настройки',
-	];
 
 	protected function getConfig()
 	{
@@ -27,15 +21,15 @@ class ModuleManager extends ModelManager
 	public function getEntitiesByModule($moduleName)
 	{
 		$ret = array();
-		$module = $this->get('container')->getModule($moduleName);
-		$tables = $this->get('container')->getTables($moduleName);
+		$module = $this->get('container')->getManager('Fuga:Common:Module')->getByName($moduleName);
+		$tables = $this->get('container')->getManager('Fuga:Common:Table')->getByModuleName($moduleName);
 
 		foreach ($tables as $table) {
 			if (empty($table->params['is_hidden'])) {
 				$ret[] = array (
 					'ref' => $this->get('routing')->getGenerator()->generate(
-							'admin_entity_index',
-							array('state' => $module['ctype'], 'module' => $module['name'], 'entity' => $table->name)
+						'admin_entity_index',
+						array('state' => $module['ctype'], 'module' => $module['name'], 'entity' => $table->name)
 					),
 					'name' => $table->title
 				);
@@ -79,32 +73,22 @@ class ModuleManager extends ModelManager
 		return $ret;
 	}
 
-	// TODO  не используется
-	public function getModule($moduleName)
-	{
-		if (isset($this->modules[$moduleName]) && $this->modules[$moduleName]->isAvailable()){
-			return $this->modules[$moduleName];
-		} else {
-			throw new \Exception('Отсутствует запрашиваемый модуль: '.$moduleName);
-		}
-	}
-
 	// TODO доработать проверку прав на модуль, не используется
 	function isAvailable()
 	{
 		return $this->get('security')->isSuperuser() || 1 == $this->users[$this->get('session')->get('fuga_user')];
 	}
 
-	public function getByState($state, $currentModule = '')
+	public function getModulesByState($state, $currentModule = '')
 	{
 		$modules = array();
-		$modules0 = $this->get('container')->getModulesByState($state);
+		$modules0 = $this->get('container')->getManager('Fuga:Common:Module')->getByState($state);
 		if ($modules0) {
 			$basePath = PRJ_REF.'/bundles/admin/img/module/';
 			foreach ($modules0 as $module) {
 				$icon = $this->get('fs')->exists(PRJ_DIR.$basePath.$module['name'].'.gif')
-						? $basePath.$module['name'].'.gif'
-						: $basePath.'folder'.'.gif';
+					? $basePath.$module['name'].'.gif'
+					: $basePath.'folder'.'.gif';
 				$modules[] = array(
 					'name' => $module['name'],
 					'title' => $module['title'],
@@ -116,10 +100,4 @@ class ModuleManager extends ModelManager
 
 		return $modules;
 	}
-
-	public function getStates()
-	{
-		return $this->states;
-	}
-
 }

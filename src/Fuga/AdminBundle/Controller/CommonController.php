@@ -9,7 +9,7 @@ class CommonController extends AdminController
 {
 	public function state($state)
 	{
-		$modules = $this->getManager('Fuga:Admin:Module')->getByState($state);
+		$modules = $this->getManager('Fuga:Admin:Menu')->getModulesByState($state);
 		$response = new Response();
 		$response->setContent($this->render('admin/index', compact('modules', 'state')));
 		$response->prepare($this->get('request'));
@@ -19,7 +19,7 @@ class CommonController extends AdminController
 
 	public function module($state, $module)
 	{
-		$entities = $this->getManager('Fuga:Admin:Module')->getEntitiesByModule($module);
+		$entities = $this->getManager('Fuga:Admin:Menu')->getEntitiesByModule($module);
 		$response = new Response();
 		$response->setContent($this->render('admin/module', compact('entities', 'state', 'module')));
 		$response->prepare($this->get('request'));

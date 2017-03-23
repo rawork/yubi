@@ -16,10 +16,10 @@ class MenuController extends AdminController {
 		}
 
 		$modules = array();
-		$modules0 = $this->get('container')->getModulesByState($state);
+		$modules0 = $this->getManager('Fuga:Admin:Menu')->getModulesByState($state);
 
 		if ($module) {
-			$entities = $this->getManager('Fuga:Admin:Module')->getEntitiesByModule($module);
+			$entities = $this->getManager('Fuga:Admin:Menu')->getEntitiesByModule($module);
 		}
 
 		foreach ($modules0 as $mod) {
@@ -49,7 +49,7 @@ class MenuController extends AdminController {
 			}
 		}
 
-		$entities = $this->getManager('Fuga:Admin:Module')->getEntitiesByModule($module);
+		$entities = $this->getManager('Fuga:Admin:Menu')->getEntitiesByModule($module);
 
 		$text = $this->render('admin/menu/module', compact('entities'));
 		if ($this->get('request')->isXmlHttpRequest()) {

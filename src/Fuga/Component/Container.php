@@ -2,7 +2,7 @@
 
 namespace Fuga\Component;
 
-use Fuga\CommonBundle\Security\SecurityHandler;
+
 use Fuga\Component\Exception\NotFoundHttpException;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Filesystem\Filesystem;
@@ -13,103 +13,14 @@ use Symfony\Component\Routing\Loader\YamlFileLoader;
 
 class Container 
 {
-	private $tables;
-	private $modules = [];
-	private $ownmodules = [];
 	private $controllers = [];
-	private $templateVars = [];
-	private $javascripts = [];
-	private $styles = [];
 	private $services = [];
 	private $managers = [];
-	private $tempmodules = [];
 	private $loader;
 	
 	public function __construct($loader)
 	{
 		$this->loader = $loader;
-		$this->tempmodules = array(
-			'user' => array(
-				'name'  => 'user',
-				'title' => 'Пользователи',
-				'ctype' => 'system',
-				'entitites' => array(
-					array(
-						'name' => 'user-user',
-						'title' => 'Список пользователей'
-					),
-					array(
-						'name' => 'user-group',
-						'title' => 'Группы пользователей'
-					),
-					array(
-						'name' => 'user-address',
-						'title' => 'Адреса доставки'
-					)
-				)
-			),
-			'template' => array(
-				'name'  => 'template',
-				'title' => 'Шаблоны',
-				'ctype' => 'system',
-				'entitites' => array(
-					array(
-						'name' => 'template-template',
-						'title' => 'Шаблоны'
-					),
-					array(
-						'name' => 'template-rule',
-						'title' => 'Правила шаблонов'
-					),
-				)
-			),
-			'config' => array(
-				'name'	=> 'config',
-				'title' => 'Настройки',
-				'ctype' => 'system',
-				'entitites' => array(
-					array(
-						'name' => 'config-module',
-						'title' => 'Модули'
-					),
-					array(
-						'name' => 'config-variable',
-						'title' => 'Переменные'
-					),
-					array(
-						'name' => 'config-backup',
-						'title' => 'Обслуживание'
-					),
-				)
-			),
-			'table' => array(
-				'name'	=> 'table',
-				'title' => 'Таблицы',
-				'ctype' => 'system',
-				'entitites' => array(
-					array(
-						'name' => 'table-table',
-						'title' => 'Таблицы'
-					),
-					array(
-						'name' => 'table-field',
-						'title' => 'Поля'
-					),
-				)
-			),
-			'subscribe' => array(
-				'name'  => 'subscribe',
-				'title' => 'Подписка',
-				'ctype' => 'service',
-				'entitites' => array()
-			),
-			'form' => array(
-				'name'  => 'form',
-				'title' => 'Формы',
-				'ctype' => 'service',
-				'entitites' => array()
-			),
-		);
 	}
 	
 	public function initialize()
@@ -121,135 +32,8 @@ class Container
 			define($var['name'], $var['value']);
 		}
 
-		$this->tables = $this->getAllTables();
-	}
-
-	public function getModule($name)
-	{
-		if (empty($this->modules[$name])) {
-			throw new \Exception('Модуль "'.$name.'" не найден');
-		}
-		
-		return $this->modules[$name];
-	}
-
-	public function getModules()
-	{
-		if (!$this->ownmodules) {
-			if ($this->get('security')->isSuperuser()) {
-				$this->ownmodules = $this->modules;
-			} elseif ($user = $this->get('security')->getCurrentUser()) {
-				if (empty($user['rules'])) {
-					$user['rules'] = array();
-				}
-				$this->ownmodules = $this->tempmodules;
-				if (!$user['is_admin']) {
-					unset($this->ownmodules['config'], $this->ownmodules['user'], $this->ownmodules['template'], $this->ownmodules['table']);
-				}
-				$sql = 'SELECT id, sort, name, title, \'content\' AS ctype 
-					FROM config_module WHERE id IN ('.implode(',', $user['rules']).') ORDER BY sort, title';
-				$stmt = $this->get('connection')->prepare($sql);
-				$stmt->execute();
-				$this->ownmodules = array_merge($this->ownmodules, $stmt->fetchAll());
-			}
-		}
-		
-		return $this->ownmodules;
-	}
-	
-	public function getModulesByState($state)
-	{
-		$modules = array();
-		foreach ($this->getModules() as $module) {
-			if ($state == $module['ctype']) {
-				$modules[$module['name']] = $module;
-			}
-		}
-		
-		return $modules;
-	}
-	
-	private function getAllTables()
-	{
-		// TODO кешировать инициализацию всех таблиц
-		$ret = array();
-		$this->modules = $this->tempmodules;
-		$sql = "SELECT id, sort, name, title, 'content' AS ctype FROM config_module ORDER BY sort, title";
-		$stmt = $this->get('connection')->prepare($sql);
-		$stmt->execute();
-		while ($module = $stmt->fetch()) {
-			$this->modules[$module['name']] = array(
-				'id'    => $module['id'],
-				'name'  => $module['name'],
-				'title' => $module['title'],
-				'ctype' => $module['ctype'],
-				'entities' => array()
-			);
-		}
-		foreach ($this->modules as $module) {
-			$className = 'Fuga\\CommonBundle\\Model\\'.ucfirst($module['name']);
-
-			if (class_exists($className)) {
-				$model = new $className();
-				foreach ($model->tables as $table) {
-					$table['is_system'] = true;
-					$ret[$table['module'].'_'.$table['name']] = new DB\Table($table, $this);
-				}
-			}
-		}
-		$sql = "SELECT t.*, m.name as module 
-				FROM table_table t 
-				JOIN config_module m ON t.module_id=m.id 
-				WHERE t.publish=1 ORDER BY t.sort";
-		$stmt = $this->get('connection')->prepare($sql);
-		$stmt->execute();
-		$tables = $stmt->fetchAll();
-		foreach ($tables as $table) {
-			$ret[$table['module'].'_'.$table['name']] = new DB\Table($table, $this);
-		}
-
-		return $ret;
-	}
-
-	public function getTable($name)
-	{
-		try {
-			if (!$this->tables) {
-				$this->tables = $this->getAllTables();
-			}
-
-			if (isset($this->tables[$name])) {
-				return $this->tables[$name];
-			} else {
-				throw new \Exception('Таблица "'.$name.'" не существует');
-			}
-		} catch (\Exception $e) {
-			$this->get('log')->addError($e->getMessage());
-			$this->get('log')->addError($e->getTraceAsString());
-			throw $e;
-		}
-	}
-
-	public function getTables($moduleName)
-	{
-		$tables = array();
-		foreach ($this->tables as $table) {
-			if ($table->moduleName == $moduleName)
-				$tables[$table->tableName] = $table;
-		}
-		return $tables;
-	}
-	
-	public function getItem($table, $criteria = 0, $sort = null, $select = null)
-	{
-		return $this->getTable($table)->getItem($criteria, $sort, $select);
-	}
-
-	public function getItems($table, $criteria = null, $sort = null, $limit = null, $select = null, $detailed = true)
-	{
-		$options = array('where' => $criteria, 'order_by' => $sort, 'limit' => $limit, 'select' => $select);
-		$this->getTable($table)->select($options);
-		return $this->getTable($table)->getNextArrays($detailed);
+		$this->getManager('Fuga:Common:Module')->getAll();
+//		$this->tables = $this->getAllTables();
 	}
 
 	public function getItemsRaw($sql)
@@ -270,49 +54,19 @@ class Container
 		return $ret;
 	}
 
-	public function getItemRaw($sql)
-	{
-		$ret = null;
-		if (!preg_match('/(delete|truncate|update|insert|drop|alter)+/i', $sql)) {
-			$stmt = $this->get('connection')->prepare($sql);
-			$stmt->execute();
-			$ret = $stmt->fetch();
-		}
-		
-		return $ret;
-	}
-
-	public function count($table, $criteria = '')
-	{
-		return $this->getTable($table)->count($criteria);
-	}
-
-	public function addItem($class, $values)
-	{
-		return $this->getTable($class)->insert($values);
-	}
-
-	public function addItemGlobal($class)
-	{
-		return $this->getTable($class)->insertGlobals();
-	}
-
-	public function updateItem($table, $values, $criteria)
-	{
-		return $this->getTable($table)->update($values, $criteria);
-	}
-
+	// todo убрать все в Table
 	public function deleteItem($table, $query)
 	{
-		$ids = $this->delRel($table, $this->getItems($table, !empty($query) ? $query : '1<>1'));
+		$ids = $this->deleteRelations($table, $this->getManager('Fuga:Common:Table')->getByName($table)->getItems(!empty($query) ? $query : '1<>1'));
 		if ($ids) {
 			return $this->getTable($table)->delete('id IN ('.implode(',', $ids).')');
-		} else {
-			return false;
-		}	
+		}
+
+		return false;
 	}
 
-	public function delRel($table, $items = array())
+	// todo убрать все в Table
+	public function deleteRelations($table, $items = array())
 	{
 		$ids = array();
 
@@ -341,18 +95,6 @@ class Container
 		}
 
 		return $ids;
-	}
-
-	public function copyItem($table, $id = 0, $times = 1)
-	{
-		$entity = $this->getItem($table, $id);
-		if ($entity) {
-			for ($i = 1; $i <= $times; $i++)
-				$this->getTable($table)->insertArray($entity);
-			return true;
-		} else {
-			return false;
-		}
 	}
 
 	public function dropTable($table, $complex = false)
@@ -432,45 +174,6 @@ class Container
 		}
 
 		return $obj->getMethod($action)->invokeArgs($this->createController($path), $params);
-	}
-
-	public function setVar($name, $value)
-	{
-		$this->templateVars[$name] = $value;
-	}
-
-	public function getVar($name)
-	{
-		return isset($this->templateVars[$name]) ? $this->templateVars[$name] : null;
-	}
-
-	public function getVars()
-	{
-		return $this->templateVars;	
-	}
-
-	public function addJs($path)
-	{
-		if (!in_array($path, $this->javascripts)) {
-			$this->javascripts[] = $path;
-		}
-	}
-
-	public function getJs()
-	{
-		return $this->javascripts;
-	}
-
-	public function addCss($path)
-	{
-		if (!in_array($path, $this->styles)) {
-			$this->styles[] = $path;
-		}
-	}
-
-	public function getCss()
-	{
-		return $this->styles;
 	}
 
 	public function register($name, $service)
@@ -568,7 +271,7 @@ class Container
 					break;
 				case 'mongo':
 					$mongo = new \MongoClient(sprintf("mongodb://%s:%s@%s/%s", MONGO_USER, MONGO_PASS, MONGO_HOST, MONGO_BASE));
-					$this->services[$name] = $mongo->selectDB('holdem');
+					$this->services[$name] = $mongo->selectDB(MONGO_BASE);
 					break;
 				case 'filestorage':
 					$this->services[$name] = new Storage\FileStorage(UPLOAD_REF, UPLOAD_DIR);
@@ -614,7 +317,7 @@ class Container
 					$this->services[$name] = $fb;
 					break;
 				case 'security':
-					$this->services[$name] = new SecurityHandler($this);
+					$this->services[$name] = $this->getManager('Fuga:Common:User');
 					break;
 				case 'fs':
 					$this->services[$name] = new Filesystem();
@@ -668,6 +371,7 @@ class Container
 		if (!isset($this->managers[$path])) {
 			list($vendor, $bundle, $name) = explode(':', $path);
 			$className = '\\'.$vendor.'\\'.$bundle.'Bundle\\Model\\'.ucfirst($name).'Manager';
+
 			if (class_exists($className)) {
 				$this->managers[$path] = new $className();
 			} else {
@@ -678,8 +382,8 @@ class Container
 		return $this->managers[$path];
 	}
 
-	public function getBaseDir() {
+	public function getBaseDir()
+	{
 		return PRJ_DIR;
 	}
-	
 }

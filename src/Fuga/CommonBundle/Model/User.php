@@ -10,7 +10,7 @@ class User {
 
 		$this->tables = array();
 
-		$this->tables[] = array(
+		$this->tables['user'] = array(
 		'name' => 'user',
 		'module' => 'user',
 		'title' => 'Список пользователей',
@@ -87,7 +87,7 @@ class User {
 			)	
 		));
 
-		$this->tables[] = array(
+		$this->tables['group'] = array(
 		'name' => 'group',
 		'module' => 'user',
 		'title' => 'Группы пользователей',

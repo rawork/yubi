@@ -39,6 +39,7 @@ class CommonController extends Controller {
 		$action = $action ?: 'index';
 
 		if ($this->get('request')->isXmlHttpRequest()) {
+			var_dump('ajax');
 			$response = new JsonResponse();
 			$response->setData($this->dinamic($node, $action, $options));
 
@@ -46,7 +47,6 @@ class CommonController extends Controller {
 		}
 
 		$staticContent = null;
-
 		$nodeItem = $this->getManager('Fuga:Common:Page')->getNodeByName($node);
 		if (!$nodeItem) {
 			throw $this->createNotFoundException('Несуществующая страница');
@@ -71,7 +71,7 @@ class CommonController extends Controller {
 			'action'    => $action,
 			'options'   => $options,
 			'curnode'   => $nodeItem,
-			'curuser'   => $this->get('security')->getCurrentUser(),
+			'curuser'   => $this->get('security')->getCurrentUserPublic(),
 			'locale'    => $this->get('session')->get('locale'),
 			'asset'		=> 'dev' == PRJ_ENV ? date('YmdHis') : 'prodaction'
 		);
@@ -92,7 +92,7 @@ class CommonController extends Controller {
 		$response = new Response();
 		$response->setContent($this->render(
 			$this->getManager('Fuga:Common:Template')->getByNode($nodeItem['name']),
-			$this->get('container')->getVars()
+			$this->getManager('Fuga:Common:Template')->getVars()
 		));
 
 		return $response;
@@ -100,7 +100,7 @@ class CommonController extends Controller {
 	
 	public function block($name)
 	{
-		$item = $this->get('container')->getItem('page_block',"name='{$name}' AND publish=1");
+		$item = $this->getTable('page_block')->getItem("name='{$name}' AND publish=1");
 		
 		return $item ? $item['content'] : '';
 	}

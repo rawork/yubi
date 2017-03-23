@@ -9,7 +9,7 @@ class Template {
 	public function __construct() {
 
 		$this->tables = array();
-		$this->tables[] = array(
+		$this->tables['template'] = array(
 		'name' => 'template',
 		'module' => 'template',
 		'title' => 'Шаблоны',
@@ -28,7 +28,7 @@ class Template {
 				'type' => 'string'
 			)
 		));
-		$this->tables[] = array(
+		$this->tables['version'] = array(
 		'name' => 'version',
 		'module' => 'template',
 		'title' => 'Версионирование',
@@ -63,7 +63,7 @@ class Template {
 				'width' => '25%'
 			)
 		));
-		$this->tables[] = array(
+		$this->tables['rules'] = array(
 		'name' => 'rule',
 		'module' => 'template',
 		'title' => 'Правила шаблонов',

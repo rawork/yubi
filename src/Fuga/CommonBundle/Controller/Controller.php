@@ -7,10 +7,10 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 abstract class Controller {
 	
-	public function get($name) 
+	public function get($name = null)
 	{
 		global $container;
-		if ($name == 'container') {
+		if (!$name || 'container' == $name) {
 			return $container;
 		} else {
 			return $container->get($name);
@@ -20,6 +20,11 @@ abstract class Controller {
 	public function getManager($path)
 	{
 		return $this->get('container')->getManager($path);
+	}
+
+	public function getTable($name)
+	{
+		return $this->get('container')->getManager('Fuga:Common:Table')->getByName($name);
 	}
 
 	public function getRequest()
@@ -80,12 +85,12 @@ abstract class Controller {
 
 	public function addJs($path)
 	{
-		$this->get('container')->addJs($path);
+		$this->getManager('Fuga:Common:Template')->addJs($path);
 	}
 
 	public function addCss($path)
 	{
-		$this->get('container')->addCss($path);
+		$this->getManager('Fuga:Common:Template')->addCss($path);
 	}
 	
 	public function flash($name)

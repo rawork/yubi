@@ -13,7 +13,7 @@ class SiteManager extends ModelManager
 		}
 
 		if (!$sites) {
-			$sites = $this->get('container')->getItems('config_version', '1=1', 'id DESC');
+			$sites = $this->getTable('config_version')->getItems('1=1', 'id DESC');
 			$this->get('cache')->save('global_sites', $sites);
 		}
 
