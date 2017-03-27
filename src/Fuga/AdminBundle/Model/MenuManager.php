@@ -78,15 +78,10 @@ class MenuManager extends ModelManager
 		$modules = array();
 		$modules0 = $this->get('container')->getManager('Fuga:Common:Module')->getByState($state);
 		if ($modules0) {
-			$basePath = PRJ_REF.'/bundles/admin/img/module/';
 			foreach ($modules0 as $module) {
-				$icon = $this->get('fs')->exists(PRJ_DIR.$basePath.$module['name'].'.gif')
-					? $basePath.$module['name'].'.gif'
-					: $basePath.'folder'.'.gif';
 				$modules[] = array(
 					'name' => $module['name'],
 					'title' => $module['title'],
-					'icon' => $icon,
 					'current' => $module['name'] == $currentModule
 				);
 			}

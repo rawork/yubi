@@ -11,18 +11,17 @@ div.cropDiv {
 	background:#FFF;
 	overflow:hidden;
 }
-.cropDiv div {position:relative; z-index:1002; background:url('imgcropresize/0.gif') top left; height:100%;}
+.cropDiv div {position:relative; z-index:1002; background:url('../img/0.gif') top left; height:100%;}
 .cropDiv span {color:#000; font:11px tahoma; padding:0 3px; overflow:hidden;}
 
 
 /* Resize */
 div.resizeDiv {
 	padding:0; margin:0;
-	background:#000;
 	position:absolute;
 	top:0; left:0;
 	z-index:1001;
-	background:#000 no-repeat url('imgcropresize/resize.gif') center center;
+	background: #000 no-repeat url('../img/resize.gif') center center;
 	border:1px solid #FFF;
 	cursor:nw-resize;
 }
@@ -32,5 +31,5 @@ div.blocker {
 	position:absolute;
 	top:0; left:0;
 	z-index:100;
-	background:url('imgcropresize/0.gif') top left;
+	background:url('../img/0.gif') top left;
 }

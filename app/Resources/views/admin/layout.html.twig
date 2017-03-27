@@ -4,13 +4,12 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>Управление сайтом - {{ prj_name }}.{{ currentLocale }}</title>
 	<link href="{{ asset('/bundles/bootstrap3/css/bootstrap.min.css') }}" type="text/css" rel="stylesheet">
-
+	<link href="{{ asset('/bundles/font-awesome/css/font-awesome.min.css') }}'" type="text/css" rel="stylesheet">
 	<link href="{{ asset('/bundles/admin/css/colorpicker.css" type="text/css') }}'" rel="stylesheet">
 	<link href="{{ asset('/bundles/treeview/jquery.treeview.css') }}'" type="text/css" rel="stylesheet">
 	<link href="{{ asset('/bundles/pickadate/themes/default.css') }}'" type="text/css" rel="stylesheet">
 	<link href="{{ asset('/bundles/pickadate/themes/default.date.css') }}'" type="text/css" rel="stylesheet">
 	<link href="{{ asset('/bundles/pickadate/themes/default.time.css') }}'" type="text/css" rel="stylesheet">
-    {#<link href="{{ asset('/bundles/calendar/calendar.css" type="text/css') }}" rel="stylesheet">#}
 
 	<link href="{{ asset('/bundles/admin/css/app.admin.css') }}" type="text/css" rel="stylesheet">
 
@@ -68,7 +67,7 @@
 						{% endfor %}
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
-						<li class="user-menu"><a href="{{ path('security_logout') }}" title="Выйти из Управление сайтом"><span class="glyphicon glyphicon-user" title="{{ user.name }} {{ user.lastname }}"></span> выйти</a></li>
+						<li class="user-menu"><a href="{{ path('security_logout') }}" title="Выйти из Управление сайтом"><i class="fa fa-user" aria-hidden="true" title="{{ user.name }} {{ user.lastname }}"></i> выйти</a></li>
 					</ul>
 				</div><!-- /.navbar-collapse -->
 			</div>
@@ -86,7 +85,7 @@
 		<div id="module-menu">{{ render('Fuga:Admin:Menu:state', {'state': state, 'module': module}) }}</div>
 	</div>
 	<!-- process window -->
-	<div id="waiting"><img src="{{ asset('/bundles/admin/img/loading.gif', false) }}">Операция выполняется&hellip;</div>
+	<div id="waiting"><i class="fa fa-circle-o-notch fa-spin"></i> Операция выполняется&hellip;</div>
 	<!-- modal window -->
 	<div class="modal fade" id="modalDialog" tabindex="-1" role="dialog" aria-labelledby="popupTitle" aria-hidden="true">
 		<div class="modal-dialog">

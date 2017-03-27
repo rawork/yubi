@@ -52,13 +52,13 @@ class IndexAction extends AdminController
 		$buttons = '<td>
 <div class="btn-group pull-right">
   <a class="btn btn-default btn-sm dropdown-toggle admin-dropdown-toggle" id="drop'.$id.'" data-toggle="dropdown" href="#">
-    <span class="glyphicon glyphicon-menu-hamburger"></span>
+    <i class="fa fa-bars" aria-hidden="true"></i>
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu admin-dropdown-menu">
-    <li><a href="'.$this->generateUrl('admin_entity_edit', array('state' => $this->state, 'module' => $this->module, 'entity' => $this->entity, 'id' => $id)).'"><i class="glyphicon glyphicon-pencil"></i> Изменить</a></li>
-    <li><a href="#" class="entity-delete-link" data-url="'.$this->generateUrl('admin_entity_delete', array('state' => $this->state, 'module' => $this->module, 'entity' => $this->entity, 'id' => $id)).'"><i class="glyphicon glyphicon-trash"></i> Удалить</a></li>
-    <li><a href="#" class="entity-copy-link" data-url="'.$this->generateUrl('admin_entity_copy_dialog', array('id' => $id)).'"><i class="glyphicon glyphicon-random"></i> Копировать</a></li>
+    <li><a href="'.$this->generateUrl('admin_entity_edit', array('state' => $this->state, 'module' => $this->module, 'entity' => $this->entity, 'id' => $id)).'"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i> Изменить</a></li>
+    <li><a href="#" class="entity-delete-link" data-url="'.$this->generateUrl('admin_entity_delete', array('state' => $this->state, 'module' => $this->module, 'entity' => $this->entity, 'id' => $id)).'"><i class="fa fa-trash-o fa-fw" aria-hidden="true"></i> Удалить</a></li>
+    <li><a href="#" class="entity-copy-link" data-url="'.$this->generateUrl('admin_entity_copy_dialog', array('id' => $id)).'"><i class="fa fa-files-o fa-fw" aria-hidden="true"></i> Копировать</a></li>
   </ul>
 </div>
 </td>
