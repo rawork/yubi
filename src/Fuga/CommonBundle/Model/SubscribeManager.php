@@ -4,7 +4,7 @@ namespace Fuga\CommonBundle\Model;
 
 class SubscribeManager extends ModelManager {
 	
-	protected $entityTable = 'subscribe_lists';
+	protected $entityTable = 'subscribe_list';
 	protected $subscriberTable = 'subscribe_subscriber';
 	protected $rubricTable = 'subscribe_subscriber_rubric';
 

@@ -7,7 +7,6 @@ use Fuga\Component\Database\Model as BaseModel;
 
 class Variable extends BaseModel
 {
-	
 	protected $table = 'variable';
 	protected $title = 'Общие настройки';
 	protected $module = 'config';

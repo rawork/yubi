@@ -42,3 +42,12 @@ user:
 user_group:
   model: Fuga:Common:UserGroup
   module: user
+subscribe_list:
+  model: Fuga:Common:SubscribeList
+  module: subscribe
+subscriber:
+  model: Fuga:Common:Subscriber
+  module: subscribe
+subscribe_rubric:
+  model: Fuga:Common:SubscribeRubric
+  module: subscribe
