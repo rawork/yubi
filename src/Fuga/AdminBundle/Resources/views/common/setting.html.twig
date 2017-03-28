@@ -1,0 +1,42 @@
+{% extends '@Admin/layout.html.twig' %}
+
+{% block content %}
+<h4>{{ title }}{% if message %}: {{ message }}{% endif %}</h4>
+<form method="post" action="{{ path('admin_module_setting', {'state': state, 'module': module}) }}">
+<table class="table table-condensed">
+<thead><tr>
+{% for param in params %}
+<tr>
+    <td align=left width="250"><strong>{{ param.title }}</strong><br>{{ param.name}}</td><td>
+        {% if param.type == 'boolean' %}
+        <input type="checkbox" name="param_{{ param.name }}" value="1"{% if param.value > 0 %} checked{% endif %}>
+        {% elseif param.type == 'date' %}
+        <input class="form-control" style="width: 100px;display:inline-block" placeholder="ГГГГ-ДД-ММ" type="text" name="param_{{ param.name }}" value="{{ param.value|slice(0,10) }}">
+        {% set hour = param.value|slice(11, 2) %}
+        {% set minute = param.value|slice(14, 2) %}
+        <select name="param_{{ param.name }}_hour" class="form-control" style="width:50px;display:inline-block">
+            {% for i in range(0,24) %}
+            {% set h = i|strpad(2, '0') %}
+            <option value="{{ h }}"{% if h == hour %} selected="selected"{% endif %}>{{ h }}</option>
+            {% endfor %}
+        </select>
+        <select name="param_{{ param.name }}_minute" class="form-control" style="width:50px;display:inline-block">
+            {% for i in range(0,55,5) %}
+                {% set m = i|strpad(2, '0') %}
+                <option value="{{ m }}"{% if m == minute %} selected="selected"{% endif %}>{{ m }}</option>
+            {% endfor %}
+        </select>
+        {% elseif param.type == 'text' %}
+        <textarea class="form-control" rows="5" name="param_{{ param.name }}">{{ param.value }}</textarea>
+        {% else %}
+        <input class="form-control" type="text" name="param_{{ param.name }}" value="{{ param.value }}">
+        {% endif %}
+    </td>
+</tr>
+{% endfor %}
+</table>
+<br>
+<input class="btn btn-success" type="submit" value="Сохранить изменения">
+<a class="btn btn-default" href="{{ path('admin_module_setting', {'state': state, 'module': module}) }}">Отменить</a>
+</form>
+{% endblock %}

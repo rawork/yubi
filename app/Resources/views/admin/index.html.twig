@@ -1,9 +1,0 @@
-{% extends 'admin/layout.html.twig' %}
-
-{% block content %}
-{% for mod in modules %}
-<div class="index-module">
-    <div><a href="{{ path('admin_module_index', {'state': state, 'module': mod.name}) }}"><i class="fa fa-folder-o fa-3x"></i><br>{{ mod.title }}</a></div>
-</div>
-{% endfor %}
-{% endblock %}

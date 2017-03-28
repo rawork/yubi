@@ -6,9 +6,9 @@ class PageManager extends ModelManager {
 	
 	public function getNodes($uri = 0, $recursive = false, $where = "publish=1") {
 		$nodes = $this->get('container')->getItemsRaw(
-			'SELECT t1.*, t3.name as module_id_name, t3.path as module_id_path FROM page_page as t1 '.
-			'LEFT JOIN page_page as t2 ON t1.parent_id=t2.id '.
-			'LEFT JOIN config_module as t3 ON t1.module_id=t3.id '.
+			'SELECT t1.*, t3.name as module_id_name, t3.path as module_id_path FROM page as t1 '.
+			'LEFT JOIN page as t2 ON t1.parent_id=t2.id '.
+			'LEFT JOIN module as t3 ON t1.module_id=t3.id '.
 			"WHERE t1.publish=1 AND t1.locale='".$this->get('session')->get('locale')."' AND ".(is_numeric($uri) ? ($uri == 0 ? ' t1.parent_id=0 ' : 't2.id='.$uri.' ') : "t2.name='".$uri."' ").
 			'ORDER BY t1.sort,t1.name '
 		);
@@ -29,10 +29,7 @@ class PageManager extends ModelManager {
 	
 	public function getPathNodes($id = 0) {
 		$titles = array('ru' => 'Главная', 'en' => 'Home');
-		$nodes = $this->get('container')
-			->getManager('Fuga:Common:Table')
-			->getByName('page_page')
-			->getPrev($id);
+		$nodes = $this->getTable('page')->getPrev($id);
 		if ($nodes[0]['name'] != '/') {
 			array_unshift($nodes, array(
 				'name' => '/', 
@@ -51,11 +48,11 @@ class PageManager extends ModelManager {
 	}
 	
 	public function getNodeByName($name) {
-		return $this->getTable('page_page')->getItem("name='".$name."'");
+		return $this->getTable('page')->getItem("name='".$name."'");
 	}
 	
 	public function getNode($id) {
-		return $this->getTable('page_page')->getItem($id);
+		return $this->getTable('page')->getItem($id);
 	}
 	
 }

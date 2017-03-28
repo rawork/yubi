@@ -6,7 +6,7 @@ class TableController extends AdminController
 {
 	public function create($state, $module, $entity)
 	{
-		$table = $this->getTable($module.'_'.$entity);
+		$table = $this->getTable($entity);
 		$this->get('session')->getFlashBag()->add(
 			'admin.message',
 			$table->create() ? 'Таблица создана' : 'Таблица уже существует'
@@ -20,7 +20,7 @@ class TableController extends AdminController
 
 	public function alter($state, $module, $entity)
 	{
-		$table = $this->getTable($module.'_'.$entity);
+		$table = $this->getTable($entity);
 		$this->get('session')->getFlashBag()->add(
 			'admin.message',
 			$table->alter() ? 'Структура таблицы обновлена' : 'Ошибка обновления структуры таблицы'
@@ -34,10 +34,10 @@ class TableController extends AdminController
 
 	public function drop($state, $module, $entity)
 	{
-		$table = $this->getTable($module.'_'.$entity);
+		$table = $this->getTable($entity);
 
-		$this->get('connection')->delete('table_field', ['table_id' => $table->id]);
-		$this->get('connection')->delete('table_table', ['id' => $table->id]);
+		$this->get('connection')->delete('model_field', ['table_id' => $table->id]);
+		$this->get('connection')->delete('model', ['id' => $table->id]);
 
 		$this->get('session')->getFlashBag()->add(
 			'admin.message',
@@ -52,7 +52,7 @@ class TableController extends AdminController
 
 	public function truncate($state, $module, $entity)
 	{
-		$table = $this->getTable($module.'_'.$entity);
+		$table = $this->getTable($entity);
 
 
 		$this->get('session')->getFlashBag()->add(

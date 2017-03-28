@@ -22,7 +22,7 @@ class SubscribeController extends AdminController
 		}
 
 		$response = new Response();
-		$response->setContent($this->render('admin/subscribe/export', compact('rubrics', 'last_update', 'state', 'module')));
+		$response->setContent($this->render('@Admin/subscribe/export', compact('rubrics', 'last_update', 'state', 'module')));
 		$response->prepare($this->get('request'));
 
 		return $response;
@@ -54,7 +54,7 @@ class SubscribeController extends AdminController
 		fclose($fh);
 
 		$this->get('connection')->update(
-			'config_param',
+			'module_param',
 			array(
 				'value' => date('Y-m-d H:i:s', $time)
 			),

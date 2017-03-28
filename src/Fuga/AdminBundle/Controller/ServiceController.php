@@ -23,7 +23,7 @@ class ServiceController extends AdminController
 		$finder->files()->in(BACKUP_DIR.'/')->name('*.gz');
 
 		$response = new Response();
-		$response->setContent($this->render('admin/service/index', compact('finder', 'message', 'state', 'module')));
+		$response->setContent($this->render('@Admin/service/index', compact('finder', 'message', 'state', 'module')));
 		$response->prepare($this->get('request'));
 
 		return $response;

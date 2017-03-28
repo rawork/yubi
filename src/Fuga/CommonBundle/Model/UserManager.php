@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class UserManager extends ModelManager {
 	
-	protected $entityTable = 'user_user';
+	protected $entityTable = 'user';
 	private $user;
 	private $hash;
 	private $container;
@@ -52,7 +52,7 @@ class UserManager extends ModelManager {
 			} else {
 				$login = $this->get('session')->get('fuga_user');
 				$sql = "
-					SELECT u.*, g.name as group_id_name, g.title as group_id_title FROM user_user u
+					SELECT u.*, g.name as group_id_name, g.title as group_id_title FROM user u
 					JOIN user_group g ON u.group_id=g.id
 					WHERE u.login = :login OR u.email = :login LIMIT 1";
 				$stmt = $this->get('connection')->prepare($sql);
@@ -109,7 +109,7 @@ class UserManager extends ModelManager {
 			if ($token == $this->token(DEV_USER, DEV_PASS)) {
 				$user = array('login' => DEV_USER);
 			} else {
-				$user = $this->getTable('user_user')->getItem("token='".$token."'");
+				$user = $this->getTable('user')->getItem("token='".$token."'");
 			}
 
 			if ($user) {
@@ -187,7 +187,7 @@ class UserManager extends ModelManager {
 		if ($login == DEV_USER && $passwordHash == DEV_PASS) {
 			$user = array('login' => $login, 'id' => 0);
 		} else {
-			$sql = "SELECT id, login FROM user_user WHERE login= :login AND password= :password AND is_active=1 AND group_id<>0 LIMIT 1";
+			$sql = "SELECT id, login FROM user WHERE login= :login AND password= :password AND is_active=1 AND group_id<>0 LIMIT 1";
 			$stmt = $this->get('connection')->prepare($sql);
 			$stmt->bindValue("login", $login);
 			$stmt->bindValue("password", $passwordHash);
@@ -200,13 +200,13 @@ class UserManager extends ModelManager {
 			$response = new RedirectResponse($this->get('request')->getRequestUri());
 			$this->get('session')->set('fuga_user', $user['login']);
 			$this->get('session')->set('fuga_key', $token);
-			$this->getTable('user_user')->update(
+			$this->getTable('user')->update(
 				array('token' => $token),
 				array('id' => $user['id'])
 			);
 
 			if ($isRemember) {
-				$this->getTable('user_user')->update(
+				$this->getTable('user')->update(
 					array('token' => $token),
 					array('id' => $user['id'])
 				);

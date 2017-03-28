@@ -1,0 +1,36 @@
+structure:
+  name: structure
+  title: Структура сайта
+  state: content
+photo:
+  name: photo
+  title: Фотоальбом
+  state: content
+subscribe:
+  name: subscribe
+  title: Подписка
+  state: service
+form:
+  name: form
+  title: Веб-формы
+  state: service
+user:
+  name: user
+  title: Пользователи
+  state: system
+template:
+  name: template
+  title: Шаблоны страниц
+  state: system
+config:
+  name: config
+  title: Настройки
+  state: system
+translate:
+  name: translate
+  title: Переводы
+  state: system
+model:
+  name: model
+  title: Типы данных
+  state: system

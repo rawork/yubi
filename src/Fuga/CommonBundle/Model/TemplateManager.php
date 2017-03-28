@@ -5,7 +5,7 @@ namespace Fuga\CommonBundle\Model;
 
 class TemplateManager extends ModelManager
 {
-	protected $entityTable = 'template_template';
+	protected $entityTable = 'template';
 	protected $vars = [];
 	protected $javascripts = [];
 	protected $styles = [];
@@ -14,7 +14,7 @@ class TemplateManager extends ModelManager
 	{
 		$sql = "
 			SELECT t.template 
-			FROM template_template t 
+			FROM template t 
 			JOIN template_rule r ON t.id = r.template_id 
 			WHERE r.locale= :locale AND (
 				(r.type='0' AND r.cond='')

@@ -19,7 +19,7 @@ class FormManager extends ModelManager {
 	
 	public function getForm($name)
 	{
-		$form = $this->getTable('form_form')->getItem("name='$name' AND publish=1");
+		$form = $this->getTable('form')->getItem("name='$name' AND publish=1");
 		if (!$form) {
 			return null;
 		}

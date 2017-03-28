@@ -2,39 +2,85 @@
 
 namespace Fuga\CommonBundle\Model;
 
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Fuga\Component\DB\Table;
+
+use Fuga\Component\Database\CustomModel;
+use Fuga\Component\Database\Table;
+use Symfony\Component\Yaml\Yaml;
 
 class TableManager extends ModelManager
 {
 	protected $tables = [];
-	protected $tableData = [];
-	protected $models = [];
+	protected $config;
 
-	public function getAll($modules)
+	protected function getConfig()
+	{
+		if (!$this->config) {
+			$this->config = Yaml::parse(file_get_contents(PRJ_DIR.'/app/config/models.yml'));
+		}
+
+		return $this->config;
+	}
+
+	public function getAll()
 	{
 		if (empty($this->tables)) {
 
-			foreach ($modules as $module) {
-				$className = 'Fuga\\CommonBundle\\Model\\'.ucfirst($module['name']);
-				if (class_exists($className)) {
-					$model = new $className();
+			// todo init table cache for prod
+			$config = $this->getConfig();
 
-					foreach ($model->tables as $table) {
-						$table['is_system'] = true;
-						$this->tables[$table['module'].'_'.$table['name']] = new Table($table, $this->get('container'));
+			foreach ($config as $name => $table ){
+				if (isset($table['model'])){
+					list($vendor, $bundle, $model) = explode(':', $table['model']);
+					$className = $vendor.'\\'.$bundle.'Bundle\\Model\\'.$model;
+					if (class_exists($className)) {
+						$model = new $className();
+						$this->tables[$name] = new Table($model, $this->get('container'));
+					}
+				} else {
+					$sql = "SELECT t.*, m.name as module
+						FROM model t
+						JOIN module m ON t.module_id=m.id
+						WHERE t.publish=1 AND m.name = :module AND t.name = :table ORDER BY t.sort";
+					$stmt = $this->get('connection')->prepare($sql);
+					$stmt->bindValue("module", $table['module']);
+					$stmt->bindValue("table", $name);
+					$stmt->execute();
+					while ($tableData = $stmt->fetch()) {
+
+						$sql = "SELECT * FROM model_field WHERE publish=1 AND table_id= :id ORDER by sort";
+						$stmt = $this->get('connection')->prepare($sql);
+						$stmt->bindValue('id', $tableData['id']);
+						$stmt->execute();
+						$fields = $stmt->fetchAll();
+						if ($fields) {
+							foreach ($fields as &$field) {
+								$field['group_update'] = $field['group_update'] == 1;
+								$field['readonly'] = $field['readonly'] == 1;
+								$field['search'] = $field['search'] == 1;
+								$field['table_name'] = $name;
+								if (!empty($field['params'])) {
+									$params = json_decode(trim($field['params']), true);
+									if (is_array($params)){
+										foreach ($params as $key => $param) {
+											$field[$key] = $param;
+										}
+									}
+								}
+								$this->fields[$field['name']] = $field;
+							}
+							unset($field);
+							$tableData['table'] = $tableData['name'];
+							$tableData['fields'] = $fields;
+						} else {
+							$this->get('log')->addError('В таблице '.$name.' не настроены поля');
+						}
+
+						$model = new CustomModel();
+						$model->setOptions($tableData);
+
+						$this->tables[$name] = new Table($model, $this->get('container'));
 					}
 				}
-			}
-			$sql = "SELECT t.*, m.name as module
-				FROM table_table t
-				JOIN config_module m ON t.module_id=m.id
-				WHERE t.publish=1 ORDER BY t.sort";
-			$stmt = $this->get('connection')->prepare($sql);
-			$stmt->execute();
-			while ($table = $stmt->fetch()) {
-				$this->tableData[$table['module'].'_'.$table['name']] = $table;
-				$this->tables[$table['module'].'_'.$table['name']] = new Table($table, $this->get('container'));
 			}
 		}
 
@@ -44,58 +90,6 @@ class TableManager extends ModelManager
 
 	public function getByName($name)
 	{
-		// todo init table cache for prod
-		// todo init models cache for prod
-
-		if (!isset($this->tables[$name]) && isset($this->tableData[$name])) {
-			$this->tables[$name] = new Table($this->tableData[$name], $this->get('container'));
-		} elseif (!isset($this->tables[$name])) {
-
-			list($module, $table) = explode('_', $name);
-
-			if (!$module || !$table) {
-				throw new \Exception('Некорректное имя таблицы "'.$name.'"');
-			}
-
-			$table = preg_replace('/^'.$module.'_/', '', $name);
-
-			if (!isset($this->models[$module])) {
-				$className = 'Fuga\\CommonBundle\\Model\\' . ucfirst($module);
-
-				if (class_exists($className)) {
-					$this->models[$module] = new $className();
-				} else {
-					$this->models[$module] = false;
-				}
-			}
-
-			if (is_object($this->models[$module])) {
-				$model = $this->models[$module];
-
-				if (isset($model->tables[$table])) {
-					$tableData = $model->tables[$table];
-					$tableData['is_system'] = true;
-					$this->tables[$module . '_' . $table] = new Table($tableData, $this->get('container'));
-				}
-			}
-
-			$sql = "SELECT t.*, m.name as module
-				FROM table_table t
-				JOIN config_module m ON t.module_id=m.id
-				WHERE m.name = :module AND t.name = :table AND t.publish=1 ORDER BY t.sort";
-			$stmt = $this->get('connection')->prepare($sql);
-			$stmt->bindValue('module', $module);
-			$stmt->bindValue('table', $table);
-			$stmt->execute();
-
-			$tableData = $stmt->fetch();
-			if ($tableData){
-				$tableData['module'] = $module;
-				$this->tableData[$name] = $tableData;
-				$this->tables[$module.'_'.$table] = new Table($tableData, $this->get('container'));
-			}
-		}
-
 		if (!isset($this->tables[$name])) {
 			throw new \Exception('Таблица "' . $name . '" не существует');
 		}
@@ -108,7 +102,7 @@ class TableManager extends ModelManager
 		$tables = [];
 		foreach ($this->tables as $table) {
 			if ($table->moduleName == $name) {
-				$tables[$table->tableName] = $table;
+				$tables[$table->getName()] = $table;
 			}
 		}
 
@@ -130,18 +124,16 @@ class TableManager extends ModelManager
 		$ids = array();
 
 		foreach ($items as $item) {
-			if ($this->getByName($table)->params['is_system']) {
-				foreach ($this->tables as $t) {
-					if ($t->moduleName != 'user' && $t->moduleName != 'template' && $t->moduleName != 'page') {
-						foreach ($t->fields as $field) {
-							$ft = $t->getFieldType($field);
+			foreach ($this->tables as $t) {
+				if ($t->moduleName != 'user' && $t->moduleName != 'template' && $t->moduleName != 'page') {
+					foreach ($t->fields as $field) {
+						$ft = $t->getFieldType($field);
 
-							if (stristr($ft->getParam('type'), 'select') && $ft->getParam('l_table') == $table) {
-								$this->deleteItem($t->dbName(), $ft->getName().'='.$item['id']);
-							}
-
-							$ft->free();
+						if (stristr($ft->getParam('type'), 'select') && $ft->getParam('l_table') == $table) {
+							$this->deleteItem($t->getName(), $ft->getName().'='.$item['id']);
 						}
+
+						$ft->free();
 					}
 				}
 			}

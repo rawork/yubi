@@ -1003,7 +1003,7 @@ class CDBRestore
 			}
 			$sql = "";
 		}
-		$result = @mysql_query("UPDATE user_user SET password=MD5('demo') WHERE login='admin'", $this->db_Conn);
+		$result = @mysql_query("UPDATE user SET password=MD5('demo') WHERE login='admin'", $this->db_Conn);
 
 		return true;
 	}

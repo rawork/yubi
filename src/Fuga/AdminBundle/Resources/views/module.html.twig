@@ -1,0 +1,9 @@
+{% extends '@Admin/layout.html.twig' %}
+
+{% block content %}
+    {% for entity in entities %}
+    <div class="module-entity">
+        <div><a href="{{ entity.ref }}"><i class="fa fa-table fa-3x"></i><br>{{ entity.name }}</a></div>
+    </div>
+    {% endfor %}
+{% endblock %}

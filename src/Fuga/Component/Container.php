@@ -25,14 +25,15 @@ class Container
 	
 	public function initialize()
 	{
-		$stmt = $this->get('connection')->query('SELECT name, value FROM config_variable');
+		$stmt = $this->get('connection')->query('SELECT name, value FROM variable');
 		$stmt->execute();
 
 		while ($var = $stmt->fetch()) {
 			define($var['name'], $var['value']);
 		}
-
-		$this->getManager('Fuga:Common:Table')->getAll($this->getManager('Fuga:Common:Module')->getAll());
+		
+		$this->getManager('Fuga:Common:Module')->getAll();
+		$this->getManager('Fuga:Common:Table')->getAll();
 	}
 
 	public function getItemsRaw($sql)
@@ -142,6 +143,7 @@ class Container
 					break;
 				case 'templating':
 					$twigLoader = new \Twig_Loader_Filesystem(PRJ_DIR.TWIG_PATH);
+					$twigLoader->addPath(PRJ_DIR.'src/Fuga/AdminBundle/Resources/views', 'Admin');
 					$engine = new \Twig_Environment($twigLoader, array(
 						'cache' => PRJ_DIR.TWIG_CACHE_PATH,
 						'auto_reload' => true,

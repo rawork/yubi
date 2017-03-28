@@ -29,7 +29,7 @@ class MenuManager extends ModelManager
 				$ret[] = array (
 					'ref' => $this->get('routing')->getGenerator()->generate(
 						'admin_entity_index',
-						array('state' => $module['ctype'], 'module' => $module['name'], 'entity' => $table->name)
+						array('state' => $module['state'], 'module' => $module['name'], 'entity' => $table->getName())
 					),
 					'name' => $table->title
 				);
@@ -40,7 +40,7 @@ class MenuManager extends ModelManager
 				$ret[] = array (
 					'ref' => $this->get('routing')->getGenerator()->generate(
 						'admin_module_setting',
-						array('state' => $module['ctype'], 'module' => $module['name'])
+						array('state' => $module['state'], 'module' => $module['name'])
 					),
 					'name' => 'Настройки'
 				);

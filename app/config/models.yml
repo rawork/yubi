@@ -1,0 +1,44 @@
+page:
+  model: Fuga:Common:Page
+  module: structure
+page_block:
+  model: Fuga:Common:PageBlock
+  module: structure
+page_seo:
+  model: Fuga:Common:PageSEO
+  module: structure
+events:
+  module: photo
+module:
+  model: Fuga:Common:Module
+  module: config
+variable:
+  model: Fuga:Common:Variable
+  module: config
+site_version:
+  model: Fuga:Common:SiteVersion
+  module: config
+model:
+  model: Fuga:Common:Model
+  module: model
+model_field:
+  model: Fuga:Common:ModelField
+  module: model
+form:
+  model: Fuga:Common:Form
+  module: form
+form_field:
+  model: Fuga:Common:FormField
+  module: form
+template:
+  model: Fuga:Common:Template
+  module: template
+template_rule:
+  model: Fuga:Common:TemplateRule
+  module: template
+user:
+  model: Fuga:Common:User
+  module: user
+user_group:
+  model: Fuga:Common:UserGroup
+  module: user

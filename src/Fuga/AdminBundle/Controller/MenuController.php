@@ -26,11 +26,11 @@ class MenuController extends AdminController {
 			$modules[] = array(
 				'name' => $mod['name'],
 				'title' => $mod['title'],
-				'submenu' => $mod['name'] == $module ? $this->render('admin/menu/module', compact('entities')) : '',
+				'submenu' => $mod['name'] == $module ? $this->render('@Admin/menu/module', compact('entities')) : '',
 			);
 		}
 
-		$text = $this->get('templating')->render('admin/menu/state', compact('state', 'modules', 'module'));
+		$text = $this->get('templating')->render('@Admin/menu/state', compact('state', 'modules', 'module'));
 
 		if ($this->get('request')->isXmlHttpRequest()) {
 			$response = new JsonResponse();
@@ -51,7 +51,7 @@ class MenuController extends AdminController {
 
 		$entities = $this->getManager('Fuga:Admin:Menu')->getEntitiesByModule($module);
 
-		$text = $this->render('admin/menu/module', compact('entities'));
+		$text = $this->render('@Admin/menu/module', compact('entities'));
 
 		if ($this->get('request')->isXmlHttpRequest()) {
 			$response = new JsonResponse();
@@ -65,6 +65,6 @@ class MenuController extends AdminController {
 
 	public function entity($links)
 	{
-		return $this->render('admin/menu/entity', compact('links'));
+		return $this->render('@Admin/menu/entity', compact('links'));
 	}
 } 

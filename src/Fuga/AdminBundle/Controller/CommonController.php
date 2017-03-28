@@ -11,7 +11,7 @@ class CommonController extends AdminController
 	{
 		$modules = $this->getManager('Fuga:Admin:Menu')->getModulesByState($state);
 		$response = new Response();
-		$response->setContent($this->render('admin/index', compact('modules', 'state')));
+		$response->setContent($this->render('@Admin/index', compact('modules', 'state')));
 		$response->prepare($this->get('request'));
 
 		return $response;
@@ -21,7 +21,7 @@ class CommonController extends AdminController
 	{
 		$entities = $this->getManager('Fuga:Admin:Menu')->getEntitiesByModule($module);
 		$response = new Response();
-		$response->setContent($this->render('admin/module', compact('entities', 'state', 'module')));
+		$response->setContent($this->render('@Admin/module', compact('entities', 'state', 'module')));
 		$response->prepare($this->get('request'));
 
 		return $response;
@@ -41,13 +41,13 @@ class CommonController extends AdminController
 					}
 
 					if ($value = $this->getManager('Fuga:Common:Param')->validate($rawValue, $param)) {
-						$this->get('connection')->update('config_param',
+						$this->get('connection')->update('module_param',
 							array('value' => $value),
 							array('name' => $param['name'], 'module' => $param['module'])
 						);
 					}
 				} elseif ($param['type'] == 'boolean') {
-					$this->get('connection')->update('config_param',
+					$this->get('connection')->update('module_param',
 						array('value' => 0),
 						array('name' => $param['name'], 'module' => $param['module'])
 					);
@@ -71,7 +71,7 @@ class CommonController extends AdminController
 
 		$response = new Response();
 		$response->setContent(
-			$this->render('admin/common/setting',
+			$this->render('@Admin/common/setting',
 			compact('state', 'module', 'title', 'message', 'params'))
 		);
 		$response->prepare($this->get('request'));

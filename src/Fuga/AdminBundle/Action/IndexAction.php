@@ -31,7 +31,7 @@ class IndexAction extends AdminController
 		$this->state = $state;
 		$this->module = $module;
 		$this->entity = $entity;
-		$this->table = $this->getManager('Fuga:Common:Table')->getByName($module.'_'.$entity);
+		$this->table = $this->getTable($entity);
 		$this->paginator = $this->get('paginator');
 		$this->baseRef = $this->generateUrl(
 			'admin_entity_index',
@@ -43,7 +43,7 @@ class IndexAction extends AdminController
 		);
 		$this->searchRef = $this->baseRef;
 		$this->fullRef = $this->searchRef.($this->get('request')->query->get('page') ? '?page='.$this->get('request')->query->get('page') : '');
-		$this->rowPerPage = $this->get('session')->get($this->table->dbName().'_rpp', $this->rowPerPage);
+		$this->rowPerPage = $this->get('session')->get($this->table->getName().'_rpp', $this->rowPerPage);
 	}
 
 	/* Кнопки управления записью */
@@ -66,11 +66,6 @@ class IndexAction extends AdminController
 		return $buttons;
 	}
 	
-	private function showCreated()
-	{
-		return !empty($this->table->params['show_credate']);
-	}
-
 	private function getTableContent()
 	{
 		$tableHtml = '';
@@ -111,9 +106,6 @@ class IndexAction extends AdminController
 					$tableHtml .= ($sFieldHtml ? $sFieldHtml : '&nbsp;').'</td>'."\n";
 				}
 			}
-			if ( $this->table->params['show_credate'] ) {
-				$tableHtml .= '<td>'.$entity['created'].'</td>'."\n";
-			}
 			$tableHtml .= $this->_getUpdateDelete($entity['id']).'</tr>'."\n";
 		}
 
@@ -128,13 +120,12 @@ class IndexAction extends AdminController
 			'entity' => $this->entity,
 			'tableData' => $tableHtml,
 			'paginator' => $this->paginator,
-			'showCreated' => $this->showCreated(),
 			'fields' => $this->table->fields,
 			'rpps' => array(10,25,50,100,200),
 			'rowPerPage' => $this->rowPerPage,
 			'ids' => join(',', $this->elementsIds),
-			'isView' => !empty($this->table->params['is_view']),
-			'tableName' => $this->table->dbName(),
+			'isView' => !empty($this->table->params['treelike']),
+			'tableName' => $this->table->getName(),
 			'showGroupSubmit' => $this->showGroupSubmit,
 			'links' => $this->links,
 			'filters' => $this->getFilterForm(),
@@ -142,7 +133,7 @@ class IndexAction extends AdminController
 			'title' => $this->table->title,
 		);
 		
-		return $this->render('admin/action/index', $params);
+		return $this->render('@Admin/action/index', $params);
 	}
 
 	private function getTree($parentId, $prefixWidth = 0, $styleClass = '')
@@ -178,7 +169,7 @@ class IndexAction extends AdminController
 						$tableHtml .= $ft->getStatic();
 					}
 					if ($num == 0) {
-						if ($this->table->dbName() == 'page_page' && isset($node['module_id_value']['item'])) {
+						if ($this->table->getName() == 'page' && isset($node['module_id_value']['item'])) {
 							$module = $this->getManager('Fuga:Common:Module')->getByName($node['module_id_value']['item']['name']);
 							if ( $module ) {
 								$tableHtml .= ' (тип &mdash; '.$module['title'].')';
@@ -208,17 +199,16 @@ class IndexAction extends AdminController
 			'entity' => $this->entity,
 			'tableData' => $this->getTree(0, 0, ''),
 			'paginator' => $this->paginator,
-			'showCreated' => $this->showCreated(),
 			'fields' => $this->table->fields,
 			'ids' => join(',', $this->elementsIds),
-			'isView' => !empty($this->table->params['is_view']),
+			'isView' => !empty($this->table->params['treelike']),
 			'showGroupSubmit' => $this->showGroupSubmit,
 			'links' => $this->links,
 			'filters' => $this->getFilterForm(),
 			'message' => $message,
 			'title' => $this->table->title,
 		);
-		return $this->render('admin/action/index', $params);
+		return $this->render('@Admin/action/index', $params);
 	}
 
 	private function getFilterForm()
@@ -237,7 +227,7 @@ class IndexAction extends AdminController
 			'search_filter_id' => $this->get('request')->request->get('search_filter_id'),
 		);
 
-		return $this->get('templating')->render('admin/common/filter', $params);
+		return $this->get('templating')->render('@Admin/common/filter', $params);
 	}
 
 	private function initSearchCriteria()
@@ -246,18 +236,18 @@ class IndexAction extends AdminController
 			if ($filterType = $this->get('request')->request->get('filter_type')) {
 				switch ($filterType) {
 					case 'cancel':
-						$this->get('session')->remove('cms_table_'.$this->table->dbName());
+						$this->get('session')->remove('cms_table_'.$this->table->getName());
 						break;
 					default:
 						$this->search_url = $this->table->getSearchURL($this->get('request'));
 						parse_str($this->search_url, $this->tableParams);
-						$this->get('session')->set('cms_table_'.$this->table->dbName(), serialize($this->tableParams));
+						$this->get('session')->set('cms_table_'.$this->table->getName(), serialize($this->tableParams));
 				}
 
 				return true;
 			}
 
-			$this->tableParams = unserialize($this->get('session')->get('cms_table_'.$this->table->dbName()));
+			$this->tableParams = unserialize($this->get('session')->get('cms_table_'.$this->table->getName()));
 
 			if (is_array($this->tableParams)) {
 				foreach ($this->tableParams as $key => $value) {
@@ -302,7 +292,7 @@ class IndexAction extends AdminController
 			'name' => 'Обновить таблицу',
 		);
 
-		if (!empty($this->table->params['is_view'])) {
+		if ($this->table->params['treelike']) {
 			return $this->getTreeContent();
 		} else {
 			return $this->getTableContent();

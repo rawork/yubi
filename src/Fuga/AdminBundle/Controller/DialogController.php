@@ -22,7 +22,7 @@ class DialogController extends Controller
 		$field = $table->fields[$fieldName];
 
 		$criteria = array();
-		if ($field['l_table'] == 'page_page' && isset($field['dir'])) {
+		if ($field['l_table'] == 'page' && isset($field['dir'])) {
 			$module = $this->getManager('Fuga:Common:Module')->getByName($table->moduleName);
 			$criteria[] = 'module_id='.(isset($module['id']) ? $module['id'] : 0 );
 		}
@@ -53,7 +53,7 @@ class DialogController extends Controller
 		$response->setData(array(
 			'title' => 'Выбор: '.$field['title'],
 			'button' => '<a class="btn btn-success btn-popup-choice" data-input="'.$inputId.'">Выбрать</a>',
-			'content' => $this->render('admin/dialog/select', $params),
+			'content' => $this->render('@Admin/dialog/select', $params),
 		));
 
 		return $response;
@@ -160,7 +160,7 @@ class DialogController extends Controller
 		$response->setData( array(
 			'title' => 'Выбор: '.$field['title'],
 			'button' => '<a class="btn btn-success btn-popup-choice" data-input="'.$inputId.'">Выбрать</a>',
-			'content' => $this->render('admin/dialog/tree', $params),
+			'content' => $this->render('@Admin/dialog/tree', $params),
 		));
 
 		return $response;
@@ -195,7 +195,7 @@ class DialogController extends Controller
 		$response->setData( array(
 			'title' => 'Выбор: '.$field['title'],
 			'button' => '<a class="btn btn-success btn-list-choice" data-input="'.$inputId.'">Выбрать</a>',
-			'content' => $this->render('admin/dialog/list', $params),
+			'content' => $this->render('@Admin/dialog/list', $params),
 		));
 
 		return $response;

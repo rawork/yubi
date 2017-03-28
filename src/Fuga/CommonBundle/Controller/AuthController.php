@@ -39,7 +39,7 @@ class AuthController extends Controller
 
 		$locked = $this->get('security')->isLocked();
 
-		return new Response($this->render('admin/form/login', compact('message', 'locked')));
+		return new Response($this->render('@Admin/form/login', compact('message', 'locked')));
 	}
 	
 	public function forget()
@@ -47,7 +47,7 @@ class AuthController extends Controller
 		$message = null;
 		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$login  = $this->get('request')->request->get('_user');
-			$sql = 'SELECT id, login, email FROM user_user WHERE login= :login OR email = :login ';
+			$sql = 'SELECT id, login, email FROM user WHERE login= :login OR email = :login ';
 			$stmt = $this->get('connection')->prepare($sql);
 			$stmt->bindValue('login', $login);
 			$stmt->execute();
@@ -55,7 +55,7 @@ class AuthController extends Controller
 			if ($user) {
 				$key = $this->get('util')->genKey(32);
 				$this->get('connection')->update(
-						'user_user', 
+						'user',
 						array('hashkey' => $key), 
 						array('id' => $user['id'])
 				);
@@ -82,7 +82,7 @@ class AuthController extends Controller
 		}
 		$message = $this->flash('danger') ?: $this->flash('success');
 
-		return new Response($this->render('admin/form/forget', compact('message')));
+		return new Response($this->render('@Admin/form/forget', compact('message')));
 	}
 	
 	public function logout()
@@ -110,12 +110,12 @@ class AuthController extends Controller
 	
 	public function password($key)
 	{
-		$user = $this->getTable('user_user')->getItem("hashkey='".$key."'");
+		$user = $this->getTable('user')->getItem("hashkey='".$key."'");
 
 		if ($user && !empty($user['email'])) {
 			$password = $this->get('util')->genKey();
 
-			$this->getTable('user_user')->update(
+			$this->getTable('user')->update(
 					array('hashkey' => '', 'password' => hash('sha512', $password)),
 					array('id' => $user['id'])
 			);

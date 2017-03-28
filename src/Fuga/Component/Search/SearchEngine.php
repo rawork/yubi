@@ -71,7 +71,7 @@ class SearchEngine {
 		$stmt->execute();
 		$items = $stmt->fetchAll();
 		foreach ($items as $item) {
-			if ($table == 'page_page') {
+			if ($table == 'page') {
 				$link = $this->container->getManager('Fuga:Common:Page')->getUrl($item);
 			} else {
 				$link = vsprintf($options['link'], array($options['nodeName'], $item['id']));
@@ -102,7 +102,7 @@ class SearchEngine {
 		$ret = array();
 		$pages = $this->container
 			->getManager('Fuga:Common:Table')
-			->getByName('page_page')
+			->getByName('page')
 			->getItems('publish=1 AND module_id<>0');
 		if (is_array($pages)) {
 			foreach ($pages as $node) {
@@ -115,7 +115,7 @@ class SearchEngine {
 					}
 				}
 			}
-			$results = $this->getSearchResults($text, 'page_page', $this->pages);
+			$results = $this->getSearchResults($text, 'page', $this->pages);
 			foreach ($results as $a) {
 				$ret[] = $a;
 			}

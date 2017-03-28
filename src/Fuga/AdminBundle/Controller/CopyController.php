@@ -11,7 +11,7 @@ class CopyController extends AdminController
 		set_time_limit(0);
 		$this->get('session')->getFlashBag()->add(
 			'admin.message',
-			$this->getTable($module.'_'.$entity)->copy($id, $quantity) ? 'Скопировано' : 'Ошибка копирования'
+			$this->getTable($entity)->copy($id, $quantity) ? 'Скопировано' : 'Ошибка копирования'
 		);
 
 		return $this->redirect($this->generateUrl(

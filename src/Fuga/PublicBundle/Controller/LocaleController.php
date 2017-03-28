@@ -8,7 +8,7 @@ class LocaleController extends Controller
 {
 	public function index()
 	{
-		$locales = $this->getTable('config_version')->getItems('publish=1');
+		$locales = $this->getTable('site_version')->getItems('publish=1');
 		$currentLocale = $this->getManager('Fuga:Common:Locale')->getCurrentLocale();
 
 		return $this->render('locale/public', compact('locales', 'currentLocale'));
