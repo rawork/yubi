@@ -2,7 +2,9 @@
 
 namespace Fuga\CommonBundle\Model;
 
-class SubscribeList
+use Fuga\Component\Database\Model as BaseModel;
+
+class SubscribeList extends BaseModel
 {
 	protected $table = 'subscribe_list';
 	protected $title = 'Очередь рассылки';
@@ -11,40 +13,40 @@ class SubscribeList
 	protected $order_by = 'date';
 
 	protected $fields = [
-		'rubrics' => array (
+		'rubrics' => [
 			'name' => 'rubrics',
 			'title' => 'Списки рассылки',
 			'type' => 'select_list',
 			'l_table' => 'subscribe_rubric',
 			'l_field' => 'name',
 			'width' => '30%'
-		),
-		'subject' => array (
+		],
+		'subject' => [
 			'name' => 'subject',
 			'title' => 'Тема',
 			'type' => 'string',
 			'width' => '35%',
 			'search'=> true
-		),
-		'message' => array (
+		],
+		'message' => [
 			'name' => 'message',
 			'title' => 'Текст',
 			'type' => 'html'
-		),
-		'file' => array (
+		],
+		'file' => [
 			'name' => 'file',
 			'title' => 'Файл',
 			'type' => 'file',
 			'path' => '/mailfiles',
 			'width' => '20%'
 
-		),
-		'date' => array (
+		],
+		'date' => [
 			'name' => 'date',
 			'title' => 'Дата',
 			'type' => 'datetime',
 			'width' => '15%',
 			'search'=> true
-		)
+		]
 	];
 }

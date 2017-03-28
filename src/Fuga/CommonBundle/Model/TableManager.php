@@ -4,6 +4,7 @@ namespace Fuga\CommonBundle\Model;
 
 
 use Fuga\Component\Database\CustomModel;
+use Fuga\Component\Database\Model;
 use Fuga\Component\Database\Table;
 use Symfony\Component\Yaml\Yaml;
 
@@ -29,11 +30,15 @@ class TableManager extends ModelManager
 			$config = $this->getConfig();
 
 			foreach ($config as $name => $table ){
+
 				if (isset($table['model'])){
 					list($vendor, $bundle, $model) = explode(':', $table['model']);
 					$className = $vendor.'\\'.$bundle.'Bundle\\Model\\'.$model;
 					if (class_exists($className)) {
 						$model = new $className();
+						if (!$model instanceof Model) {
+							throw new \Exception('Класс модели не унаследован от Fuga\Component\Database\Model');
+						}
 						$this->tables[$name] = new Table($model, $this->get('container'));
 					}
 				} else {
