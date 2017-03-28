@@ -2,10 +2,10 @@
 
 namespace Fuga\CommonBundle\Model;
 
-use Fuga\Component\Database\Model;
+use Fuga\Component\Database\Model as BaseModel;
 
-class SiteVersion extends Model {
-	
+class SiteVersion extends BaseModel
+{
 	protected $table = 'site_version';
 	protected $title = 'Версии сайта';
 	protected $module = 'config';

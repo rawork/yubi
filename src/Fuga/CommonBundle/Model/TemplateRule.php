@@ -3,9 +3,9 @@
 namespace Fuga\CommonBundle\Model;
 
 
-use Fuga\Component\Database\Model;
+use Fuga\Component\Database\Model as BaseModel;
 
-class TemplateRule extends Model
+class TemplateRule extends BaseModel
 {
 	protected $table = 'template_rule';
 	protected $title = 'Правила шаблонов';

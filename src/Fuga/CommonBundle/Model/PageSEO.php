@@ -2,10 +2,10 @@
 
 namespace Fuga\CommonBundle\Model;
 
-use Fuga\Component\Database\Model;
+use Fuga\Component\Database\Model as BaseModel;
 
-class PageSEO extends Model {
-	
+class PageSEO extends BaseModel
+{
 	protected $table = 'page_seo';
 	protected $title = 'SEO';
 	protected $module = 'structure';

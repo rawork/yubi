@@ -3,9 +3,9 @@
 namespace Fuga\CommonBundle\Model;
 
 
-use Fuga\Component\Database\Model;
+use Fuga\Component\Database\Model as BaseModel;
 
-class Variable extends Model
+class Variable extends BaseModel
 {
 	
 	protected $table = 'variable';

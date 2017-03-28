@@ -2,10 +2,11 @@
 
 namespace Fuga\CommonBundle\Model;
 
-use Fuga\Component\Database\Model;
 
-class PageBlock extends Model {
-	
+use Fuga\Component\Database\Model as BaseModel;
+
+class PageBlock extends BaseModel
+{
 	protected $table = 'page_block';
 	protected $title = 'Инфоблоки';
 	protected $module = 'structure';

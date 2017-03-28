@@ -2,9 +2,9 @@
 
 namespace Fuga\CommonBundle\Model;
 
-use Fuga\Component\Database\Model;
+use Fuga\Component\Database\Model as BaseModel;
 
-class FormField extends Model {
+class FormField extends BaseModel {
 	
 	protected $table = 'form_field';
 	protected $title = 'Поля формы';

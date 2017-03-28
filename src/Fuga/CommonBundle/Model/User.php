@@ -3,9 +3,9 @@
 namespace Fuga\CommonBundle\Model;
 
 
-use Fuga\Component\Database\Model;
+use Fuga\Component\Database\Model as BaseModel;
 
-class User extends Model
+class User extends BaseModel
 {
 	protected $table = 'user';
 	protected $title = 'Список пользователей';
