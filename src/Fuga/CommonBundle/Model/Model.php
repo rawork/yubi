@@ -47,7 +47,9 @@ class Model extends BaseModel
 		'treelike'	=> [
 			'name'	=> 'treelike',
 			'title' => 'Древовидный',
-			'type'	=> 'checkbox'
+			'type'	=> 'checkbox',
+			'width' => '1%',
+			'group_update' => true
 		],
 		'l10n'	=> [
 			'name'	=> 'l10n',
@@ -76,11 +78,6 @@ class Model extends BaseModel
 			'type'	=> 'checkbox',
 			'width' => '1%',
 			'group_update' => true
-		],
-		'show_credate'	=> [
-			'name'	=> 'show_credate',
-			'title' => 'Пок. дату создания',
-			'type'	=> 'checkbox'
 		]
 	];
 }
