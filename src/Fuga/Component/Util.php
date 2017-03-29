@@ -6,7 +6,7 @@ class Util
 {
 	private $locale;
 
-	public function __construct(Container $locale) {
+	public function __construct($locale) {
 		$this->locale = $locale;
 	}
 	

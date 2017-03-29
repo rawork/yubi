@@ -1,14 +1,23 @@
 parameters:
-  global.prj_dir: !php/const:PRJ_DIR
-  monolog.namespace: fuga
-  mailer.transport: sendmail
+  log.namespace: fuga
 
 services:
   mailer:
     class:     Fuga\Component\Mailer\Mailer
   util:
     class:     Fuga\Component\Util
-    arguments: ['@session']
+    arguments: ['%global.locale%']
+  locator:
+    class:     Symfony\Component\Config\FileLocator
+    arguments: ['%global.config_path%']
+  log_stream:
+    class:     Monolog\Handler\StreamHandler
+    arguments: ['%log.error_path%', '%log.level%']
+  log:
+    class:     Monolog\Logger
+    arguments: ['%log.namespace%']
+    calls:
+      - [pushHandler, ['@log_stream']]
   newsletter_manager:
     class:     NewsletterManager
     calls:

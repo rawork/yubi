@@ -45,11 +45,23 @@ class Container
 		$this->getManager('Fuga:Common:Table')->getAll();
 
 		$this->container = new ContainerBuilder();
-		$this->locator = new FileLocator(array($this->getBaseDir() . '/app/config'));
+
+		$this->container->setParameter('global.prj_dir', PRJ_DIR);
+		$this->container->setParameter('global.locale', PRJ_LOCALE);
+		$this->container->setParameter('global.config_path', array($this->getBaseDir() . 'app/config'));
+		$this->container->setParameter('log.error_path', PRJ_DIR.'app/logs/error.log');
+		$this->container->setParameter('log.level', PRJ_ENV == 'dev' ? \Monolog\Logger::DEBUG : \Monolog\Logger::ERROR);
+
+		$this->locator = new FileLocator(array($this->getBaseDir() . 'app/config'));
 		$loader = new ServiceYamlFileLoader($this->container, $this->locator);
 		$loader->load('services.yml');
 
-//		var_dump($this->container->get('mailer'));
+//		try {
+//			var_dump($this->container->get('log'));
+//		} catch (\Exception $e) {
+//			var_dump($e->getMessage());
+//		}
+
 	}
 
 	public function getItemsRaw($sql)
@@ -148,16 +160,10 @@ class Container
 		if (!isset($this->services[$name])) {
 			switch ($name) {
 				case 'log':
-					$log = new \Monolog\Logger('fuga');
-					$log->pushHandler(new \Monolog\Handler\StreamHandler(
-							PRJ_DIR.'/app/logs/error.log', 
-							PRJ_ENV == 'dev' ? \Monolog\Logger::DEBUG : \Monolog\Logger::ERROR
-						));
-					
-					$this->services[$name] = $log;
+					$this->services[$name] = $this->container->get('log');
 					break;
 				case 'util':
-					$this->services[$name] = new Util($this->get('session')->get('locale', PRJ_LOCALE));
+					$this->services[$name] = $this->container->get('util'); //new Util($this->get('session')->get('locale', PRJ_LOCALE));
 					break;
 				case 'templating':
 					$twigLoader = new \Twig_Loader_Filesystem(PRJ_DIR.TWIG_PATH);
