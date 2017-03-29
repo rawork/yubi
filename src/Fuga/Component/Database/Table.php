@@ -3,6 +3,7 @@
 namespace Fuga\Component\Database;
 	
 use Fuga\Component\Container;
+use Doctrine\DBAL\Statement;
 
 class Table
 {
@@ -13,12 +14,24 @@ class Table
 	public $moduleName;
 	public $tableName;
 
+	/**
+	 * @var array
+	 */
+	protected $fieldtypes = [];
+	/**
+	 * @var Statement|null
+	 */
 	protected $stmt;
-	protected $filedtypes = [];
+	/**
+	 * @var Container|null
+	 */
 	protected $container;
+	/**
+	 * @var Model|null
+	 */
 	protected $model;
 
-	public function __construct(Model $model, Container $container)
+	public function __construct(Model $model, Container &$container)
 	{
 		$this->model 		= $model;
 		$this->container 	= $container;
@@ -53,7 +66,7 @@ class Table
 	
 	public function getFieldType($field, $entity = null)
 	{
-		if (empty($this->filedtypes[$field['type']])) {
+		if (empty($this->fieldtypes[$field['type']])) {
 			switch ($field['type']) {
 				case 'select_tree':
 					$fieldName = 'SelectTree';
@@ -66,12 +79,13 @@ class Table
 					break;
 			}
 			$className = '\\Fuga\\Component\\Database\\Field\\'.$fieldName.'Type';
-			$this->filedtypes[$field['type']] = new $className($field);
+			$this->fieldtypes[$field['type']] = new $className($field);
+			$this->fieldtypes[$field['type']]->setContainer($this->container);
 		}
-		$this->filedtypes[$field['type']]->setParams($field);
-		$this->filedtypes[$field['type']]->setEntity($entity);
+		$this->fieldtypes[$field['type']]->setParams($field);
+		$this->fieldtypes[$field['type']]->setEntity($entity);
 		
-		return $this->filedtypes[$field['type']];
+		return $this->fieldtypes[$field['type']];
 	}
 
 	public function getFieldList()
@@ -365,15 +379,20 @@ class Table
 	{
 		$filters = array();
 		$value = $this->container->get('request')->request->getInt('search_filter_id');
+
 		if ($value) {
 			$filters[] = 'id='.$value;
 		}
+
 		foreach ($this->fields as $field) {
 			$fieldType = $this->getFieldType($field);
+
 			if ($filter = $fieldType->getSearchSQL()) {
+
 				$filters[] = $filter;
 			}
 		}
+
 		return implode(' AND ', $filters);
 	}
 

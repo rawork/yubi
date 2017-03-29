@@ -1,11 +1,11 @@
 <?php
 
-namespace Fuga\CommonBundle\Model;
+namespace Fuga\CommonBundle\Manager;
 
 class PageManager extends ModelManager {
 	
 	public function getNodes($uri = 0, $recursive = false, $where = "publish=1") {
-		$nodes = $this->get('container')->getItemsRaw(
+		$nodes = $this->container->getItemsRaw(
 			'SELECT t1.*, t3.name as module_id_name, t3.path as module_id_path FROM page as t1 '.
 			'LEFT JOIN page as t2 ON t1.parent_id=t2.id '.
 			'LEFT JOIN module as t3 ON t1.module_id=t3.id '.

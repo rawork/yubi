@@ -1,0 +1,15 @@
+parameters:
+  global.prj_dir: !php/const:PRJ_DIR
+  monolog.namespace: fuga
+  mailer.transport: sendmail
+
+services:
+  mailer:
+    class:     Fuga\Component\Mailer\Mailer
+  util:
+    class:     Fuga\Component\Util
+    arguments: ['@session']
+  newsletter_manager:
+    class:     NewsletterManager
+    calls:
+      - [setMailer, ['@mailer']]

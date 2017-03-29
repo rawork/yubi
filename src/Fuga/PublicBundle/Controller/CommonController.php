@@ -15,7 +15,7 @@ class CommonController extends Controller {
 
 		if ($node['module_id']) {
 			try {
-				return $this->get('container')->callAction(
+				return $this->container->callAction(
 					$node['module_id_value']['item']['path'].':'.$action,
 					$params
 				);
@@ -119,7 +119,7 @@ class CommonController extends Controller {
 			foreach ($items as $node) {
 				$node['sub'] = '';
 				if ($node['module_id']) {
-					$controller = $this->get('container')->createController($node['module_id_path']);
+					$controller = $this->container->createController($node['module_id_path']);
 					$node['sub'] = $controller->map();
 				}
 				$node['sub'] .= $this->getMapList($node['id']);

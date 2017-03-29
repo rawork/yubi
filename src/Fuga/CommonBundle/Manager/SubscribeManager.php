@@ -1,6 +1,6 @@
 <?php
 
-namespace Fuga\CommonBundle\Model;
+namespace Fuga\CommonBundle\Manager;
 
 class SubscribeManager extends ModelManager {
 	
@@ -25,7 +25,7 @@ class SubscribeManager extends ModelManager {
 				$emails	
 			);
 			
-			$this->get('container')
+			$this->container
 				->getManager('Fuga:Common:Table')
 				->deleteItem($this->entityTable, 'id='.$letter['id']);
 		}

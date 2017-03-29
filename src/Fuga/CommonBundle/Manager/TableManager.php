@@ -1,6 +1,6 @@
 <?php
 
-namespace Fuga\CommonBundle\Model;
+namespace Fuga\CommonBundle\Manager;
 
 
 use Fuga\Component\Database\CustomModel;
@@ -39,7 +39,7 @@ class TableManager extends ModelManager
 						if (!$model instanceof Model) {
 							throw new \Exception('Класс модели не унаследован от Fuga\Component\Database\Model');
 						}
-						$this->tables[$name] = new Table($model, $this->get('container'));
+						$this->tables[$name] = new Table($model, $this->container);
 					}
 				} else {
 					$sql = "SELECT t.*, m.name as module
@@ -83,7 +83,7 @@ class TableManager extends ModelManager
 						$model = new CustomModel();
 						$model->setOptions($tableData);
 
-						$this->tables[$name] = new Table($model, $this->get('container'));
+						$this->tables[$name] = new Table($model, $this->container);
 					}
 				}
 			}

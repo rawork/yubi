@@ -4,10 +4,10 @@ namespace Fuga\Component;
 	
 class Util
 {
-	private $container;
+	private $locale;
 
-	public function __construct(Container $container) {
-		$this->container = $container;
+	public function __construct(Container $locale) {
+		$this->locale = $locale;
 	}
 	
 	public function cut_text($text, $len = 120) {
@@ -87,7 +87,7 @@ class Util
 		}
 
 		$dstr = $date->format($format);
-		$locale = $this->container->get('session')->get('locale', PRJ_LOCALE);
+		$locale = $this->locale;
 		if ($locale != 'en') {
 			$smonth = array(
 				'ru' => array('Jan' => 'Январь', 'Feb' => 'Февраль', 'Mar' => 'Март', 'Apr' => 'Апрель', 'May' => 'Май', 'Jun' => 'Июнь', 'Jul' => 'Июль', 'Aug' => 'Август', 'Sep' => 'Сентябрь', 'Oct' => 'Октябрь', 'Nov'  => 'Ноябрь', 'Dec' => 'Декабрь'),

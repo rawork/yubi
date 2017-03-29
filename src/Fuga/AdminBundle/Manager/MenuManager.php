@@ -1,8 +1,8 @@
 <?php
 
-namespace Fuga\AdminBundle\Model;
+namespace Fuga\AdminBundle\Manager;
 
-use Fuga\CommonBundle\Model\ModelManager;
+use Fuga\CommonBundle\Manager\ModelManager;
 use Symfony\Component\Yaml\Yaml;
 
 class MenuManager extends ModelManager
@@ -21,8 +21,8 @@ class MenuManager extends ModelManager
 	public function getEntitiesByModule($moduleName)
 	{
 		$ret = array();
-		$module = $this->get('container')->getManager('Fuga:Common:Module')->getByName($moduleName);
-		$tables = $this->get('container')->getManager('Fuga:Common:Table')->getByModuleName($moduleName);
+		$module = $this->container->getManager('Fuga:Common:Module')->getByName($moduleName);
+		$tables = $this->container->getManager('Fuga:Common:Table')->getByModuleName($moduleName);
 
 		foreach ($tables as $table) {
 			if (empty($table->params['is_hidden'])) {
@@ -36,7 +36,7 @@ class MenuManager extends ModelManager
 			}
 		}
 		if ($this->get('security')->isSuperuser()) {
-			if ($this->get('container')->getManager('Fuga:Common:Param')->findAll($module['name'])) {
+			if ($this->container->getManager('Fuga:Common:Param')->findAll($module['name'])) {
 				$ret[] = array (
 					'ref' => $this->get('routing')->getGenerator()->generate(
 						'admin_module_setting',
@@ -76,7 +76,7 @@ class MenuManager extends ModelManager
 	public function getModulesByState($state, $currentModule = '')
 	{
 		$modules = array();
-		$modules0 = $this->get('container')->getManager('Fuga:Common:Module')->getByState($state);
+		$modules0 = $this->container->getManager('Fuga:Common:Module')->getByState($state);
 		if ($modules0) {
 			foreach ($modules0 as $module) {
 				$modules[] = array(

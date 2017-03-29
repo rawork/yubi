@@ -11,12 +11,21 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Loader\YamlFileLoader;
 
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader as ServiceYamlFileLoader;
+
 class Container 
 {
-	private $controllers = [];
-	private $services = [];
-	private $managers = [];
-	private $loader;
+	protected $controllers = [];
+	protected $services = [];
+	protected $managers = [];
+	protected $loader;
+	protected $locator;
+
+	/**
+	 * @var ContainerBuilder|null
+	 */
+	protected $container;
 	
 	public function __construct($loader)
 	{
@@ -31,9 +40,16 @@ class Container
 		while ($var = $stmt->fetch()) {
 			define($var['name'], $var['value']);
 		}
-		
+
 		$this->getManager('Fuga:Common:Module')->getAll();
 		$this->getManager('Fuga:Common:Table')->getAll();
+
+		$this->container = new ContainerBuilder();
+		$this->locator = new FileLocator(array($this->getBaseDir() . '/app/config'));
+		$loader = new ServiceYamlFileLoader($this->container, $this->locator);
+		$loader->load('services.yml');
+
+//		var_dump($this->container->get('mailer'));
 	}
 
 	public function getItemsRaw($sql)
@@ -79,6 +95,7 @@ class Container
 		if (!isset($this->controllers[$path])) {
 			$className = $this->getControllerClass($path);
 			$this->controllers[$path] = new $className();
+			$this->controllers[$path]->setContainer($this);
 		}
 		return $this->controllers[$path];
 	}
@@ -122,6 +139,7 @@ class Container
 	public function register($name, $service)
 	{
 		$this->services[$name] = $service;
+
 		return $service;
 	}
 
@@ -139,7 +157,7 @@ class Container
 					$this->services[$name] = $log;
 					break;
 				case 'util':
-					$this->services[$name] = new Util($this);
+					$this->services[$name] = new Util($this->get('session')->get('locale', PRJ_LOCALE));
 					break;
 				case 'templating':
 					$twigLoader = new \Twig_Loader_Filesystem(PRJ_DIR.TWIG_PATH);
@@ -239,12 +257,11 @@ class Container
 					$this->services[$name] = new Search\SearchEngine($this);
 					break;
 				case 'routing':
-					$locator = new FileLocator(array($this->getBaseDir() . '/app/config'));
 					$requestContext = new RequestContext();
 					$requestContext->fromRequest($this->get('request'));
 
 					$router = new Router(
-						new YamlFileLoader($locator),
+						new YamlFileLoader($this->locator),
 						'routes.yml',
 						array('cache_dir' => PRJ_ENV == 'dev' ? null :$this->getBaseDir().'/app/cache', 'debug' => PRJ_ENV == 'dev'),
 						$requestContext
@@ -314,10 +331,11 @@ class Container
 	{
 		if (!isset($this->managers[$path])) {
 			list($vendor, $bundle, $name) = explode(':', $path);
-			$className = '\\'.$vendor.'\\'.$bundle.'Bundle\\Model\\'.ucfirst($name).'Manager';
+			$className = '\\'.$vendor.'\\'.$bundle.'Bundle\\Manager\\'.ucfirst($name).'Manager';
 
 			if (class_exists($className)) {
 				$this->managers[$path] = new $className();
+				$this->managers[$path]->setContainer($this);
 			} else {
 				throw new Exception('Менеджер "'.$className.'" не найден');
 			}

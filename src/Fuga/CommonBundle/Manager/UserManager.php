@@ -1,6 +1,6 @@
 <?php
 
-namespace Fuga\CommonBundle\Model;
+namespace Fuga\CommonBundle\Manager;
 
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -8,12 +8,11 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 class UserManager extends ModelManager {
 	
 	protected $entityTable = 'user';
-	private $user;
-	private $hash;
-	private $container;
-	private $loginTries = 3;
-	private $lockPeriod = 900; //seconds
-	private $currentUser;
+	protected $user;
+	protected $hash;
+	protected $loginTries = 3;
+	protected $lockPeriod = 900; //seconds
+	protected $currentUser;
 
 
 	public function isAuthenticated() {

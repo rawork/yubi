@@ -20,7 +20,7 @@ class BackupController extends AdminController
 		$filename_sql2 = date('YmdHi',$my_time).'_'.$my_key.'_after_connect.sql';
 		$this->get('fs')->dumpFile(BACKUP_DIR.DIRECTORY_SEPARATOR.$filename_sql2, "/*!41000 SET NAMES 'utf8' */;");
 		set_time_limit(0);
-		$this->get('container')->backupDB(BACKUP_DIR.DIRECTORY_SEPARATOR.$filename_sql);
+		$this->container->backupDB(BACKUP_DIR.DIRECTORY_SEPARATOR.$filename_sql);
 		$cwd = getcwd();
 		chdir(PRJ_DIR.'/');
 		system('tar -czf '.BACKUP_DIR.DIRECTORY_SEPARATOR.$filename.' --exclude=*.lock --exclude=autoload.php --exclude=*.tar.gz --exclude=./vendor/* --exclude=./.git --exclude=./.idea --exclude=./app/cache/smarty/* --exclude=./app/cache/twig/* ./');

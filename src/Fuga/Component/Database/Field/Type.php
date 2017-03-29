@@ -2,12 +2,18 @@
 
 namespace Fuga\Component\Database\Field;
 
+use Fuga\Component\Container;
+
 class Type
 {
 	protected $params = [];
 	protected $dbValue = null;
 	protected $dbId = 0;
 	protected $type = 'string';
+	/**
+	 * @var Container|null
+	 */
+	protected $container;
 	
 	public function __construct($params, $entity = null)
 	{
@@ -148,15 +154,18 @@ class Type
 	
 	public function free(){}
 
+	public function setContainer(Container &$container)
+	{
+		$this->container = $container;
+	}
+
 	public function get($name)
 	{
-		global $container;
-
-		if ($name == 'container') {
-			return $container;
-		} else {
-			return $container->get($name);
+		if (!$name || 'container' == $name) {
+			return $this->container;
 		}
+
+		return $this->container->get($name);
 	}
 
 	public function getType()

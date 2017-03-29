@@ -3,28 +3,38 @@
 namespace Fuga\CommonBundle\Controller;
 
 use Fuga\Component\Exception\NotFoundHttpException;
+use Fuga\Component\Container;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
-abstract class Controller {
-	
+abstract class Controller
+{
+	/**
+	 * @var Container|null
+	 */
+	protected $container;
+
+	public function setContainer(\Fuga\Component\Container &$container)
+	{
+		$this->container = $container;
+	}
+
 	public function get($name = null)
 	{
-		global $container;
 		if (!$name || 'container' == $name) {
-			return $container;
+			return $this->container;
 		} else {
-			return $container->get($name);
+			return $this->container->get($name);
 		}
 	}
 	
 	public function getManager($path)
 	{
-		return $this->get('container')->getManager($path);
+		return $this->container->getManager($path);
 	}
 
 	public function getTable($name)
 	{
-		return $this->get('container')->getManager('Fuga:Common:Table')->getByName($name);
+		return $this->container->getManager('Fuga:Common:Table')->getByName($name);
 	}
 
 	public function getRequest()
@@ -65,7 +75,7 @@ abstract class Controller {
 	
 	public function call($path, $params = array()) 
 	{
-		return $this->get('container')->callAction($path, $params);
+		return $this->container->callAction($path, $params);
 	}
 	
 	public function t($name)

@@ -17,8 +17,8 @@ class AppController extends Controller
 		$session = new Session();
 		$session->start();
 
-		$this->get('container')->register('session', $session);
-		$this->get('container')->register('request', $request);
+		$this->container->register('session', $session);
+		$this->container->register('request', $request);
 
 		$site = $this->getManager('Fuga:Common:Site')->detectSite($_SERVER['REQUEST_URI']);
 		$this->getManager('Fuga:Common:Locale')->setLocale($site);
@@ -40,7 +40,7 @@ class AppController extends Controller
 		try {
 			$parameters = $this->get('routing')->match(array_shift(explode('?', $site['url'])));
 
-			return $this->get('container')->callAction($parameters['_controller'], $parameters);
+			return $this->container->callAction($parameters['_controller'], $parameters);
 		} catch(ResourceNotFoundException $e) {
 			throw new NotFoundHttpException('Несуществующая страница');
 		}

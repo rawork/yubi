@@ -1,6 +1,6 @@
 <?php
 
-namespace Fuga\CommonBundle\Model;
+namespace Fuga\CommonBundle\Manager;
 
 use Fuga\Component\Form\FormBuilder;
 
@@ -10,7 +10,7 @@ class FormManager extends ModelManager {
 	
 	public function __construct()
 	{
-		$params = $this->get('container')->getManager('Fuga:Common:Param')->findAll('form');
+		$params = $this->container->getManager('Fuga:Common:Param')->findAll('form');
 		$this->params = array();
 		foreach ($params as $param) {
 			$this->params[$param['name']] = $param['type'] == 'int' ? intval($param['value']) : $param['value'];
@@ -26,6 +26,7 @@ class FormManager extends ModelManager {
 
 		$form['fields'] = $this->getTable('form_field')->getItems('form_id='.$form['id']);
 		$builder = new FormBuilder($form, '');
+		$builder->setContainer($this->container);
 		$builder->items = $form['fields'];
 		$builder->message = $this->processForm($builder);
 

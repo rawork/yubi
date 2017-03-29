@@ -1,6 +1,6 @@
 <?php
 
-namespace Fuga\CommonBundle\Model;
+namespace Fuga\CommonBundle\Manager;
 
 class CategoryManager extends ModelManager {
 	

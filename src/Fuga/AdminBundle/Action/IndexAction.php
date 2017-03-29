@@ -3,47 +3,39 @@
 namespace Fuga\AdminBundle\Action;
 
 use Fuga\AdminBundle\Controller\AdminController;
+use Fuga\Component\Database\Table;
 use Symfony\Component\HttpFoundation\Response;
 
 class IndexAction extends AdminController
 {
+	/**
+	 * @var Table|null
+	 */
 	public $table;
 	public $baseRef;
 	public $searchRef;
 	public $fullRef;
 	public $action;
+
 	protected $search_url;
 	protected $search_sql;
 	protected $tableParams;
-	private $links = array();
+	protected $links = array();
 
-	private $showGroupSubmit	= false;
-	private $paginator;
-	private $elementsIds		= array();
+	protected $showGroupSubmit	= false;
+	protected $paginator;
+	protected $elementsIds		= array();
 	protected $rowPerPage		= 25;
 
-	private $state;
-	private $module;
-	private $entity;
+	protected $state;
+	protected $module;
+	protected $entity;
 
 	public function __construct($state, $module, $entity)
 	{
 		$this->state = $state;
 		$this->module = $module;
 		$this->entity = $entity;
-		$this->table = $this->getTable($entity);
-		$this->paginator = $this->get('paginator');
-		$this->baseRef = $this->generateUrl(
-			'admin_entity_index',
-			array(
-				'state'  => $state,
-				'module' => $module,
-				'entity' => $entity,
-			)
-		);
-		$this->searchRef = $this->baseRef;
-		$this->fullRef = $this->searchRef.($this->get('request')->query->get('page') ? '?page='.$this->get('request')->query->get('page') : '');
-		$this->rowPerPage = $this->get('session')->get($this->table->getName().'_rpp', $this->rowPerPage);
 	}
 
 	/* Кнопки управления записью */
@@ -263,6 +255,20 @@ class IndexAction extends AdminController
 
 	public function run()
 	{
+		$this->table = $this->getTable($this->entity);
+		$this->paginator = $this->get('paginator');
+		$this->searchRef = $this->baseRef;
+		$this->fullRef = $this->searchRef.($this->get('request')->query->get('page') ? '?page='.$this->get('request')->query->get('page') : '');
+		$this->rowPerPage = $this->get('session')->get($this->table->getName().'_rpp', $this->rowPerPage);
+		$this->baseRef = $this->generateUrl(
+			'admin_entity_index',
+			array(
+				'state'  => $this->state,
+				'module' => $this->module,
+				'entity' => $this->entity,
+			)
+		);
+
 		if ($this->initSearchCriteria()) {
 			return $this->reload();
 		}

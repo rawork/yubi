@@ -104,7 +104,7 @@ class SelectType extends LookUpType
 			}
 			$value['extra'] = array();
 			if ($extra) {
-				$value['extra'] = $this->get('container')
+				$value['extra'] = $this->container
 					->getManager('Fuga:Common:Table')
 					->gtByName($this->getParam('l_table'))
 					->getItems('id IN('.implode(',', $extra).')');

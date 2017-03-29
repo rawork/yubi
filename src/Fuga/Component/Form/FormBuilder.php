@@ -2,21 +2,30 @@
 	
 namespace Fuga\Component\Form;
 
-class FormBuilder {
+use Fuga\Component\Container;
+
+class FormBuilder
+{
 	public $items;
 	public $action;
 	public $defense;
 	public $message;
-	private $again_postfix;
-	private $form;
-	private $email;
-	private $secureNames = array(
+	protected $again_postfix;
+	protected $form;
+	protected $email;
+	protected $secureNames = array(
 		'ru' => 'Введите текст с изображения',
 		'en' => 'Enter the text from the image',
 		'it' => 'Inserisci il testo dell`immagine',
 	);
 
-	public function __construct($form, $action = '.') {
+	/**
+	 * @var Container|null
+	 */
+	protected $container;
+
+	public function __construct($form, $action = '.')
+	{
 		$this->form = $form;
 		$this->action = $action;
 		$this->again_postfix = '_again';
@@ -26,7 +35,8 @@ class FormBuilder {
 		$this->email = empty($form['email']) ? ADMIN_EMAIL : $form['email'];
 	}
 
-	public function fillGlobals() {
+	public function fillGlobals()
+	{
 		foreach ($this->items as $k => $v) {
 			if (empty($this->items[$k]['value'])) {
 				$this->items[$k]['value'] = $this->get('request')->request->get($v['name']);
@@ -34,7 +44,8 @@ class FormBuilder {
 		}
 	}
 
-	public function fillValues(&$a) {
+	public function fillValues(&$a)
+	{
 		for ($i = 0; $i < sizeof($this->items); $i++) {
 			$name = $this->items[$i]['name'];
 			if (!stristr($name, $this->again_postfix)) {
@@ -48,7 +59,8 @@ class FormBuilder {
 		}
 	}
 
-	private function parseItem($item) {
+	private function parseItem($item)
+	{
 		switch ($item['type']) {
 			case 'select':
 				if (!empty($item['select_values'])) {
@@ -110,11 +122,14 @@ class FormBuilder {
 			case 'string':
 			// do something
 		}
+
 		return $item;
 	}
 
-	public function render() {
+	public function render()
+	{
 		$ret = '';
+
 		if (count($this->items)) {
 			foreach ($this->items as &$item) {
 				$item = $this->parseItem($item);
@@ -143,34 +158,42 @@ class FormBuilder {
 		} else {
 			$ret = 'Форма '.$this->name.' не содержит полей';
 		}
+
 		return $ret;
 	}
 
-	function getFieldValue($sName) {
+	function getFieldValue($sName)
+	{
 		return isset($_POST[$sName]) ? addslashes($_POST[$sName]) : null;
 	}
 
-	public function getIncorrectFieldTitle() {
+	public function getIncorrectFieldTitle()
+	{
 		foreach ($this->items as $i) {
 			if (!empty($i['is_required']) && !$this->getFieldValue($i['name'])) {
 				return $i['title'];
 			}
 		}
+
 		return null;
 	}
 
-	public function isCorrect() {
+	public function isCorrect()
+	{
 		foreach ($this->items as $k => $i) {
 			if ($i['type'] == 'password' && $this->get('request')->request->get($i['name']) != $this->get('request')->request->get($i['name'].$this->again_postfix)) {
 				return false;
 			}
 		}
+
 		return $this->getIncorrectFieldTitle() === null;
 	}
 
-	public function sendMail($params) {
+	public function sendMail($params)
+	{
 		$errors = array();
 		$fields = array();
+
 		foreach ($this->items as $field){
 			$value = strip_tags($this->get('request')->request->get($field['name']));
 			if ($field['is_required'] && empty($value)) {
@@ -191,6 +214,7 @@ class FormBuilder {
 			}
 			$fields[] = array('value' => $value, 'title' => $field['title']);
 		}
+
 		if ($errors) {
 			return $errors;
 		} else {
@@ -207,12 +231,17 @@ class FormBuilder {
 		}
 	}
 
-	public function get($name) {
-		global $container;
-		if ($name == 'container') {
-			return $container;
+	public function setContainer(\Fuga\Component\Container &$container)
+	{
+		$this->container = $container;
+	}
+
+	public function get($name = null)
+	{
+		if (!$name || 'container' == $name) {
+			return $this->container;
 		} else {
-			return $container->get($name);
+			return $this->container->get($name);
 		}
 	}
 
