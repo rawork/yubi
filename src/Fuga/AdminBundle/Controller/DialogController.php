@@ -36,7 +36,7 @@ class DialogController extends Controller
 			10,
 			1,
 			6);
-		$items = $this->getTable($field['l_table'])->getItems($criteria, $field['l_field'], $paginator->limit);
+		$items = $this->getTable($field['l_table'])->getItems($criteria, $field['l_field'], $paginator->getLimit());
 		$fields = explode(',', $field['l_field']);
 
 		$params = array(
@@ -77,7 +77,7 @@ class DialogController extends Controller
 			$page,
 			6
 		);
-		$items = $this->getTable($fieldData['l_table'])->getItems($criteria, $fieldData['l_field'], $paginator->limit);
+		$items = $this->getTable($fieldData['l_table'])->getItems($criteria, $fieldData['l_field'], $paginator->getLimit());
 		$fields = explode(',', $fieldData['l_field']);
 		$text = '<table class="table table-condensed">
 <thead><tr>

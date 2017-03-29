@@ -6,20 +6,19 @@ use Fuga\Component\Container;
 
 class Scheduler
 {
+	protected $tasks = [];
+	protected $log;
 	
-	private $tasks = array();
-	private $container;
-	
-	public function __construct(Container $container) {
-		$this->container = $container;
-		$this->tasks = array(
-			'maillist' => array(
-				'manager' => 'Fuga\\CommonBundle\\Model\\SubscribeManager',
+	public function __construct(Container $log) {
+		$this->log = $log;
+		$this->tasks = [
+			'maillist' => [
+				'manager' => \Fuga\CommonBundle\Manager\SubscribeManager::class,
 				'action' => 'processMessage',
 				'frequency' => 'minute',
-				'params' => array()
-			)
-		);
+				'params' => []
+			]
+		];
 	}
 	
 	public function registerTask($name, $className, $methodName, $frequency = 'hour', $params = array()) {
@@ -42,7 +41,7 @@ class Scheduler
 				try {
 					$this->processTask($name);
 				} catch (\Exception $e) {
-					$this->container->get('log')->addError($e->getMessage());
+					$this->log->addError($e->getMessage());
 				}
 			}
 		}

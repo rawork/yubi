@@ -2,32 +2,33 @@
 
 namespace Fuga\Component;
 
-class Paginator {
+use Fuga\Component\Templating\TwigTemplating;
 
-	public $limit;
+class Paginator
+{
+	/**
+	 * @var TwigTemplating
+	 */
+	protected $templating;
+	protected $limit;
+	protected $template;
+	protected $baseUrl		= './';
+	protected $quantity;
+	protected $currentPage;
+	protected $entityQuantity;
+	protected $rowPerPage		= 25;
+	protected $maxDisplayPages 	= 15;
+	protected $table;
+
+	protected $content;
 	
-	private $templating;
-
-	private $container;
-
-	private $template; 
-
-	private $baseUrl		= './'; 
-	private $quantity; 
-	private $currentPage;
-	private $entityQuantity; 
-	private $rowPerPage		= 25;
-	private $maxDisplayPages= 15; 
-	private $table;
-
-	private $content;
-	
-	public function __construct($templating, $container) {
+	public function __construct($templating)
+	{
 		$this->templating = $templating;
-		$this->container = $container;
 	}
 	
-	public function paginate($table, $baseUrl, $criteria = '', $rowPerPage = 25, $currentPage = 1, $maxDisplayPages = 10, $templateName = 'default') {
+	public function paginate($table, $baseUrl, $criteria = '', $rowPerPage = 25, $currentPage = 1, $maxDisplayPages = 10, $templateName = 'default')
+	{
 		$this->content			= null;
 		$this->table			= $table;
 		$this->maxDisplayPages	= $maxDisplayPages;
@@ -54,7 +55,8 @@ class Paginator {
 		}
 	}
 
-	public function render() {
+	public function render()
+	{
 		if (!$this->content) {
 			if ($this->quantity > 1) {
 				if ($this->currentPage > 1) {
@@ -92,18 +94,27 @@ class Paginator {
 				$this->content = '&nbsp;';
 			}
 		}
+
 		return $this->content;
 	}
 
-	public function getLink($page, $url = '') {
+	public function getLink($page, $url = '')
+	{
 		if(!$url) {
 			$url = $this->baseUrl;
 		}
+
 		return str_replace('###', $page, $url);
 	}
 
-	public function setTemplate($name) {
+	public function setTemplate($name)
+	{
 		$this->template = 'paginator/'.$name;
+	}
+
+	public function getLimit()
+	{
+		return $this->limit;
 	}
 	
 }

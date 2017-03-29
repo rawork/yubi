@@ -8,7 +8,6 @@ class CacheController extends AdminController
 {
 	public function clear()
 	{
-//		$this->get('templating')->clearCompiled();
 		$this->get('cache')->deleteAll();
 
 		$response = new JsonResponse();

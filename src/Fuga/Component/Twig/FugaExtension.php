@@ -58,7 +58,7 @@ class FugaExtension  extends \Twig_Extension
 		if (isset($options['node']) && '/' == $options['node']) {
 			unset($options['node']);
 		}
-		return ($locale != PRJ_LOCALE ? '/'.$locale : '').$GLOBALS['container']->get('routing')->getGenerator()->generate($name, $options);
+		return ($locale != PRJ_LOCALE ? '/'.$locale : '').$GLOBALS['container']->get('router')->getGenerator()->generate($name, $options);
 	}
 
 	public function formatDate($string, $format, $simple = true)

@@ -3,22 +3,102 @@ parameters:
 
 services:
   mailer:
-    class:     Fuga\Component\Mailer\Mailer
+    class:      Fuga\Component\Mailer\Mailer
   util:
-    class:     Fuga\Component\Util
+    class:      Fuga\Component\Util
     arguments: ['%global.locale%']
   locator:
-    class:     Symfony\Component\Config\FileLocator
+    class:      Symfony\Component\Config\FileLocator
     arguments: ['%global.config_path%']
   log_stream:
-    class:     Monolog\Handler\StreamHandler
+    class:      Monolog\Handler\StreamHandler
     arguments: ['%log.error_path%', '%log.level%']
   log:
-    class:     Monolog\Logger
+    class:      Monolog\Logger
     arguments: ['%log.namespace%']
     calls:
       - [pushHandler, ['@log_stream']]
-  newsletter_manager:
-    class:     NewsletterManager
+  filestorage:
+    class:      Fuga\Component\Storage\FileStorage
+    arguments:  ['%global.upload_ref%', '%global.upload_dir%']
+  imagestorage:
+    class:      Fuga\Component\Storage\ImageStorageDecorator
+    arguments:  ['@filestorage']
+  translator:
+    class:      Fuga\Component\Translator
+    arguments: ['%global.locale%']
+  paginator:
+    class:      Fuga\Component\Paginator
+    arguments:  ['@templating']
+  scheduler:
+    class:      Fuga\Component\Scheduler\Scheduler
+    arguments:  ['@log']
+  request_context:
+    class:      Symfony\Component\Routing\RequestContext
     calls:
-      - [setMailer, ['@mailer']]
+          - [fromRequest, ['@request']]
+  route_loader:
+    class:      Symfony\Component\Routing\Loader\YamlFileLoader
+    arguments: ['@locator']
+  router:
+    class:      Symfony\Component\Routing\Router
+    arguments: ['@route_loader', 'routes.yml', '%router.options%', '@request_context']
+  vk:
+    class:      Fuga\Component\Social\VK\Auth
+    arguments:  ['@container', 'VK_APP_ID', 'VK_APP_SHARED_SECRET', 'VK_APP_REDIRECT_URI', 'VK_OAUTH_URL']
+  fb:
+    class:      Fuga\Component\Social\FB\Auth
+    arguments:  ['@container', 'FB_APP_ID', 'FB_APP_SHARED_SECRET', 'FB_APP_REDIRECT_URI', 'FB_OAUTH_URL']
+  fs:
+    class:      Symfony\Component\Filesystem\Filesystem
+  cache:
+    class:      Doctrine\Common\Cache\Cache
+    factory:    ['Fuga\Component\Cache\CacheBuilder', createCacheProvider]
+    arguments:  ['%cache.driver%', '%cache.options%']
+  event:
+    class:      Symfony\Component\EventDispatcher\EventDispatcher
+  template_loader:
+    class:      Twig_Loader_Filesystem
+    arguments:  ['%twig.path%']
+    calls:
+          - [addPath, ['%twig.admin.path%', 'Admin']]
+  template_string_loader:
+    class:      Twig_Extension_StringLoader
+  template_debug:
+    class:      Twig_Extension_Debug
+  template_fuga:
+    class:      Fuga\Component\Twig\FugaExtension
+  template_engine:
+    class:      Twig_Environment
+    arguments:  ['@template_loader', '%twig.options%']
+    calls:
+        - [addExtension, ['@template_string_loader']]
+        - [addExtension, ['@template_debug']]
+        - [addExtension, ['@template_fuga']]
+        - [addGlobal, ['prj_ref', '%global.prj_ref%']]
+        - [addGlobal, ['prj_ref', '%global.theme_ref%']]
+        - [addGlobal, ['prj_name', '%global.prj_name%']]
+        - [addGlobal, ['prj_zone', '%global.prj_zone%']]
+  templating:
+    class:      Fuga\Component\Templating\TwigTemplating
+    arguments:  ['@template_engine', '@log']
+  mongo:
+    class:      MongoClient
+    arguments: ['mongodb://%mongo.user%:%mongo.pass%@%mongo.host%/%mongo.base%']
+    calls:
+          - [selectDB, ['%mongo.base%']]
+  em_config:
+    class:     Doctrine\ORM\Configuration
+    factory:   ['Doctrine\ORM\Tools\Setup', createAnnotationMetadataConfiguration]
+    arguments: ['%em.entities%', '%em.dev_mode%']
+  em:
+    class:      Doctrine\ORM\EntityManager
+    factory:    ['Doctrine\ORM\EntityManager', create]
+    arguments:  ['%database.options%', '@em_config']
+  connection_config:
+    class:      Doctrine\DBAL\Configuration
+  connection:
+    class:      Doctrine\DBAL\Connection
+    factory:    ['Doctrine\DBAL\DriverManager', getConnection]
+    arguments:  ['%database.options%', '@connection_config']
+ #   $this->services[$name]->getDatabasePlatform()->registerDoctrineTypeMapping('DECIMAL(14,2)', 'money');

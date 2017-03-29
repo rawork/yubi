@@ -24,7 +24,7 @@ class PageManager extends ModelManager {
 	}
 	
 	public function getUrl($node) {
-		return trim($node['url']) ?: ($this->get('session')->get('locale') != 'ru' ? '/'.$this->get('session')->get('locale') : '').$this->get('routing')->getGenerator()->generate('public_page', array('node' => $node['name']));
+		return trim($node['url']) ?: ($this->get('session')->get('locale') != 'ru' ? '/'.$this->get('session')->get('locale') : '').$this->get('router')->getGenerator()->generate('public_page', array('node' => $node['name']));
 	}
 	
 	public function getPathNodes($id = 0) {

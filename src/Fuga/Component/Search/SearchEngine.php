@@ -2,13 +2,14 @@
 
 namespace Fuga\Component\Search;
 
-class SearchEngine {
-	
+class SearchEngine
+{
 	private $container;
 	private $options;
 	private $pages;
 	
-	public function __construct($container, $options = array()) {
+	public function __construct($container, $options = [])
+	{
 		$this->container = $container;
 		$this->options = array(
 			'catalog' => array(

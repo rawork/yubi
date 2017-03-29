@@ -38,7 +38,7 @@ class AppController extends Controller
 		}
 
 		try {
-			$parameters = $this->get('routing')->match(array_shift(explode('?', $site['url'])));
+			$parameters = $this->get('router')->match(array_shift(explode('?', $site['url'])));
 
 			return $this->container->callAction($parameters['_controller'], $parameters);
 		} catch(ResourceNotFoundException $e) {

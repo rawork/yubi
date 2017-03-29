@@ -73,7 +73,7 @@ class IndexAction extends AdminController
 		$this->table->select(
 			array (
 				'where' => $this->search_sql,
-				'limit' => $this->paginator->limit
+				'limit' => $this->paginator->getLimit()
 			)
 		);
 		$entities = $this->table->getNextArrays(false);

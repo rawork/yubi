@@ -48,7 +48,7 @@ abstract class Controller
 			if (isset($options['node']) && '/' == $options['node']) {
 				unset($options['node']);
 			}
-			return ($locale != PRJ_LOCALE ? '/'.$locale : '').$this->get('routing')->getGenerator()->generate($name, $options);
+			return ($locale != PRJ_LOCALE ? '/'.$locale : '').$this->get('router')->getGenerator()->generate($name, $options);
 		} catch (\Exception $e) {
 			$this->log($e->getMessage());
 		}
