@@ -11,7 +11,7 @@ class CacheController extends AdminController
 		$this->get('cache')->deleteAll();
 
 		$response = new JsonResponse();
-		$response->setData(array('content' => 'Кэш очищен'));
+		$response->setData(['content' => 'Кэш очищен']);
 		$response->prepare($this->get('request'));
 
 		return $response;

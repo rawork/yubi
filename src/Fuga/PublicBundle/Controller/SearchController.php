@@ -39,7 +39,7 @@ class SearchController extends Controller {
 				} else {
 					$max_per_page_cur = $maxPerPage;
 				}
-				$items = array();
+				$items = [];
 				for ($i = 1; $i <= $max_per_page_cur; $i++) {
 					$j = $i+($this->page-1)*$maxPerPage;
 					$results[$j-1]['num'] = $j;

@@ -38,38 +38,38 @@ class CrudController extends AdminController
 				if ($this->get('request')->request->get('utype', 0) == 1) {
 					return $this->redirect($this->generateUrl(
 						'admin_entity_edit',
-						array('state' => $state, 'module' => $module, 'entity' => $entity, 'id' => $lastId)
+						['state' => $state, 'module' => $module, 'entity' => $entity, 'id' => $lastId]
 					));
 				} else {
 					return $this->redirect($this->generateUrl(
 						'admin_entity_index',
-						array('state' => $state, 'module' => $module, 'entity' => $entity)
+						['state' => $state, 'module' => $module, 'entity' => $entity]
 					));
 				}
 			} else {
 				return $this->redirect($this->generateUrl(
 					'admin_entity_add',
-					array('state' => $state, 'module' => $module, 'entity' => $entity)
+					['state' => $state, 'module' => $module, 'entity' => $entity]
 				));
 			}
 		}
 
-		$links = array(
-			array(
+		$links = [
+			[
 				'ref' => $this->generateUrl(
 					'admin_entity_index',
-					array('state' => $state, 'module' => $module, 'entity' => $entity)
+					['state' => $state, 'module' => $module, 'entity' => $entity]
 				),
 				'name' => 'Список элементов',
-			)
-		);
+			]
+		];
 
 		$message = null;
 		if ($adminMessage = $this->get('session')->getFlashBag()->get('admin.message')) {
 			$message = array_shift($adminMessage);
 		}
 
-		$params = array(
+		$params = [
 			'links' => $links,
 			'state' => $state,
 			'module' => $module,
@@ -78,7 +78,7 @@ class CrudController extends AdminController
 			'message' => $message,
 			'title' => $table->title,
 			'isRoot' => $this->get('security')->isSuperuser(),
-		);
+		];
 
 		return new Response($this->render('@Admin/action/add', $params));
 	}
@@ -96,31 +96,31 @@ class CrudController extends AdminController
 			if ($this->get('request')->request->get('utype', 0) == 1) {
 				return $this->redirect($this->generateUrl(
 					'admin_entity_edit',
-					array('state' => $state, 'module' => $module, 'entity' => $entity, 'id' => $id)
+					['state' => $state, 'module' => $module, 'entity' => $entity, 'id' => $id]
 				));
 			} else {
 				return $this->redirect($this->generateUrl(
 					'admin_entity_index',
-					array('state' => $state, 'module' => $module, 'entity' => $entity)
+					['state' => $state, 'module' => $module, 'entity' => $entity]
 				));
 			}
 		}
 
-		$links = array(
-			array(
+		$links = [
+			[
 				'ref' => $this->generateUrl(
 					'admin_entity_index',
-					array('state' => $state, 'module' => $module, 'entity' => $entity)
+					['state' => $state, 'module' => $module, 'entity' => $entity]
 				),
 				'name' => 'Список элементов'
-			)
-		);
+			]
+		];
 		$item = $table->getItem($id);
 
 		if (!$item) {
 			return $this->redirect($this->generateUrl(
 				'admin_entity_index',
-				array('state' => $state, 'module' => $module, 'entity' => $entity)
+				['state' => $state, 'module' => $module, 'entity' => $entity]
 			));
 		}
 
@@ -129,7 +129,7 @@ class CrudController extends AdminController
 			$message = array_shift($adminMessage);
 		}
 
-		$params = array(
+		$params = [
 			'state' => $state,
 			'module' => $module,
 			'entity' => $entity,
@@ -139,7 +139,7 @@ class CrudController extends AdminController
 			'isRoot' => $this->get('security')->isSuperuser(),
 			'table' => $table,
 			'links' => $links,
-		);
+		];
 
 		return new Response($this->render('@Admin/action/edit', $params));
 	}
@@ -155,7 +155,7 @@ class CrudController extends AdminController
 
 		return $this->redirect($this->generateUrl(
 			'admin_entity_index',
-			array('state' => $state, 'module' => $module, 'entity' => $entity)
+			['state' => $state, 'module' => $module, 'entity' => $entity]
 		));
 	}
 
@@ -172,39 +172,39 @@ class CrudController extends AdminController
 
 			return $this->redirect($this->generateUrl(
 				'admin_entity_index',
-				array('state' => $state, 'module' => $module, 'entity' => $entity)
+				['state' => $state, 'module' => $module, 'entity' => $entity]
 			));
 		}
 
 		$table->select(
-			array (
+			[
 				'where' => 'id IN('.$ids.')',
-			)
+			]
 		);
 		$items = $table->getNextArrays(false);
 		if (count($items) == 0) {
 			return $this->redirect($this->generateUrl(
 				'admin_entity_index',
-				array('state' => $state, 'module' => $module, 'entity' => $entity)
+				['state' => $state, 'module' => $module, 'entity' => $entity]
 			));
 		}
 
-		$links = array(
-			array(
+		$links = [
+			[
 				'ref' => $this->generateUrl(
 						'admin_entity_index',
-						array('state' => $state, 'module' => $module, 'entity' => $entity)
+						['state' => $state, 'module' => $module, 'entity' => $entity]
 					),
 				'name' => 'Список элементов'
-			)
-		);
+			]
+		];
 
 		$message = null;
 		if ($adminMessage = $this->get('session')->getFlashBag()->get('admin.message')) {
 			$message = array_shift($adminMessage);
 		}
 
-		$params = array(
+		$params = [
 			'state' => $state,
 			'module' => $module,
 			'entity' => $entity,
@@ -215,7 +215,7 @@ class CrudController extends AdminController
 			'table' => $table,
 			'links' => $links,
 			'ids' => $ids,
-		);
+		];
 
 		return new Response($this->render('@Admin/action/groupedit', $params));
 	}
@@ -237,7 +237,7 @@ class CrudController extends AdminController
 
 		return $this->redirect($this->generateUrl(
 			'admin_entity_index',
-			array('state' => $state, 'module' => $module, 'entity' => $entity)
+			['state' => $state, 'module' => $module, 'entity' => $entity]
 		));
 	}
 

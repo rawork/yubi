@@ -16,14 +16,14 @@ class CopyController extends AdminController
 
 		return $this->redirect($this->generateUrl(
 			'admin_entity_index',
-			array('state' => $state, 'module' => $module, 'entity' => $entity)
+			['state' => $state, 'module' => $module, 'entity' => $entity]
 		));
 	}
 
 	public function dialog($id)
 	{
 		$response = new JsonResponse();
-		$response->setData(array(
+		$response->setData([
 			'title' => 'Копирование элемента',
 			'button' => '<a class="btn btn-default" data-dismiss="modal" aria-hidden="true">Закрыть</a><a class="btn btn-success btn-copy" data-id="'.$id.'">Копировать</a>',
 			'content' => '
@@ -34,7 +34,7 @@ class CopyController extends AdminController
     <span class="help-inline" id="copy-help"></span>
   </div>
 </div>'
-		));
+		]);
 
 		return $response;
 	}

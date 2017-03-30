@@ -21,7 +21,7 @@ class DialogController extends Controller
 		$fieldName = str_replace('search_filter_', '', $fieldName);
 		$field = $table->fields[$fieldName];
 
-		$criteria = array();
+		$criteria = [];
 		if ($field['l_table'] == 'page' && isset($field['dir'])) {
 			$module = $this->getManager('Fuga:Common:Module')->getByName($table->moduleName);
 			$criteria[] = 'module_id='.(isset($module['id']) ? $module['id'] : 0 );
@@ -31,7 +31,7 @@ class DialogController extends Controller
 		$paginator = $this->get('paginator');
 		$paginator->paginate(
 			$this->getTable($field['l_table']),
-			rawurldecode($this->generateUrl('admin_dialog_pagination', array('table' => $tableName, 'field' => $fieldName, 'entity' => $entityId > 0 ? $entityId : 0, 'page' => '###'))),
+			rawurldecode($this->generateUrl('admin_dialog_pagination', ['table' => $tableName, 'field' => $fieldName, 'entity' => $entityId > 0 ? $entityId : 0, 'page' => '###'])),
 			$criteria,
 			10,
 			1,
@@ -39,7 +39,7 @@ class DialogController extends Controller
 		$items = $this->getTable($field['l_table'])->getItems($criteria, $field['l_field'], $paginator->getLimit());
 		$fields = explode(',', $field['l_field']);
 
-		$params = array(
+		$params = [
 			'table' => $table,
 			'field' => $field,
 			'fields' => $fields,
@@ -47,14 +47,14 @@ class DialogController extends Controller
 			'items' => $items,
 			'paginator' => $paginator,
 			'entityId' => $entityId,
-		);
+		];
 
 		$response = new JsonResponse();
-		$response->setData(array(
+		$response->setData([
 			'title' => 'Выбор: '.$field['title'],
 			'button' => '<a class="btn btn-success btn-popup-choice" data-input="'.$inputId.'">Выбрать</a>',
 			'content' => $this->render('@Admin/dialog/select', $params),
-		));
+		]);
 
 		return $response;
 	}
@@ -71,7 +71,7 @@ class DialogController extends Controller
 		$paginator = $this->get('paginator');
 		$paginator->paginate(
 			$this->getTable($fieldData['l_table']),
-			rawurldecode($this->generateUrl('admin_dialog_pagination', array('table' => $table, 'field' => $field, 'entity' => $entity, 'page' => '###'))),
+			rawurldecode($this->generateUrl('admin_dialog_pagination', ['table' => $table, 'field' => $field, 'entity' => $entity, 'page' => '###'])),
 			$criteria,
 			10,
 			$page,
@@ -100,9 +100,9 @@ class DialogController extends Controller
 		$text .= $paginator->render();
 
 		$response = new JsonResponse();
-		$response->setData( array(
+		$response->setData( [
 			'content' => $text
-		));
+		]);
 
 		return $response;
 	}
@@ -132,7 +132,7 @@ class DialogController extends Controller
 
 		$nodes = $this->getTable($field['l_table'])->getItems($criteria, 'left_key');
 		foreach ($nodes as &$node) {
-			$complexname = array();
+			$complexname = [];
 			foreach ($fields as $fieldName) {
 				if (isset($node[$fieldName])) {
 					$complexname[] = $node[$fieldName];
@@ -141,7 +141,7 @@ class DialogController extends Controller
 			$node['complexname'] = implode(' ', $complexname);
 
 			if (!isset($node['children'])) {
-				$node['children'] = array();
+				$node['children'] = [];
 			}
 			if ($node['parent_id'] > 0 && isset($nodes[$node['parent_id']])) {
 				$nodes[$node['parent_id']]['children'][$node['id']] = $node;
@@ -149,19 +149,19 @@ class DialogController extends Controller
 		}
 		unset($node);
 
-		$params = array(
+		$params = [
 			'table' => $table,
 			'title' => $title,
 			'nodes' => $nodes,
 			'entityId' => $entityId,
-		);
+		];
 
 		$response = new JsonResponse();
-		$response->setData( array(
+		$response->setData( [
 			'title' => 'Выбор: '.$field['title'],
 			'button' => '<a class="btn btn-success btn-popup-choice" data-input="'.$inputId.'">Выбрать</a>',
 			'content' => $this->render('@Admin/dialog/tree', $params),
-		));
+		]);
 
 		return $response;
 	}
@@ -183,20 +183,20 @@ class DialogController extends Controller
 		$items = $this->getTable($field['l_table'])->getItems($lang_where, $field["l_sort"]);
 		$fields = explode(",", $field["l_field"]);
 
-		$params = array(
+		$params = [
 			'field' => $field,
 			'table' => $table,
 			'fields' => $fields,
 			'items' => $items,
 			'values' => $values,
-		);
+		];
 
 		$response = new JsonResponse();
-		$response->setData( array(
+		$response->setData( [
 			'title' => 'Выбор: '.$field['title'],
 			'button' => '<a class="btn btn-success btn-list-choice" data-input="'.$inputId.'">Выбрать</a>',
 			'content' => $this->render('@Admin/dialog/list', $params),
-		));
+		]);
 
 		return $response;
 	}
@@ -214,10 +214,10 @@ class DialogController extends Controller
 		$version = $this->getTable('template_version')->getItem($id);
 		$text = @file_get_contents(PRJ_DIR.'/app/Resources/views/backup/'.$version['file']);
 
-		return json_encode( array(
+		return json_encode( [
 			'title' => 'Версия шаблона',
 			'button' => '<a class="btn btn-default" data-dismiss="modal" aria-hidden="true">Закрыть</a>',
 			'content' => '<div><pre>'.htmlspecialchars($text).'</pre></div>'
-		));
+		]);
 	}
 } 

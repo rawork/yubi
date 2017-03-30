@@ -11,7 +11,7 @@ class ImageStorageDecorator implements StorageInterface
 	private $storageEngine;
 	private $options;
 	
-	public function __construct($storageEngine, $options = array())
+	public function __construct($storageEngine, $options = [])
 	{
 		$this->storageEngine = $storageEngine;
 		$this->setOptions($options);
@@ -85,10 +85,10 @@ class ImageStorageDecorator implements StorageInterface
 		return $this->storageEngine->size($this->realPath($filename), $precision);
 	}
 	
-	public function additionalFiles($filename, $options = array())
+	public function additionalFiles($filename, $options = [])
 	{
 		$this->setOptions($options);
-		$files = array();
+		$files = [];
 
 		if ($this->hasOption('sizes') && $filename) {
 			$pathParts = pathinfo($filename);
@@ -100,18 +100,18 @@ class ImageStorageDecorator implements StorageInterface
 			foreach ($sizes as $name => $size) {
 				$path = $pathParts['dirname'].'/'.$pathParts['filename'].'_'.$name;
 				$path .= isset($pathParts['extension']) ? '.'.$pathParts['extension'] : '';
-				$files[$name] = array(
+				$files[$name] = [
 					'name' => $name,
 					'path' => $this->path($path),
 					'size' => $this->size($path)
-				);
+				];
 			}
 		}
 
 		return $files;
 	}
 	
-	public function afterSave($filename, $options = array())
+	public function afterSave($filename, $options = [])
 	{
 		$this->setOptions($options);
 

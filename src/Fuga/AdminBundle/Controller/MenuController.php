@@ -11,11 +11,11 @@ class MenuController extends AdminController {
 	{
 		if (!$this->get('session')->get('fuga_user')) {
 			if ($this->get('request')->isXmlHttpRequest()) {
-				return json_encode(array('error' => true));
+				return json_encode(['error' => true]);
 			}
 		}
 
-		$modules = array();
+		$modules = [];
 		$modules0 = $this->getManager('Fuga:Admin:Menu')->getModulesByState($state);
 
 		if ($module) {
@@ -23,18 +23,18 @@ class MenuController extends AdminController {
 		}
 
 		foreach ($modules0 as $mod) {
-			$modules[] = array(
+			$modules[] = [
 				'name' => $mod['name'],
 				'title' => $mod['title'],
 				'submenu' => $mod['name'] == $module ? $this->render('@Admin/menu/module', compact('entities')) : '',
-			);
+			];
 		}
 
 		$text = $this->get('templating')->render('@Admin/menu/state', compact('state', 'modules', 'module'));
 
 		if ($this->get('request')->isXmlHttpRequest()) {
 			$response = new JsonResponse();
-			$response->setData(array('content' => $text));
+			$response->setData(['content' => $text]);
 
 			return $response;
 		} else {
@@ -45,7 +45,7 @@ class MenuController extends AdminController {
 	public function module($module) {
 		if (!$this->get('session')->get('fuga_user')) {
 			if ($this->get('request')->isXmlHttpRequest()) {
-				return json_encode(array('error' => true));
+				return json_encode(['error' => true]);
 			}
 		}
 
@@ -55,7 +55,7 @@ class MenuController extends AdminController {
 
 		if ($this->get('request')->isXmlHttpRequest()) {
 			$response = new JsonResponse();
-			$response->setData(array('content' => $text));
+			$response->setData(['content' => $text]);
 
 			return $response;
 		}

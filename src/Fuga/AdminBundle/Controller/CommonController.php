@@ -42,14 +42,14 @@ class CommonController extends AdminController
 
 					if ($value = $this->getManager('Fuga:Common:Param')->validate($rawValue, $param)) {
 						$this->get('connection')->update('module_param',
-							array('value' => $value),
-							array('name' => $param['name'], 'module' => $param['module'])
+							['value' => $value],
+							['name' => $param['name'], 'module' => $param['module']]
 						);
 					}
 				} elseif ($param['type'] == 'boolean') {
 					$this->get('connection')->update('module_param',
-						array('value' => 0),
-						array('name' => $param['name'], 'module' => $param['module'])
+						['value' => 0],
+						['name' => $param['name'], 'module' => $param['module']]
 					);
 				}
 			}
@@ -57,7 +57,7 @@ class CommonController extends AdminController
 
 			return $this->redirect($this->generateUrl(
 				'admin_module_setting',
-				array('state' => $state, 'module' => $module)
+				['state' => $state, 'module' => $module]
 			));
 		}
 

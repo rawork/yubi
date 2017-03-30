@@ -35,7 +35,7 @@ class BackupController extends AdminController
 		$this->get('session')->getFlashBag()->add('archive.report', $text);
 
 		$response = new JsonResponse();
-		$response->setData(array('content' => $text));
+		$response->setData(['content' => $text]);
 		$response->prepare($this->get('request'));
 
 		return $response;

@@ -23,14 +23,14 @@ class GalleryController extends Controller
 			if (json_last_error() == JSON_ERROR_NONE && array_key_exists('sizes', $params)) {
 				$sizes = $params['sizes'];
 				$sizes['default'] = ['width' => 50, 'height' => 50, 'adaptive' => true];
-				$this->get('imagestorage')->setOptions(array('sizes' => $sizes));
+				$this->get('imagestorage')->setOptions(['sizes' => $sizes]);
 			}
 
 			$this->get('imagestorage')->remove($file['file']);
-			$this->get('connection')->delete('system_files', array('id' => $id));
-			$response->setData(array('ok' => true));
+			$this->get('connection')->delete('system_files', ['id' => $id]);
+			$response->setData(['ok' => true]);
 		} else {
-			$response->setData(array('error' => 'Ошибка удаления файла'));
+			$response->setData(['error' => 'Ошибка удаления файла']);
 		}
 
 		return $response;

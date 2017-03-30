@@ -36,7 +36,7 @@ class SubscribeController extends AdminController
 		if ($this->get('request')->query->get('all')) {
 			$last_update = '0000-00-00 00:00:00';
 		}
-		$content = array('Выгрузка подписчиков от '.date('d.m.Y H:i:s', $time));
+		$content = ['Выгрузка подписчиков от '.date('d.m.Y H:i:s', $time)];
 		$rubrics = $this->getTable('subscribe_rubric')->getItems();
 		foreach ($rubrics as $rubric) {
 			$content[] = $rubric['name'];
@@ -55,13 +55,11 @@ class SubscribeController extends AdminController
 
 		$this->get('connection')->update(
 			'module_param',
-			array(
-				'value' => date('Y-m-d H:i:s', $time)
-			),
-			array(
+			['value' => date('Y-m-d H:i:s', $time)],
+			[
 				'module' => 'subscribe',
 				'name'   => 'last_update',
-			)
+			]
 		);
 
 		$response = new BinaryFileResponse($filepath);

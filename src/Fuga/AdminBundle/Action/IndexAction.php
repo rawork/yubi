@@ -20,11 +20,11 @@ class IndexAction extends AdminController
 	protected $search_url;
 	protected $search_sql;
 	protected $tableParams;
-	protected $links = array();
+	protected $links = [];
 
 	protected $showGroupSubmit	= false;
 	protected $paginator;
-	protected $elementsIds		= array();
+	protected $elementsIds		= [];
 	protected $rowPerPage		= 25;
 
 	protected $state;
@@ -48,9 +48,9 @@ class IndexAction extends AdminController
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu admin-dropdown-menu">
-    <li><a href="'.$this->generateUrl('admin_entity_edit', array('state' => $this->state, 'module' => $this->module, 'entity' => $this->entity, 'id' => $id)).'"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i> Изменить</a></li>
-    <li><a href="#" class="entity-delete-link" data-url="'.$this->generateUrl('admin_entity_delete', array('state' => $this->state, 'module' => $this->module, 'entity' => $this->entity, 'id' => $id)).'"><i class="fa fa-trash-o fa-fw" aria-hidden="true"></i> Удалить</a></li>
-    <li><a href="#" class="entity-copy-link" data-url="'.$this->generateUrl('admin_entity_copy_dialog', array('id' => $id)).'"><i class="fa fa-files-o fa-fw" aria-hidden="true"></i> Копировать</a></li>
+    <li><a href="'.$this->generateUrl('admin_entity_edit', ['state' => $this->state, 'module' => $this->module, 'entity' => $this->entity, 'id' => $id]).'"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i> Изменить</a></li>
+    <li><a href="#" class="entity-delete-link" data-url="'.$this->generateUrl('admin_entity_delete', ['state' => $this->state, 'module' => $this->module, 'entity' => $this->entity, 'id' => $id]).'"><i class="fa fa-trash-o fa-fw" aria-hidden="true"></i> Удалить</a></li>
+    <li><a href="#" class="entity-copy-link" data-url="'.$this->generateUrl('admin_entity_copy_dialog', ['id' => $id]).'"><i class="fa fa-files-o fa-fw" aria-hidden="true"></i> Копировать</a></li>
   </ul>
 </div>
 </td>
@@ -106,14 +106,14 @@ class IndexAction extends AdminController
 			$message = array_shift($adminMessage);
 		}
 
-		$params = array(
+		$params = [
 			'state' => $this->state,
 			'module' => $this->module,
 			'entity' => $this->entity,
 			'tableData' => $tableHtml,
 			'paginator' => $this->paginator,
 			'fields' => $this->table->fields,
-			'rpps' => array(10,25,50,100,200),
+			'rpps' => [10,25,50,100,200],
 			'rowPerPage' => $this->rowPerPage,
 			'ids' => join(',', $this->elementsIds),
 			'isView' => !empty($this->table->params['treelike']),
@@ -123,7 +123,7 @@ class IndexAction extends AdminController
 			'filters' => $this->getFilterForm(),
 			'message' => $message,
 			'title' => $this->table->title,
-		);
+		];
 		
 		return $this->render('@Admin/action/index', $params);
 	}
@@ -133,10 +133,10 @@ class IndexAction extends AdminController
 		$tableHtml = '';
 		$where = 'parent_id='.$parentId.' '.($this->search_sql ? ' AND '.$this->search_sql : '');
 		$this->table->select(
-			array(
+			[
 				'where'		=> '1=1',
 				'order_by'	=> 'left_key'
-			)
+			]
 		);
 		$nodes = $this->table->getNextArrays();
 		$styleClass .= 't'.$parentId;
@@ -185,7 +185,7 @@ class IndexAction extends AdminController
 			$message = array_shift($adminMessage);
 		}
 
-		$params = array(
+		$params = [
 			'state' => $this->state,
 			'module' => $this->module,
 			'entity' => $this->entity,
@@ -199,7 +199,7 @@ class IndexAction extends AdminController
 			'filters' => $this->getFilterForm(),
 			'message' => $message,
 			'title' => $this->table->title,
-		);
+		];
 		return $this->render('@Admin/action/index', $params);
 	}
 
@@ -213,11 +213,11 @@ class IndexAction extends AdminController
 		}
 		unset($field);
 
-		$params = array(
+		$params = [
 			'baseRef' => $this->baseRef,
 			'fields' => $this->table->fields,
 			'search_filter_id' => $this->get('request')->request->get('search_filter_id'),
-		);
+		];
 
 		return $this->get('templating')->render('@Admin/common/filter', $params);
 	}
@@ -262,41 +262,41 @@ class IndexAction extends AdminController
 		$this->rowPerPage = $this->get('session')->get($this->table->getName().'_rpp', $this->rowPerPage);
 		$this->baseRef = $this->generateUrl(
 			'admin_entity_index',
-			array(
+			[
 				'state'  => $this->state,
 				'module' => $this->module,
 				'entity' => $this->entity,
-			)
+			]
 		);
 
 		if ($this->initSearchCriteria()) {
 			return $this->reload();
 		}
 
-		$this->links[] = array(
+		$this->links[] = [
 			'ref' => $this->generateUrl(
 				'admin_entity_add',
-				array('state' => $this->state, 'module' => $this->module, 'entity' => $this->entity)),
+				['state' => $this->state, 'module' => $this->module, 'entity' => $this->entity]),
 			'name' => 'Добавить запись',
-		);
+		];
 		if ($this->get('security')->isDeveloper()) {
-			$links[] =	array(
+			$links[] =	[
 				'ref' => $this->fullRef.'/table',
 				'name' => 'Настройка таблицы'
-			);
+			];
 		}
-		$this->links[] = array(
+		$this->links[] = [
 			'ref' => $this->generateUrl(
 					'admin_entity_table_create',
-					array('state' => $this->state, 'module' => $this->module, 'entity' => $this->entity)),
+					['state' => $this->state, 'module' => $this->module, 'entity' => $this->entity]),
 			'name' => 'Создать таблицу',
-		);
-		$this->links[] = array(
+		];
+		$this->links[] = [
 			'ref' => $this->generateUrl(
 					'admin_entity_table_alter',
-					array('state' => $this->state, 'module' => $this->module, 'entity' => $this->entity)),
+					['state' => $this->state, 'module' => $this->module, 'entity' => $this->entity]),
 			'name' => 'Обновить таблицу',
-		);
+		];
 
 		if ($this->table->params['treelike']) {
 			return $this->getTreeContent();

@@ -7,26 +7,26 @@ class FugaExtension  extends \Twig_Extension
 
 	public function getFunctions()
 	{
-		return array(
-			new \Twig_SimpleFunction('render', array($this, 'render')),
-			new \Twig_SimpleFunction('renderJS', array($this, 'renderJS')),
-			new \Twig_SimpleFunction('renderCSS', array($this, 'renderCSS')),
-			new \Twig_SimpleFunction('path', array($this, 'path')),
-			new \Twig_SimpleFunction('t', array($this, 'translate')),
-			new \Twig_SimpleFunction('asset', array($this, 'asset')),
-		);
+		return [
+			new \Twig_SimpleFunction('render', [$this, 'render']),
+			new \Twig_SimpleFunction('renderJS', [$this, 'renderJS']),
+			new \Twig_SimpleFunction('renderCSS', [$this, 'renderCSS']),
+			new \Twig_SimpleFunction('path', [$this, 'path']),
+			new \Twig_SimpleFunction('t', [$this, 'translate']),
+			new \Twig_SimpleFunction('asset', [$this, 'asset']),
+		];
 	}
 
 	public function getFilters()
 	{
-		return array(
-			new \Twig_SimpleFilter('format_date', array($this, 'formatDate')),
-			new \Twig_SimpleFilter('file_size', array($this, 'fileSize')),
-			new \Twig_SimpleFilter('strpad', array($this, 'strpad')),
-		);
+		return [
+			new \Twig_SimpleFilter('format_date', [$this, 'formatDate']),
+			new \Twig_SimpleFilter('file_size', [$this, 'fileSize']),
+			new \Twig_SimpleFilter('strpad', [$this, 'strpad']),
+		];
 	}
 
-	public function render($path, $options = array())
+	public function render($path, $options = [])
 	{
 		return $GLOBALS['container']->callAction($path, $options);
 	}
@@ -53,7 +53,7 @@ class FugaExtension  extends \Twig_Extension
 		return $text;
 	}
 
-	public function path($name, $options = array(), $locale = PRJ_LOCALE)
+	public function path($name, $options = [], $locale = PRJ_LOCALE)
 	{
 		if (isset($options['node']) && '/' == $options['node']) {
 			unset($options['node']);
@@ -78,7 +78,7 @@ class FugaExtension  extends \Twig_Extension
 
 	public function translate($string)
 	{
-		return $GLOBALS['container']->get('translator')->t($string);
+		return $GLOBALS['container']->get('translator_local')->t($string);
 	}
 
 	public function asset($path, $cache = true)

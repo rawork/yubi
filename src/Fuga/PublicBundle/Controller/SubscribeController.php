@@ -21,9 +21,9 @@ class SubscribeController extends Controller
 		$rubrics = $this->get('request')->request->get('rubrics');
 
 		if (!$this->get('util')->isEmail($email)) {
-			$data = array(
+			$data = [
 				'error' => 'АДРЕС ЭЛЕКТРОННОЙ ПОЧТЫ<br> УКАЗАН НЕПРАВИЛЬНО!',
-			);
+			];
 		} else {
 			$data = $this->getManager('Fuga:Common:Subscribe')->subscribe($email, $rubrics);
 		}
@@ -51,7 +51,7 @@ class SubscribeController extends Controller
 
 		return $this->redirect($this->generateUrl(
 			'admin_entity_index',
-			array('state' => 'service', 'module' => 'subscribe', 'entity' => 'lists')
+			['state' => 'service', 'module' => 'subscribe', 'entity' => 'lists']
 		));
 	}
 

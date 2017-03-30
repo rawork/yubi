@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class AdminController extends Controller
 {
-	public function render($template, $params = array())
+	public function render($template, $params = [])
 	{
 		$params['user'] = $this->get('security')->getCurrentUser();
 		$params['states'] = $this->getManager('Fuga:Common:Module')->getStates();
@@ -25,7 +25,7 @@ class AdminController extends Controller
 		$rpp = $this->get('request')->request->get('rpp', 25);
 		$this->get('session')->set($table.'_rpp', $rpp);
 		$response = new JsonResponse();
-		$response->setData(array('status' => $this->get('session')->get($table.'_rpp')));
+		$response->setData(['status' => $this->get('session')->get($table.'_rpp')]);
 
 		return $response;
 	}

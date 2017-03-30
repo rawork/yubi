@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CommonController extends Controller {
 
-	public function dinamic($node, $action, $params = array())
+	public function dinamic($node, $action, $params = [])
 	{
 		$node = $this->getManager('Fuga:Common:Page')->getNodeByName($node);
 
@@ -33,7 +33,7 @@ class CommonController extends Controller {
 		return '';
 	}
 
-	public function index($node = null, $action = null, $options = array())
+	public function index($node = null, $action = null, $options = [])
 	{
 		$node = $node ?: '/';
 		$action = $action ?: 'index';
@@ -53,7 +53,7 @@ class CommonController extends Controller {
 		}
 
 		if ($action == 'index') {
-			$staticContent = $this->render('page/static', array('node' => $nodeItem));
+			$staticContent = $this->render('page/static', ['node' => $nodeItem]);
 		}
 
 		$links = $this->getManager('Fuga:Common:Page')->getNodes('/', true);
@@ -86,7 +86,7 @@ class CommonController extends Controller {
 			return $response;
 		}
 
-		$this->get('templating')->assign(array('maincontent' => $staticContent.$res));
+		$this->get('templating')->assign(['maincontent' => $staticContent.$res]);
 
 		$response = new Response();
 		$response->setContent($this->render(
@@ -111,7 +111,7 @@ class CommonController extends Controller {
 	
 	private function getMapList($uri = 0)
 	{
-		$nodes = array();
+		$nodes = [];
 		$items = $this->getManager('Fuga:Common:Page')->getNodes($uri);
 		$block = strval($uri) == '0' ? '' :  '_sub';
 		if (count($items)) {
@@ -140,10 +140,10 @@ class CommonController extends Controller {
 
 		if ($form->isSubmitted() && $form->isValid()) {
 
-			$data = array(
+			$data = [
 				'secret' => RECAPTCHA_SECRET_KEY,
 				'response' => $this->get('request')->request->get('g-recaptcha-response')
-			);
+			];
 
 			$verify = curl_init();
 			curl_setopt($verify, CURLOPT_URL, RECAPTCHA_URL);
@@ -203,8 +203,8 @@ class CommonController extends Controller {
 	// TODO fileupload -> filestorage
 	public function fileupload()
 	{
-		$error = array();
-		$msg = array();
+		$error = [];
+		$msg = [];
 		$fileElementName = 'fileToUpload';
 		$date = new \Datetime();
 		$upload_ref = UPLOAD_REF.$date->format('/Y/m/d/');
@@ -258,7 +258,7 @@ class CommonController extends Controller {
 					$width = $fileInfo[0];
 					$height = $fileInfo[1];
 				}
-				$this->get('connection')->insert('system_files', array(
+				$this->get('connection')->insert('system_files', [
 					'name' => $name,
 					'mimetype' => $mimetype,
 					'file' => $file,
@@ -268,7 +268,7 @@ class CommonController extends Controller {
 					'table_name' => $this->get('request')->request->get('table_name'),
 					'entity_id' => $this->get('request')->request->get('entity_id', true, 0),
 					'created' => date('Y-m-d H:i:s')
-				));
+				]);
 				$sizes = $this->get('request')->request->get('sizes');
 				if ($sizes) {
 					$this->get('imagestorage')->afterSave($file, ['sizes' => $sizes]);

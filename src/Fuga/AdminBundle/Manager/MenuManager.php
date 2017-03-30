@@ -20,47 +20,47 @@ class MenuManager extends ModelManager
 
 	public function getEntitiesByModule($moduleName)
 	{
-		$ret = array();
+		$ret = [];
 		$module = $this->container->getManager('Fuga:Common:Module')->getByName($moduleName);
 		$tables = $this->container->getManager('Fuga:Common:Table')->getByModuleName($moduleName);
 
 		foreach ($tables as $table) {
 			if (empty($table->params['is_hidden'])) {
-				$ret[] = array (
+				$ret[] = [
 					'ref' => $this->container->get('router')->getGenerator()->generate(
 						'admin_entity_index',
-						array('state' => $module['state'], 'module' => $module['name'], 'entity' => $table->getName())
+						['state' => $module['state'], 'module' => $module['name'], 'entity' => $table->getName()]
 					),
 					'name' => $table->title
-				);
+				];
 			}
 		}
 		if ($this->container->get('security')->isSuperuser()) {
 			if ($this->container->getManager('Fuga:Common:Param')->findAll($module['name'])) {
-				$ret[] = array (
+				$ret[] = [
 					'ref' => $this->container->get('router')->getGenerator()->generate(
 						'admin_module_setting',
-						array('state' => $module['state'], 'module' => $module['name'])
+						['state' => $module['state'], 'module' => $module['name']]
 					),
 					'name' => 'Настройки'
-				);
+				];
 			}
 		}
 		if ($module['name'] == 'config' && $this->container->get('security')->isSuperuser()) {
-			$ret[] = array (
+			$ret[] = [
 				'ref' => $this->container->get('router')->getGenerator()->generate('admin_service'),
 				'name' => 'Обслуживание'
-			);
+			];
 		}
 
 		$config = $this->getConfig();
 
 		foreach ($config as $var => $data) {
 			if ($module['name'] == $var) {
-				$ret[] = array (
+				$ret[] = [
 					'ref' => $this->container->get('router')->getGenerator()->generate($data['route']),
 					'name' => $data['title']
-				);
+				];
 			}
 		}
 
@@ -75,15 +75,15 @@ class MenuManager extends ModelManager
 
 	public function getModulesByState($state, $currentModule = '')
 	{
-		$modules = array();
+		$modules = [];
 		$modules0 = $this->container->getManager('Fuga:Common:Module')->getByState($state);
 		if ($modules0) {
 			foreach ($modules0 as $module) {
-				$modules[] = array(
+				$modules[] = [
 					'name' => $module['name'],
 					'title' => $module['title'],
 					'current' => $module['name'] == $currentModule
-				);
+				];
 			}
 		}
 

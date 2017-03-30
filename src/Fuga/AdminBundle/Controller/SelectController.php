@@ -9,7 +9,7 @@ class SelectController extends Controller
 {
 	public function complete()
 	{
-		$results = array();
+		$results = [];
 		$response = new JsonResponse();
 		$response->setData($results);
 

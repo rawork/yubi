@@ -220,7 +220,7 @@ class Container
 					
 					$this->services[$name] = \Doctrine\ODM\MongoDB\DocumentManager::create($connection, $config);
 					break;
-				case 'translator':
+				case 'translator_local':
 					$this->services[$name] = new Translator($this->get('session')->get('locale'));
 					break;
 				case 'search':
