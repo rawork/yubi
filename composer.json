@@ -15,14 +15,16 @@
         "symfony/finder": "2.8.*",
         "symfony/yaml": "2.8.*",
         "symfony/config": "2.8.*",
+        "symfony/security-csrf": "2.8.*",
         "symfony/form": "2.8.*",
         "symfony/validator": "2.8.*",
         "symfony/security": "2.8.*",
         "symfony/event-dispatcher": "2.8.*",
         "symfony/expression-language": "2.8.*",
         "symfony/proxy-manager-bridge": "2.8.*",
-        "symfony/dependency-injection": "2.8.*",
-        "gregwar/captcha": "1.1.*"
+        "symfony/dependency-injection": "2.8.*"
+        "symfony/twig-bridge": "2.8.*",
+        "symfony/translation": "2.8.*"
     },
     "autoload": {
         "psr-4": {"Fuga\\": "src/Fuga/"}

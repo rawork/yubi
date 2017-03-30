@@ -1,0 +1,6 @@
+{% if message %}<div class="alert alert-{{ message.type }}">{{ message.text }}</div>{% endif %}
+{{ form_start(form) }}
+    {{ form_widget(form) }}
+<tr><td colspan="2"><div class="g-recaptcha" data-sitekey="{{ recaptcha_key }}"></div></td></tr>
+<tr><td colspan="2" align="center"><br><input type="submit" value="Отправить сообщение"></td></tr>
+{{ form_end(form) }}

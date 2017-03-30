@@ -3,6 +3,8 @@
 namespace Fuga\Component;
 
 
+use Fuga\CommonBundle\Controller\Controller;
+use Fuga\CommonBundle\Manager\ModelManager;
 use Fuga\Component\Exception\NotFoundHttpException;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Config\FileLocator;
@@ -11,10 +13,23 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader as ServiceYamlFi
 
 class Container 
 {
+	/**
+	 * @var Controller[]
+	 */
 	protected $controllers = [];
+
 	protected $services = [];
+
+	/**
+	 * @var ModelManager[]
+	 */
 	protected $managers = [];
+
 	protected $loader;
+
+	/**
+	 * @var ServiceYamlFileLoader
+	 */
 	protected $locator;
 
 	/**
@@ -38,25 +53,6 @@ class Container
 
 		$this->getManager('Fuga:Common:Module')->getAll();
 		$this->getManager('Fuga:Common:Table')->getAll();
-	}
-
-	public function getItemsRaw($sql)
-	{
-		$ret = array();
-		if (!preg_match('/(delete|truncate|update|insert|drop|alter)+/i', $sql)) {
-			$stmt = $this->get('connection')->prepare($sql);
-			$stmt->execute();
-			$items = $stmt->fetchAll();
-			foreach ($items as $item) {
-				if (isset($item['id'])) {
-					$ret[$item['id']] = $item;
-				} else {
-					$ret[] = $item;
-				}
-			}
-		}
-
-		return $ret;
 	}
 
 	public function backupDB($filename)
@@ -98,7 +94,8 @@ class Container
 		}
 
 		$obj = new \ReflectionClass($this->getControllerClass($path));
-		//$action .= 'Action';
+
+
 		if (!$obj->hasMethod($action)) {
 			$this->get('log')->addError('Не найден обработчик ссылки '.$path);
 			throw new NotFoundHttpException(PRJ_ENV == 'dev'
@@ -106,15 +103,16 @@ class Container
 				: 'Несуществующая страница.'
 			);
 		}
-		$params = array();
+		$params = [];
+		$options['request'] = $this->get('request');
 		foreach ($obj->getMethod($action)->getParameters() as $parameter) {
 			$params[$parameter->getName()] = isset($options[$parameter->getName()])
 				? $options[$parameter->getName()]
 				: null;
 			if (null === $params[$parameter->getName()] && !$parameter->allowsNull()) {
-				throw new NotFoundHttpException(PRJ_ENV == 'dev'
-					? 'Не задан обязательный параметр '.$parameter->getName().' обработчика.'
-					: 'Несуществующая страница.'
+				throw new NotFoundHttpException(PRJ_ENV == 'prod'
+					? 'Несуществующая страница.'
+					: 'Не задан обязательный параметр '.$parameter->getName().' обработчика.'
 				);
 			}
 			if ($parameter->getName() == 'options') {
@@ -163,7 +161,13 @@ class Container
 			$this->container->setParameter('mongo.host', MONGO_HOST);
 			$this->container->setParameter('mongo.base', MONGO_BASE);
 
-			$this->container->setParameter('twig.path', PRJ_DIR.TWIG_PATH);
+//			$appVariableReflection = new \ReflectionClass('\Symfony\Bridge\Twig\AppVariable');
+//			$vendorTwigBridgeDir = dirname($appVariableReflection->getFileName());
+
+			$this->container->setParameter('twig.paths', [
+				PRJ_DIR.TWIG_PATH,
+//				$vendorTwigBridgeDir.'/Resources/views/Form'
+			]);
 			$this->container->setParameter('twig.admin.path', PRJ_DIR.'src/Fuga/AdminBundle/Resources/views');
 			$this->container->setParameter('twig.options', [
 				'cache' => PRJ_DIR.TWIG_CACHE_PATH,

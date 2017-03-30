@@ -4,6 +4,7 @@ namespace Fuga\CommonBundle\Manager;
 
 use Fuga\Component\Container;
 use Doctrine\DBAL\Connection;
+use Fuga\Component\Database\Table;
 
 class ModelManager implements ModelManagerInterface
 {
@@ -36,8 +37,8 @@ class ModelManager implements ModelManagerInterface
 		return $this->container->get($name);
 	}
 
-	/*
-	 * @return Fuga\Component\Database\Table
+	/**
+	 * @return Table
 	 */
 	public function getTable($name)
 	{

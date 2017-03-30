@@ -55,5 +55,10 @@ class TwigTemplating implements TemplatingInterface
 
 		return false;
 	}
+
+	public function getEngine()
+	{
+		return $this->engine;
+	}
 	
 }

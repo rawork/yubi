@@ -8,9 +8,6 @@ security_forget:
   path: /admin/forget
   defaults: { _controller: 'Fuga:Common:Auth:forget' }
 
-secureimage:
-  path: /secureimage
-  defaults: { _controller: 'Fuga:Public:Common:captcha' }
 fileupload:
   path: /fileupload
   defaults: { _controller: 'Fuga:Public:Common:fileupload' }

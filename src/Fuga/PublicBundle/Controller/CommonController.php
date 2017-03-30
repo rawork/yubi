@@ -4,8 +4,8 @@ namespace Fuga\PublicBundle\Controller;
 
 use Fuga\CommonBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Gregwar\Captcha\CaptchaBuilder;
 
 class CommonController extends Controller {
 
@@ -63,7 +63,7 @@ class CommonController extends Controller {
 		}
 		unset($link);
 
-		$params = array(
+		$params = [
 			'h1'        => $nodeItem['title'],
 			'title'     => $this->getManager('Fuga:Common:Meta')->getTitle() ?: strip_tags($nodeItem['title']),
 			'meta'      => $this->getManager('Fuga:Common:Meta')->getMeta(),
@@ -73,8 +73,7 @@ class CommonController extends Controller {
 			'curnode'   => $nodeItem,
 			'curuser'   => $this->get('security')->getCurrentUserPublic(),
 			'locale'    => $this->get('session')->get('locale'),
-			'asset'		=> 'dev' == PRJ_ENV ? date('YmdHis') : 'prodaction'
-		);
+		];
 		$this->get('templating')->assign($params);
 
 
@@ -134,23 +133,71 @@ class CommonController extends Controller {
 		return $this->getMapList();
 	}
 	
-	public function form($name)
+	public function form($name, Request $request)
 	{
-		return $this->getManager('Fuga:Common:Form')->getForm($name);
-	}
+		$form = $this->getManager('Fuga:Common:Form')->getForm($name);
+		$form->handleRequest();
 
-	public function captcha()
-	{
-		$captcha = new CaptchaBuilder();
-		$captcha->setBackgroundColor(255, 255, 255);
-		$captcha->build(200, 50);
+		if ($form->isSubmitted() && $form->isValid()) {
 
-		$this->get('session')->set('captcha.phrase', md5($captcha->getPhrase().CAPTCHA_KEY));
-		$response = new Response();
-		$response->setContent($captcha->output());
-		$response->headers->set('Content-Type', 'image/jpeg');
+			$data = array(
+				'secret' => RECAPTCHA_SECRET_KEY,
+				'response' => $this->get('request')->request->get('g-recaptcha-response')
+			);
 
-		return $response;
+			$verify = curl_init();
+			curl_setopt($verify, CURLOPT_URL, RECAPTCHA_URL);
+			curl_setopt($verify, CURLOPT_POST, true);
+			curl_setopt($verify, CURLOPT_POSTFIELDS, http_build_query($data));
+			curl_setopt($verify, CURLOPT_SSL_VERIFYPEER, false);
+			curl_setopt($verify, CURLOPT_RETURNTRANSFER, true);
+			$response = curl_exec($verify);
+
+			$json = json_decode($response);
+
+			$params0 = $this->get('container')->getManager('Fuga:Common:Param')->findAll('form');
+			$params = [];
+			foreach ($params0 as $param) {
+				$params[$param['name']] = $param['type'] == 'int' ? intval($param['value']) : $param['value'];
+			}
+
+			$values = $form->getData();
+			if ($json->success) {
+				$this->get('session')->remove('form_'.$name);
+				$this->getManager('Fuga:Common:Form')->send($name, $values);
+
+				$this->get('session')->set(
+					'success',
+					$this->get('container')->getManager('Fuga:Common:Param')->getValue('form', 'success')
+				);
+			} else {
+				$this->get('session')->set('form_'.$name, $values);
+				$this->get('session')->set(
+					'error',
+					$this->get('container')->getManager('Fuga:Common:Param')->getValue('form','securecode_error')
+				);
+			}
+
+			return $this->reload();
+		}
+
+		$message = $this->flash('error');
+		if (!$message) {
+			$message = $this->flash('success');
+		}
+
+		if ($this->get('session')->has('form_'.$name)) {
+			$form->setData($this->get('session')->get('form_'.$name));
+		}
+
+		return $this->getManager('Fuga:Common:Form')->getTwig()->render(
+			'form/new',
+			[
+				'form' => $form->createView(),
+				'recaptcha_key' => RECAPTCHA_PUBLIC_KEY,
+				'message' => $message
+			]
+		);
 	}
 
 	// TODO fileupload -> filestorage

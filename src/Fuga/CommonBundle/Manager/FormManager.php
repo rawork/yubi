@@ -2,62 +2,133 @@
 
 namespace Fuga\CommonBundle\Manager;
 
-use Fuga\Component\Form\FormBuilder;
+use Fuga\Component\Templating\TwigTemplating;
+use Symfony\Component\Form\FormFactory;
+use Symfony\Component\Form\Forms;
+use Symfony\Component\Form\Extension\Csrf\CsrfExtension;
+use Symfony\Component\Security\Csrf\TokenStorage\SessionTokenStorage;
+use Symfony\Component\Security\Csrf\TokenGenerator\UriSafeTokenGenerator;
+use Symfony\Component\Security\Csrf\CsrfTokenManager;
 
-class FormManager extends ModelManager {
-	
-	private $params;
-	
-	public function __construct()
+use Symfony\Bridge\Twig\Extension\FormExtension;
+use Symfony\Bridge\Twig\Form\TwigRenderer;
+use Symfony\Bridge\Twig\Form\TwigRendererEngine;
+
+use Symfony\Component\Translation\Translator;
+use Symfony\Component\Translation\Loader\XliffFileLoader;
+use Symfony\Bridge\Twig\Extension\TranslationExtension;
+
+class FormManager extends ModelManager
+{
+	protected $params;
+	/**
+	 * @var FormFactory
+	 */
+	protected $formFactory;
+	/**
+	 * @var TwigTemplating
+	 */
+	protected $twig;
+
+	protected $formData = [];
+	protected $fieldsData = [];
+
+	public function getFactory()
 	{
-		$params = $this->container->getManager('Fuga:Common:Param')->findAll('form');
-		$this->params = array();
-		foreach ($params as $param) {
-			$this->params[$param['name']] = $param['type'] == 'int' ? intval($param['value']) : $param['value'];
+		if (!$this->formFactory) {
+			$csrfGenerator = new UriSafeTokenGenerator();
+			$csrfStorage = new SessionTokenStorage($this->container->get('session'));
+			$csrfManager = new CsrfTokenManager($csrfGenerator, $csrfStorage);
+
+			$defaultFormTheme = 'form/layout.html.twig';
+
+			$this->twig = $this->container->get('templating');
+
+			// create the Translator
+			$translator = new Translator('ru');
+			// somehow load some translations into it
+			$translator->addLoader('xlf', new XliffFileLoader());
+			$translator->addResource(
+				'xlf',
+				PRJ_DIR.'app/Resources/translations/validators.ru.xlf',
+				'ru'
+			);
+
+			$this->twig->getEngine()->addExtension(new TranslationExtension($translator));
+
+			$formEngine = new TwigRendererEngine(array($defaultFormTheme));
+			$formEngine->setEnvironment($this->twig->getEngine());
+
+			$this->twig->getEngine()->addExtension(new FormExtension(new TwigRenderer($formEngine, $csrfManager)));
+
+			$this->formFactory = Forms::createFormFactoryBuilder()
+				->addExtension(new CsrfExtension($csrfManager))
+				->getFormFactory();
 		}
+
+		return $this->formFactory;
 	}
+
+	public function getTwig()
+	{
+		return $this->twig;
+	}
+
 	
 	public function getForm($name)
 	{
-		$form = $this->getTable('form')->getItem("name='$name' AND publish=1");
-		if (!$form) {
+		$factory = $this->getFactory();
+
+		$formData = $this->getTable('form')->getItem("name='$name' AND publish=1");
+		if (!$formData) {
 			return null;
 		}
 
-		$form['fields'] = $this->getTable('form_field')->getItems('form_id='.$form['id']);
-		$builder = new FormBuilder($form, '');
-		$builder->setContainer($this->container);
-		$builder->items = $form['fields'];
-		$builder->message = $this->processForm($builder);
+		$fieldsData = $this->getTable('form_field')->getItems('form_id='.$formData['id']);
 
-		if ($builder->message[0] == 'error'){
-			$builder->fillGlobals();
+		$builder = $this->formFactory->createNamedBuilder($formData['name']);
+
+		foreach($fieldsData as $fieldData) {
+			$builder->add($fieldData['name'], 'Symfony\\Component\\Form\\Extension\\Core\\Type\\'.ucfirst($fieldData['type']).'Type', ['label' => $fieldData['title'], 'required' => $fieldData['is_required'] == 1]);
 		}
 
-		return $builder->render();
+		$this->formData[$name] = $formData;
+		$this->fieldsData[$name] = $fieldsData;
+
+		return $builder->getForm();
 	}
 
-	private function processForm($form)
+	public function send($name, $data)
 	{
-		$message = null;
-		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-			if($form->defense && $this->get('session')->get('captcha.phrase') != md5($this->get('request')->request->get('securecode').CAPTCHA_KEY)){
-				$message[0] = 'error';
-				$message[1] = $this->params['securecode_error'];
-			} else {
-				$errors = $form->sendMail($this->params);
-				if ($errors === true){
-					$message[0] = 'success';
-					$message[1] = $this->params['form_success'];
-				} else {
-					$message[0] = 'error';
-					$message[1] = implode('<br>', $errors);
+		$fields = [];
+
+		foreach ($this->fieldsData[$name] as $field){
+			$value = $data[$field['name']];
+			if ($field['type'] == 'checkbox') {
+				$value = (empty($value) ? 'нет' : 'да').'<br>';
+			} elseif ($field['type'] == 'file' && is_array($_FILES) && isset($_FILES[$field['name']]) && $_FILES[$field['name']]['name'] != '') {
+				$upfile = $_FILES[$field['name']];
+				if ($upfile['name'] != '' && $upfile['size'] < MAX_FILE_SIZE ){
+					$this->get('mailer')->Attach( $upfile['tmp_name'], $upfile['type'], 'inline', $upfile['name']);
 				}
+				$value = $upfile['name'].' см. вложение<br>';
+			} else {
+				$value = htmlspecialchars($value);
 			}
-			$this->get('session')->remove('captcha.phrase');
+
+			$fields[] = array('value' => $value, 'title' => $field['title']);
 		}
-		
-		return $message;
+
+		if ($this->formData[$name]['is_defense'] == 1) {
+			$fields[] = array('value' => $this->get('request')->request->get('g-recaptcha-response'), 'title' => 'Код безопасности');
+		}
+		$this->container->get('mailer')->send(
+			$this->formData[$name]['title'].' на сайте '.$_SERVER['SERVER_NAME'],
+			$this->twig->render('form/mail', compact('fields')),
+			empty($this->formData[$name]['email']) ? ADMIN_EMAIL : $this->formData[$name]['email']
+		);
+
+		return true;
 	}
 
 }

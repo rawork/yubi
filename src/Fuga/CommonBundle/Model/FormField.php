@@ -10,8 +10,8 @@ class FormField extends BaseModel {
 	protected $title = 'Поля формы';
 	protected $module = 'form';
 
-	protected $order_by = 'name';
-	protected $activate = true;
+	protected $order_by = 'sort,name';
+	protected $sortable = true;
 	protected $l10n = true;
 
 	protected $fields = [
@@ -42,45 +42,18 @@ class FormField extends BaseModel {
 			'name' => 'type',
 			'title' => 'Тип',
 			'type' => 'enum',
-			'select_values' => '{"string":"Строка","text":"Текст","select":"Список","checkbox":"Флаг","file":"Файл","password":"Пароль"}',
+			'select_values' => '{"text":"Строка","textarea":"Текст","choice":"Список","email":"Почта","checkbox":"Флажок","file":"Файл","password":"Пароль"}',
 			'width' => '15%'
 		],
-		'select_table' => [
-			'name' => 'select_table',
-			'title' => 'Таблица значений',
-			'type' => 'string',
-			'help' => 'Таблица значений'
-		],
-		'select_name' => [
-			'name' => 'select_name',
-			'title' => 'Поле залоговка',
-			'type' => 'string',
-		],
-		'select_value' => [
-			'name' => 'select_value',
-			'title' => 'Поле значения',
-			'type' => 'string',
-		],
-		'select_filter' => [
-			'name' => 'select_filter',
-			'title' => 'Запрос',
-			'type' => 'string',
-		],
-		'select_values' => [
-			'name' => 'select_values',
-			'title' => 'Значения',
-			'type' => 'string'
+		'options' => [
+			'name' => 'options',
+			'title' => 'Настройки поля',
+			'type' => 'text',
+			'help' => 'Настройки поля с формате JSON'
 		],
 		'is_required' => [
 			'name' => 'is_required',
 			'title' => 'Обяз.',
-			'type' => 'checkbox',
-			'group_update'  => true,
-			'width' => '1%'
-		],
-		'is_check' => [
-			'name' => 'is_check',
-			'title' => 'Пров.',
 			'type' => 'checkbox',
 			'group_update'  => true,
 			'width' => '1%'

@@ -59,7 +59,7 @@ services:
     class:      Symfony\Component\EventDispatcher\EventDispatcher
   template_loader:
     class:      Twig_Loader_Filesystem
-    arguments:  ['%twig.path%']
+    arguments:  ['%twig.paths%']
     calls:
           - [addPath, ['%twig.admin.path%', 'Admin']]
   template_string_loader:

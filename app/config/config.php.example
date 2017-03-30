@@ -1,9 +1,9 @@
 <?php
 
-define('PRJ_ENV', 'dev'); // prod, dev
+define('PRJ_ENV', 'dev'); // development | production
 define('PRJ_REF', '');
-define('PRJ_DIR', __DIR__.'/../../'.PRJ_REF);
-define('PRJ_LOGO', PRJ_REF.'/bundles/public/img/logo_.png');
+define('PRJ_DIR', __DIR__.'/../..'.(PRJ_REF ?: '/'));
+define('PRJ_LOGO', PRJ_REF.'/bundles/public/img/logo.png');
 
 define('RES_REF', PRJ_REF.'/files');
 define('RES_DIR', PRJ_DIR.'/files');
@@ -23,17 +23,21 @@ define('TWIG_CACHE_PATH', '/app/cache/twig');
 define('VK_APP_ID', '');
 define('VK_APP_SHARED_SECRET', '');
 define('VK_APP_REDIRECT_URI', '');
-define('VK_OAUTH_URL', '');
+define('VK_OAUTH_URL', 'http://oauth.vk.com/authorize');
 
 define('FB_APP_ID', '');
 define('FB_APP_SHARED_SECRET', '');
 define('FB_APP_REDIRECT_URI', '');
 define('FB_OAUTH_URL', '');
 
-define('CACHE_DRIVER', 'file'); // file | memcached | redis
+define('CACHE_DRIVER', 'file'); // file / memcached / redis
 define('CACHE_STORAGE', PRJ_DIR.'app/cache/fuga/');
 define('CACHE_HOST', 'localhost');
-define('CACHE_PORT', 0);   // 0 | 11211 | 6379
+define('CACHE_PORT', 11211);   // 0 / 11211 / 6379
+
+define('RECAPTCHA_PUBLIC_KEY', '');
+define('RECAPTCHA_SECRET_KEY', '');
+define('RECAPTCHA_URL', 'https://www.google.com/recaptcha/api/siteverify');
 
 require_once('database.php');
 require_once('parameters.php');

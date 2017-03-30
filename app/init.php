@@ -53,7 +53,7 @@ if (! function_exists('array_column')) {
 	}
 }
 
-set_exception_handler('exception_handler');
+//set_exception_handler('exception_handler');
 
 if (file_exists(__DIR__.'/config/config.php')) {
 	require_once __DIR__.'/config/config.php';

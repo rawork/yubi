@@ -13,7 +13,7 @@ abstract class Controller
 	 */
 	protected $container;
 
-	public function setContainer(\Fuga\Component\Container &$container)
+	public function setContainer(&$container)
 	{
 		$this->container = $container;
 	}
