@@ -26,15 +26,11 @@ class AppController extends Controller
 		$this->getManager('Fuga:Common:Template')->setVar('mainurl', $site['url']);
 
 		if ($this->get('security')->isSecuredArea() && !$this->get('security')->isAuthenticated()) {
-			$controller = new AuthController();
-
-			return $controller->login();
+			return $this->call('Fuga:Common:Auth:login');
 		}
 
 		if ($this->get('security')->isClosedArea()) {
-			$controller = new AuthController();
-
-			return $controller->closed();
+			return $this->call('Fuga:Common:Auth:closed');
 		}
 
 		try {
