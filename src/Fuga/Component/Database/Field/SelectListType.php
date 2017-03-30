@@ -12,10 +12,10 @@ class SelectListType extends Type
 	public function getSQLValue($name = '')
 	{
 		$name = $name ? $name : $this->getName();
-		$value = $this->get('request')->request->get($name);
-		$this->get('connection')->delete($this->getParam('link_table'), array($this->getParam('link_inversed') => $this->dbId));
+		$value = $this->container->get('request')->request->get($name);
+		$this->container->get('connection')->delete($this->getParam('link_table'), array($this->getParam('link_inversed') => $this->dbId));
 		foreach ($value as $id) {
-			$this->get('connection')->insert(
+			$this->container->get('connection')->insert(
 				$this->getParam('link_table'),
 				array(
 					$this->getParam('link_inversed') => $this->dbId,
@@ -36,7 +36,7 @@ class SelectListType extends Type
 		JOIN '.$this->getParam('link_table').' as t1 ON t1.'.$this->getParam('link_mapped').' = t0.id
 		WHERE t1.'.$this->getParam('link_inversed').' = :id
 		ORDER BY t0.'.$this->getParam('l_sort');
-		$stmt = $this->get('connection')->prepare($sql);
+		$stmt = $this->container->get('connection')->prepare($sql);
 		$stmt->bindValue('id', $this->dbId);
 		$stmt->execute();
 		$items = $stmt->fetchAll();
@@ -66,7 +66,7 @@ class SelectListType extends Type
 		$empty = $value ? ' <a href="#" class="selected-remove" data-input="'.$input_id.'"><span class="glyphicon glyphicon-remove"></span></a>' : '';
 		$content = '
 <div id="'.$input_id.'_title">'.$this->getStatic($value).$empty.'</div>
-<button class="btn btn-success btn-select-dialog" data-url="'.$this->get('router')->getGenerator()->generate('admin_dialog_select').'" data-input="'.$input_id.'" data-table="'.$table.'" data-field="'.$name.'" data-value="'.$id.'" data-title="'.htmlspecialchars($this->getStatic($value)).'">Выбрать</button>
+<button class="btn btn-success btn-select-dialog" data-url="'.$this->container->get('router')->getGenerator()->generate('admin_dialog_select').'" data-input="'.$input_id.'" data-table="'.$table.'" data-field="'.$name.'" data-value="'.$id.'" data-title="'.htmlspecialchars($this->getStatic($value)).'">Выбрать</button>
 <input type="hidden" name="'.$name.'" value="'.$value.'" id="'.$input_id.'">
 <input type="hidden" name="'.$name.'_type" value="'.$this->getParam('link_type').'" id="'.$input_id.'_type">
 ';
@@ -78,7 +78,7 @@ class SelectListType extends Type
 		$value = $this->getSearchValue();
 		if ($value) {
 			$sql = 'SELECT * FROM '.$this->getParam('link_table').' WHERE '.$this->getParam('link_mapped').' = '.$value;
-			$stmt = $this->get('connection')->prepare($sql);
+			$stmt = $this->container->get('connection')->prepare($sql);
 			$stmt->bindValue('id', $this->dbId);
 			$stmt->execute();
 			$links = $stmt->fetchAll();
@@ -104,12 +104,12 @@ class SelectListType extends Type
 			LEFT JOIN '.$this->getParam('link_table').' as t1 ON (t1.'.$this->getParam('link_mapped').' = t0.id AND t1.'.$this->getParam('link_inversed').'='.$this->dbId.')
 			WHERE t1.'.$this->getParam('link_inversed').' = :id
 			ORDER BY t0.'.$this->getParam('l_sort');
-			$stmt = $this->get('connection')->prepare($sql);
+			$stmt = $this->container->get('connection')->prepare($sql);
 			$stmt->bindValue('id', $this->dbId);
 			$stmt->execute();
 			$items = $stmt->fetchAll();
 
-			return $this->get('templating')->render(
+			return $this->container->get('templating')->render(
 				'form/field/selectlist.dialog',
 				array(
 					'items' => $items,
@@ -123,11 +123,11 @@ class SelectListType extends Type
 			FROM '.$this->getParam('l_table').' as t0
 			LEFT JOIN '.$this->getParam('link_table').' as t1 ON (t1.'.$this->getParam('link_mapped').' = t0.id AND t1.'.$this->getParam('link_inversed').'='.$this->dbId.')
 			ORDER BY t0.'.$this->getParam('l_sort');
-			$stmt = $this->get('connection')->prepare($sql);
+			$stmt = $this->container->get('connection')->prepare($sql);
 			$stmt->execute();
 			$items = $stmt->fetchAll();
 
-			return $this->get('templating')->render(
+			return $this->container->get('templating')->render(
 				'form/field/selectlist.simple',
 				array(
 					'items' => $items,

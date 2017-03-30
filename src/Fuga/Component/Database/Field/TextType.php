@@ -13,7 +13,7 @@ class TextType extends Type
 
 	public function getStatic()
 	{
-		return $this->get('util')->cut_text(parent::getStatic());
+		return $this->container->get('util')->cut_text(parent::getStatic());
 	}
 
 	public function getSearchInput()

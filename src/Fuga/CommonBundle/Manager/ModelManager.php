@@ -8,6 +8,9 @@ use Fuga\Component\Database\Table;
 
 class ModelManager implements ModelManagerInterface
 {
+	/**
+	 * @var string
+	 */
 	protected $entityTable;
 	/**
 	 * @var Connection;
@@ -28,15 +31,6 @@ class ModelManager implements ModelManagerInterface
 		$this->container = $container;
 	}
 	
-	public function get($name = null)
-	{
-		if (!$name || 'container' == $name) {
-			return $this->container;
-		}
-
-		return $this->container->get($name);
-	}
-
 	/**
 	 * @return Table
 	 */

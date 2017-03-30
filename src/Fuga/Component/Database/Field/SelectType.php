@@ -24,7 +24,7 @@ class SelectType extends LookUpType
 				FROM '.$this->getParam('link_table').' t0
 				JOIN '.$this->getParam('l_table').' t1 ON t0.'.$this->getParam('link_mapped').'=t1.id
 				WHERE t0.'.$this->getParam('link_inversed').'='.$this->dbId.' AND '.$this->getParam('link_mapped').'<>'.parent::getNativeValue();
-			$stmt = $this->get('connection')->prepare($sql);
+			$stmt = $this->container->get('connection')->prepare($sql);
 			$stmt->execute();
 			$entities = $stmt->fetchAll();
 			foreach ($entities as $entity) {
@@ -41,7 +41,7 @@ class SelectType extends LookUpType
 <div>'.$staticValue.$defaultValue.'</div>
 '.$extraElements.'
 </div>
-<button class="btn btn-success btn-select-dialog" data-url="'.$this->get('router')->getGenerator()->generate('admin_dialog_select').'" data-input="'.$input_id.'" data-table="'.$table.'" data-field="'.$name.'" data-value="'.$id.'" data-title="'.htmlspecialchars($this->getStatic($value)).'">Выбрать</button>
+<button class="btn btn-success btn-select-dialog" data-url="'.$this->container->get('router')->getGenerator()->generate('admin_dialog_select').'" data-input="'.$input_id.'" data-table="'.$table.'" data-field="'.$name.'" data-value="'.$id.'" data-title="'.htmlspecialchars($this->getStatic($value)).'">Выбрать</button>
 <input type="hidden" name="'.$name.'" value="'.$value.'" id="'.$input_id.'">
 <input type="hidden" name="'.$name.'_extra" value="'.$extra.'" id="'.$input_id.'_extra">
 <input type="hidden" name="'.$name.'_type" value="'.$this->getParam('link_type').'" id="'.$input_id.'_type">
@@ -55,7 +55,7 @@ class SelectType extends LookUpType
 		$value = $value ?: parent::getNativeValue();
 		if ($value) {
 			$sql = 'SELECT id,'.$this->getParam('l_field').' FROM '.$this->getParam('l_table').' WHERE id='.intval($value);
-			$stmt = $this->get('connection')->prepare($sql);
+			$stmt = $this->container->get('connection')->prepare($sql);
 			$stmt->execute();
 			$entity = $stmt->fetch();
 			if ($this->getParam('l_field') && count($entity)) {
@@ -79,7 +79,7 @@ class SelectType extends LookUpType
 		$value = array('value' => parent::getNativeValue());
 		if (!empty($value['value'])) {
 			$sql = 'SELECT * FROM '.$this->getParam('l_table').' WHERE id IN('.$value['value'].')';
-			$stmt = $this->get('connection')->prepare($sql);
+			$stmt = $this->container->get('connection')->prepare($sql);
 			$stmt->execute();
 			$item = $stmt->fetch();
 			if ($item) {
@@ -95,7 +95,7 @@ class SelectType extends LookUpType
 				FROM '.$this->getParam('link_table').' t0
 				JOIN '.$this->getParam('l_table').' t1 ON t0.'.$this->getParam('link_mapped').'=t1.id
 				WHERE t0.'.$this->getParam('link_inversed').'='.$this->dbId;
-			$stmt = $this->get('connection')->prepare($sql);
+			$stmt = $this->container->get('connection')->prepare($sql);
 			$stmt->execute();
 			$entities = $stmt->fetchAll();
 			$extra = array();

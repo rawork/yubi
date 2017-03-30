@@ -15,8 +15,8 @@ class FileType extends Type
 		$inputName = $inputName ? $inputName : $this->getName();
 		$fileName = $this->dbValue;
 
-		if ($this->get('request')->request->get($inputName.'_delete')) {
-			$this->get('filestorage')->remove($fileName);
+		if ($this->container->get('request')->request->get($inputName.'_delete')) {
+			$this->container->get('filestorage')->remove($fileName);
 			$fileName = '';
 		}
 
@@ -25,8 +25,8 @@ class FileType extends Type
 			&& !in_array($_FILES[$inputName]['name'], $this->getParam('disallowed'))
 			&& !preg_match('/\.(php|js)$/i', $_FILES[$inputName]['name'])
 		) {
-			$this->get('filestorage')->remove($fileName);
-			$fileName = $this->get('filestorage')->save($_FILES[$inputName]['name'], $_FILES[$inputName]['tmp_name']);
+			$this->container->get('filestorage')->remove($fileName);
+			$fileName = $this->container->get('filestorage')->save($_FILES[$inputName]['name'], $_FILES[$inputName]['tmp_name']);
 		} else {
 			$fileName = '';
 		}
@@ -36,7 +36,7 @@ class FileType extends Type
 	
 	public function getNativeValue()
 	{
-		return $this->get('filestorage')->path(parent::getNativeValue());
+		return $this->container->get('filestorage')->path(parent::getNativeValue());
 	}
 
 	public function getStatic()
@@ -44,7 +44,7 @@ class FileType extends Type
 		$content = '';
 
 		if ($this->getNativeValue())
-			$content = '<a href="'.$this->getNativeValue().'">'.$this->getNativeValue().'</a>&nbsp;('.$this->get('filestorage')->size($this->get('filestorage')->realPath(parent::getNativeValue())).')';
+			$content = '<a href="'.$this->getNativeValue().'">'.$this->getNativeValue().'</a>&nbsp;('.$this->container->get('filestorage')->size($this->container->get('filestorage')->realPath(parent::getNativeValue())).')';
 
 		return $content;
 	}
@@ -63,7 +63,7 @@ class FileType extends Type
 
 	public function free()
 	{
-		$this->get('filestorage')->remove($this->dbValue);
+		$this->container->get('filestorage')->remove($this->dbValue);
 	}
 
 }

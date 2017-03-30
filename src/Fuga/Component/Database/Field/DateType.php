@@ -24,7 +24,7 @@ class DateType extends Type
 
 	public function getStatic()
 	{
-		return !in_array($this->dbValue, array(null, '0000-00-00')) ? $this->get('util')->format_date($this->dbValue, 'j F Y', false) : '';
+		return !in_array($this->dbValue, array(null, '0000-00-00')) ? $this->container->get('util')->format_date($this->dbValue, 'j F Y', false) : '';
 	}
 
 	public function getInput($value = '', $name = '')

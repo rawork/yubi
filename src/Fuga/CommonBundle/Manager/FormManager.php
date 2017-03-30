@@ -20,7 +20,6 @@ use Symfony\Bridge\Twig\Extension\TranslationExtension;
 
 class FormManager extends ModelManager
 {
-	protected $params;
 	/**
 	 * @var FormFactory
 	 */
@@ -109,7 +108,7 @@ class FormManager extends ModelManager
 			} elseif ($field['type'] == 'file' && is_array($_FILES) && isset($_FILES[$field['name']]) && $_FILES[$field['name']]['name'] != '') {
 				$upfile = $_FILES[$field['name']];
 				if ($upfile['name'] != '' && $upfile['size'] < MAX_FILE_SIZE ){
-					$this->get('mailer')->Attach( $upfile['tmp_name'], $upfile['type'], 'inline', $upfile['name']);
+					$this->container->get('mailer')->Attach( $upfile['tmp_name'], $upfile['type'], 'inline', $upfile['name']);
 				}
 				$value = $upfile['name'].' см. вложение<br>';
 			} else {
@@ -120,7 +119,7 @@ class FormManager extends ModelManager
 		}
 
 		if ($this->formData[$name]['is_defense'] == 1) {
-			$fields[] = array('value' => $this->get('request')->request->get('g-recaptcha-response'), 'title' => 'Код безопасности');
+			$fields[] = array('value' => $this->container->get('request')->request->get('g-recaptcha-response'), 'title' => 'Код безопасности');
 		}
 		$this->container->get('mailer')->send(
 			$this->formData[$name]['title'].' на сайте '.$_SERVER['SERVER_NAME'],

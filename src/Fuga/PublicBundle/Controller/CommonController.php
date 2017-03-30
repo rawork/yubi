@@ -155,7 +155,7 @@ class CommonController extends Controller {
 
 			$json = json_decode($response);
 
-			$params0 = $this->get('container')->getManager('Fuga:Common:Param')->findAll('form');
+			$params0 = $this->getManager('Fuga:Common:Param')->findAll('form');
 			$params = [];
 			foreach ($params0 as $param) {
 				$params[$param['name']] = $param['type'] == 'int' ? intval($param['value']) : $param['value'];
@@ -168,13 +168,13 @@ class CommonController extends Controller {
 
 				$this->get('session')->set(
 					'success',
-					$this->get('container')->getManager('Fuga:Common:Param')->getValue('form', 'success')
+					$this->getManager('Fuga:Common:Param')->getValue('form', 'success')
 				);
 			} else {
 				$this->get('session')->set('form_'.$name, $values);
 				$this->get('session')->set(
 					'error',
-					$this->get('container')->getManager('Fuga:Common:Param')->getValue('form','securecode_error')
+					$this->getManager('Fuga:Common:Param')->getValue('form','securecode_error')
 				);
 			}
 

@@ -42,9 +42,9 @@ class ModuleManager extends ModelManager
 	public function getPersonal()
 	{
 		if (empty($this->personalModules)) {
-			if ($this->get('security')->isSuperuser()) {
+			if ($this->container->get('security')->isSuperuser()) {
 				$this->personalModules = $this->modules;
-			} elseif ($user = $this->get('security')->getCurrentUser()) {
+			} elseif ($user = $this->container->get('security')->getCurrentUser()) {
 				if (empty($user['rules'])) {
 					$user['rules'] = array();
 				}
@@ -54,7 +54,7 @@ class ModuleManager extends ModelManager
 				}
 				$sql = 'SELECT id, sort, name, title, \'content\' AS ctype 
 					FROM config_module WHERE id IN ('.implode(',', $user['rules']).') ORDER BY sort, title';
-				$stmt = $this->get('connection')->prepare($sql);
+				$stmt = $this->container->get('connection')->prepare($sql);
 				$stmt->execute();
 				$this->personalModules = array_merge($this->personalModules, $stmt->fetchAll());
 			}

@@ -24,7 +24,7 @@ class ImageType extends FileType
 				}
 			}
 		}
-		return $fileName ? '<a target="_blank" href="'.parent::getNativeValue().'"><img width="50" src="'.$fileName.'"></a><div>('.$this->get('imagestorage')->size($this->dbValue).')</div>'.$additionalFiles : '';
+		return $fileName ? '<a target="_blank" href="'.parent::getNativeValue().'"><img width="50" src="'.$fileName.'"></a><div>('.$this->container->get('imagestorage')->size($this->dbValue).')</div>'.$additionalFiles : '';
 	}
 	
 	public function getGroupStatic() {
@@ -35,12 +35,12 @@ class ImageType extends FileType
 
 	public function getSQLValue($inputName = '')
 	{
-		$this->get('imagestorage')->setOptions(['sizes' => $this->getParam('sizes')]);
+		$this->container->get('imagestorage')->setOptions(['sizes' => $this->getParam('sizes')]);
 		$inputName = $inputName ? $inputName : $this->getName();
 		$fileName = $this->dbValue;
 
-		if ($fileName && $this->get('request')->request->get($inputName.'_delete')) {
-			$this->get('imagestorage')->remove($fileName);
+		if ($fileName && $this->container->get('request')->request->get($inputName.'_delete')) {
+			$this->container->get('imagestorage')->remove($fileName);
 			$fileName = '';
 		}
 
@@ -48,8 +48,8 @@ class ImageType extends FileType
 			&& !empty($_FILES[$inputName]['name'])
 			&& in_array($_FILES[$inputName]['type'], $this->getParam('allowed'))
 		) {
-			$this->get('imagestorage')->remove($fileName);
-			$fileName = $this->get('imagestorage')->save($_FILES[$inputName]['name'], $_FILES[$inputName]['tmp_name']);
+			$this->container->get('imagestorage')->remove($fileName);
+			$fileName = $this->container->get('imagestorage')->save($_FILES[$inputName]['name'], $_FILES[$inputName]['tmp_name']);
 		} else {
 			$fileName = '';
 		}
@@ -61,7 +61,7 @@ class ImageType extends FileType
 	{
 		$value = array('value' => parent::getNativeValue());
 		if ($value['value']) {
-			if ($files = $this->get('imagestorage')->additionalFiles($this->dbValue, ['sizes' => $this->getParam('sizes')])) {
+			if ($files = $this->container->get('imagestorage')->additionalFiles($this->dbValue, ['sizes' => $this->getParam('sizes')])) {
 				$value['extra'] = $files;
 			}
 		}
@@ -71,7 +71,7 @@ class ImageType extends FileType
 	
 	public function free()
 	{
-		$this->get('imagestorage')->remove($this->dbValue);
+		$this->container->get('imagestorage')->remove($this->dbValue);
 	}
 
 }

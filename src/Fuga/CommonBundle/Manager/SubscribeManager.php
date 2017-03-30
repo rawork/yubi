@@ -17,9 +17,9 @@ class SubscribeManager extends ModelManager {
 				$emails[] = $subscriber['email'];
 			}
 			if ($letter['file']) {
-				$this->get('mailer')->attach($letter['file']);
+				$this->container->get('mailer')->attach($letter['file']);
 			}
-			$this->get('mailer')->send(
+			$this->container->get('mailer')->send(
 				$letter['subject'],
 				$letter['message'],
 				$emails	
@@ -33,7 +33,7 @@ class SubscribeManager extends ModelManager {
 	
 	public function getSubscriber($email) {
 		$sql = "SELECT * FROM ".$this->subscriberTable." WHERE email = :email LIMIT 1";
-		$stmt = $this->get('connection')->prepare($sql);
+		$stmt = $this->container->get('connection')->prepare($sql);
 		$stmt->bindValue("email", $email);
 		$stmt->execute();
 		return $stmt->fetch();
@@ -42,7 +42,7 @@ class SubscribeManager extends ModelManager {
 	public function subscribe($email, $rubrics) {
 		$email = trim($email);
 		$subscriber = $this->getSubscriber($email);
-		$key = md5($this->get('util')->genKey(20));
+		$key = md5($this->container->get('util')->genKey(20));
 		$values = array(
 			'email' => $email,
 			'date' => date('Y-m-d H:i:s'),
@@ -55,9 +55,9 @@ class SubscribeManager extends ModelManager {
 					'error' => 'Вы не выбрали<br> рубрики рассылки',
 				);
 			} elseif ($subscriber) {
-				$this->get('connection')->delete($this->rubricTable, array('subscriber_id' => $subscriber['id']));
+				$this->container->get('connection')->delete($this->rubricTable, array('subscriber_id' => $subscriber['id']));
 				foreach ($rubrics as $rubric) {
-					$this->get('connection')->insert(
+					$this->container->get('connection')->insert(
 						$this->rubricTable,
 						array(
 							'subscriber_id' => $subscriber['id'],
@@ -70,7 +70,7 @@ class SubscribeManager extends ModelManager {
 				);
 			} elseif ($subscriberId = $this->getTable($this->subscriberTable)->insert($values)) {
 				foreach ($rubrics as $rubric) {
-					$this->get('connection')->insert(
+					$this->container->get('connection')->insert(
 						$this->rubricTable,
 						array(
 							'subscriber_id' => $subscriberId,
@@ -82,13 +82,13 @@ class SubscribeManager extends ModelManager {
 	Вы подписались на рассылку на сайте http://".$_SERVER['SERVER_NAME']."\n
 	Для подтверждения, пожалуйста, проследуйте по ссылке:\n
 	http://".$_SERVER['SERVER_NAME']."/subscribe/activate?key=".$key;
-				$this->get('mailer')->send(
+				$this->container->get('mailer')->send(
 					'Оповещение о подписке на рассылку на сайте '.$_SERVER['SERVER_NAME'],
 					nl2br($letterText),
 					$email
 				);
 				$letterText = "На e-mail ".$email." оформлена подписка на рассылку на сайте http://".$_SERVER['SERVER_NAME']."\n";
-				$this->get('mailer')->send(
+				$this->container->get('mailer')->send(
 					'Оповещение о подписке на рассылку на сайте '.$_SERVER['SERVER_NAME'],
 					nl2br($letterText),
 					array(ADMIN_EMAIL)
@@ -98,7 +98,7 @@ class SubscribeManager extends ModelManager {
 				);
 			}
 		} catch(\Exception $e) {
-			$this->get('log')->addError($e->getMessage());
+			$this->container->get('log')->addError($e->getMessage());
 			$message = array(
 				'error' => 'Ошибка при добавлении.<br> Обратитесь к администратору',
 			);
@@ -115,7 +115,7 @@ class SubscribeManager extends ModelManager {
 				'message' => 'Адреса '.htmlspecialchars($email).' нет в списке рассылки',
 				'success' => false
 			);	
-		} elseif ($this->get('connection')->delete($this->subscriberTable, array('email' => $email))) {
+		} elseif ($this->container->get('connection')->delete($this->subscriberTable, array('email' => $email))) {
 			$message = array(
 				'message' => 'Адрес '.htmlspecialchars($email).' удален из списка рассылки',
 				'success' => true

@@ -14,7 +14,7 @@ class CheckboxType extends Type
 	public function getValue($name = '')
 	{
 		$name = $name ? $name : $this->getName();
-		$value = $this->get('request')->request->get($name);
+		$value = $this->container->get('request')->request->get($name);
 		return $value;
 	}
 

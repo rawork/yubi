@@ -14,8 +14,8 @@ class DatetimeType extends Type
 	public function getValue($name = '')
 	{
 		$name = $name ?: $this->getName();
-		$value = $this->get('request')->request->get($name);
-		if ($value && $time = $this->get('request')->request->get($name . '_time')) {
+		$value = $this->container->get('request')->request->get($name);
+		if ($value && $time = $this->container->get('request')->request->get($name . '_time')) {
 			$value .= ' ' . $time . ':00';
 		}
 
@@ -34,7 +34,7 @@ class DatetimeType extends Type
 
 	public function getStatic()
 	{
-		return !in_array($this->dbValue, array(null, '0000-00-00 00:00:00')) ? $this->get('util')->format_date($this->dbValue, 'j F Y, H:i', false) : '';
+		return !in_array($this->dbValue, array(null, '0000-00-00 00:00:00')) ? $this->container->get('util')->format_date($this->dbValue, 'j F Y, H:i', false) : '';
 	}
 
 	public function getInput($value = '', $name = '')

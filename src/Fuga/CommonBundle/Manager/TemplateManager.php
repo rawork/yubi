@@ -22,8 +22,8 @@ class TemplateManager extends ModelManager
 				OR (r.type = 'U' AND LOCATE(r.cond, :url ) > 0)	
 				OR (r.type = 'F' AND r.cond = :name )
 			) ORDER BY sort DESC LIMIT 1";
-		$stmt = $this->get('connection')->prepare($sql);
-		$stmt->bindValue("locale", $this->get('session')->get('locale') ?: PRJ_LOCALE);
+		$stmt = $this->container->get('connection')->prepare($sql);
+		$stmt->bindValue("locale", $this->container->get('session')->get('locale') ?: PRJ_LOCALE);
 		$stmt->bindValue("url", $_SERVER['REQUEST_URI']);
 		$stmt->bindValue("name", $name);
 		$stmt->execute();

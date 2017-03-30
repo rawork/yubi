@@ -24,7 +24,7 @@ class LookUpType extends Type
 	public function getValue($name = '')
 	{
 		$name = $name ? $name: $this->getName();
-		$value = $this->get('request')->request->getInt($name, $this->dbValue);
+		$value = $this->container->get('request')->request->getInt($name, $this->dbValue);
 		
 		return $value;
 	}

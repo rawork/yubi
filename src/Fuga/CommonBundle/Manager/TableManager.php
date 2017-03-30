@@ -46,14 +46,14 @@ class TableManager extends ModelManager
 						FROM model t
 						JOIN module m ON t.module_id=m.id
 						WHERE t.publish=1 AND m.name = :module AND t.name = :table ORDER BY t.sort";
-					$stmt = $this->get('connection')->prepare($sql);
+					$stmt = $this->container->get('connection')->prepare($sql);
 					$stmt->bindValue("module", $table['module']);
 					$stmt->bindValue("table", $name);
 					$stmt->execute();
 					while ($tableData = $stmt->fetch()) {
 
 						$sql = "SELECT * FROM model_field WHERE publish=1 AND table_id= :id ORDER by sort";
-						$stmt = $this->get('connection')->prepare($sql);
+						$stmt = $this->container->get('connection')->prepare($sql);
 						$stmt->bindValue('id', $tableData['id']);
 						$stmt->execute();
 						$fields = $stmt->fetchAll();
@@ -77,7 +77,7 @@ class TableManager extends ModelManager
 							$tableData['table'] = $tableData['name'];
 							$tableData['fields'] = $fields;
 						} else {
-							$this->get('log')->addError('В таблице '.$name.' не настроены поля');
+							$this->container->get('log')->addError('В таблице '.$name.' не настроены поля');
 						}
 
 						$model = new CustomModel();

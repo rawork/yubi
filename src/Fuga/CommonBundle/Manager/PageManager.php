@@ -13,7 +13,7 @@ class PageManager extends ModelManager {
 			AND '.(is_numeric($uri) ? ($uri === null ? ' t1.parent_id=0 ' : 't2.id='.$uri.' ') : "t2.name='".$uri."' ").
 			'ORDER BY t1.sort, t1.name';
 		$stmt = $this->container->get('connection')->prepare($sql);
-		$stmt->bindValue('locale', $this->get('session')->get('locale'));
+		$stmt->bindValue('locale', $this->container->get('session')->get('locale'));
 		$stmt->execute();
 		$nodes = [];
 		while ($row =  $stmt->fetch()) {
@@ -36,7 +36,7 @@ class PageManager extends ModelManager {
 	}
 	
 	public function getUrl($node) {
-		return trim($node['url']) ?: ($this->get('session')->get('locale') != 'ru' ? '/'.$this->get('session')->get('locale') : '').$this->get('router')->getGenerator()->generate('public_page', array('node' => $node['name']));
+		return trim($node['url']) ?: ($this->container->get('session')->get('locale') != 'ru' ? '/'.$this->container->get('session')->get('locale') : '').$this->container->get('router')->getGenerator()->generate('public_page', array('node' => $node['name']));
 	}
 	
 	public function getPathNodes($id = 0) {
@@ -46,12 +46,12 @@ class PageManager extends ModelManager {
 			array_unshift($nodes, array(
 				'name' => '/', 
 				'url' => '', 
-				'title' => $titles[$this->get('session')->get('locale')]
+				'title' => $titles[$this->container->get('session')->get('locale')]
 			));
 		}
 		foreach ($nodes as &$node) {
 			if ('/' == $node['name']) {
-				$node['title'] = $titles[$this->get('session')->get('locale')];
+				$node['title'] = $titles[$this->container->get('session')->get('locale')];
 			}	
 			$node['ref'] = $this->getUrl($node);
 		}

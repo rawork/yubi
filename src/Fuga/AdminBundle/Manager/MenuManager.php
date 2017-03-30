@@ -27,7 +27,7 @@ class MenuManager extends ModelManager
 		foreach ($tables as $table) {
 			if (empty($table->params['is_hidden'])) {
 				$ret[] = array (
-					'ref' => $this->get('router')->getGenerator()->generate(
+					'ref' => $this->container->get('router')->getGenerator()->generate(
 						'admin_entity_index',
 						array('state' => $module['state'], 'module' => $module['name'], 'entity' => $table->getName())
 					),
@@ -35,10 +35,10 @@ class MenuManager extends ModelManager
 				);
 			}
 		}
-		if ($this->get('security')->isSuperuser()) {
+		if ($this->container->get('security')->isSuperuser()) {
 			if ($this->container->getManager('Fuga:Common:Param')->findAll($module['name'])) {
 				$ret[] = array (
-					'ref' => $this->get('router')->getGenerator()->generate(
+					'ref' => $this->container->get('router')->getGenerator()->generate(
 						'admin_module_setting',
 						array('state' => $module['state'], 'module' => $module['name'])
 					),
@@ -46,9 +46,9 @@ class MenuManager extends ModelManager
 				);
 			}
 		}
-		if ($module['name'] == 'config' && $this->get('security')->isSuperuser()) {
+		if ($module['name'] == 'config' && $this->container->get('security')->isSuperuser()) {
 			$ret[] = array (
-				'ref' => $this->get('router')->getGenerator()->generate('admin_service'),
+				'ref' => $this->container->get('router')->getGenerator()->generate('admin_service'),
 				'name' => 'Обслуживание'
 			);
 		}
@@ -58,7 +58,7 @@ class MenuManager extends ModelManager
 		foreach ($config as $var => $data) {
 			if ($module['name'] == $var) {
 				$ret[] = array (
-					'ref' => $this->get('router')->getGenerator()->generate($data['route']),
+					'ref' => $this->container->get('router')->getGenerator()->generate($data['route']),
 					'name' => $data['title']
 				);
 			}
@@ -70,7 +70,7 @@ class MenuManager extends ModelManager
 	// TODO доработать проверку прав на модуль, не используется
 	function isAvailable()
 	{
-		return $this->get('security')->isSuperuser() || 1 == $this->users[$this->get('session')->get('fuga_user')];
+		return $this->container->get('security')->isSuperuser() || 1 == $this->users[$this->container->get('session')->get('fuga_user')];
 	}
 
 	public function getModulesByState($state, $currentModule = '')

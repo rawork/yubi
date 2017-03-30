@@ -19,9 +19,9 @@ class GalleryType extends ImageType
 
 		foreach ($files as $file) {
 			if (isset($file['extra']['default'])) {
-				$content[] = '<div id="file_'.$file['id'].'"><a target="_blank" href="'.$file['file'].'"><img width="50" src="'.$file['extra']['default']['path'].'"></a><a class="delete" href="#" data-url="'.$this->get('router')->getGenerator()->generate('admin_gallery_delete').'" data-id="'.$file['id'].'"><i class="fa fa-times-circle" aria-hidden="true"></i></div>';
+				$content[] = '<div id="file_'.$file['id'].'"><a target="_blank" href="'.$file['file'].'"><img width="50" src="'.$file['extra']['default']['path'].'"></a><a class="delete" href="#" data-url="'.$this->container->get('router')->getGenerator()->generate('admin_gallery_delete').'" data-id="'.$file['id'].'"><i class="fa fa-times-circle" aria-hidden="true"></i></div>';
 			} else {
-				$content[] = '<div id="file_'.$file['id'].'"><a target="_blank" href="'.$file['file'].'"><img width="50" src="'.$file['file'].'"></a><a class="delete" href="#" data-url="'.$this->get('router')->getGenerator()->generate('admin_gallery_delete').'" data-id="'.$file['id'].'"><i class="fa fa-times-circle" aria-hidden="true"></i></div>';
+				$content[] = '<div id="file_'.$file['id'].'"><a target="_blank" href="'.$file['file'].'"><img width="50" src="'.$file['file'].'"></a><a class="delete" href="#" data-url="'.$this->container->get('router')->getGenerator()->generate('admin_gallery_delete').'" data-id="'.$file['id'].'"><i class="fa fa-times-circle" aria-hidden="true"></i></div>';
 			}
 		}
 
@@ -32,7 +32,7 @@ class GalleryType extends ImageType
 
 	public function getSQLValue($inputName = '')
 	{
-		$this->get('imagestorage')->setOptions(['sizes' => $this->getParam('sizes')]);
+		$this->container->get('imagestorage')->setOptions(['sizes' => $this->getParam('sizes')]);
 		$inputName = $inputName ?: $this->getName();
 
 		if (!empty($_FILES[$inputName]) && !empty($_FILES[$inputName]['name'])) {
@@ -43,19 +43,19 @@ class GalleryType extends ImageType
 					continue;
 				}
 
-				$filename = $this->get('imagestorage')->save($_FILES[$inputName]['name'][$i], $_FILES[$inputName]['tmp_name'][$i]);
+				$filename = $this->container->get('imagestorage')->save($_FILES[$inputName]['name'][$i], $_FILES[$inputName]['tmp_name'][$i]);
 				$name = $_FILES[$inputName]['name'][$i];
-				$filesize = @filesize($this->get('imagestorage')->realPath($filename));
+				$filesize = @filesize($this->container->get('imagestorage')->realPath($filename));
 				$mimetype = $_FILES[$inputName]['type'][$i];
 				$width = 0;
 				$height = 0;
 
-				if ($fileInfo = @GetImageSize($this->get('imagestorage')->realPath($filename))) {
+				if ($fileInfo = @GetImageSize($this->container->get('imagestorage')->realPath($filename))) {
 					$width = $fileInfo[0];
 					$height = $fileInfo[1];
 				}
 
-				$this->get('connection')->insert('system_files', array(
+				$this->container->get('connection')->insert('system_files', array(
 					'name' => $name,
 					'mimetype' => $mimetype,
 					'file' => $filename,
@@ -76,15 +76,15 @@ class GalleryType extends ImageType
 	public function getNativeValue()
 	{
 		$sql = "SELECT * FROM system_files WHERE table_name = :table_name AND field_name = :field_name AND entity_id = :entity_id ORDER by sort,id";
-		$stmt = $this->get('connection')->prepare($sql);
+		$stmt = $this->container->get('connection')->prepare($sql);
 		$stmt->bindValue('table_name', $this->getParam('table_name'));
 		$stmt->bindValue('field_name', $this->getParam('name'));
 		$stmt->bindValue('entity_id', $this->dbId);
 		$stmt->execute();
 		$files = $stmt->fetchAll();
 		foreach ($files as &$file) {
-			$file['extra'] = $this->get('imagestorage')->additionalFiles($file['file'], ['sizes' => $this->getParam('sizes')]);
-			$file['file'] = $this->get('imagestorage')->path($file['file']);
+			$file['extra'] = $this->container->get('imagestorage')->additionalFiles($file['file'], ['sizes' => $this->getParam('sizes')]);
+			$file['file'] = $this->container->get('imagestorage')->path($file['file']);
 		}
 		unset($file);
 		return $files;

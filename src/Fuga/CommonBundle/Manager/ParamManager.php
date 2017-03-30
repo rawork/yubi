@@ -10,7 +10,7 @@ class ParamManager extends ModelManager
 	public function findAll($name) {
 		if (!isset($this->params[$name])){
 			$sql = "SELECT * FROM ".$this->entityTable." WHERE module= :name ";
-			$stmt = $this->get('connection')->prepare($sql);
+			$stmt = $this->container->get('connection')->prepare($sql);
 			$stmt->bindValue("name", $name);
 			$stmt->execute();
 
@@ -26,7 +26,7 @@ class ParamManager extends ModelManager
 
 	public function findByName($module, $name) {
 		$sql = "SELECT * FROM ".$this->entityTable." WHERE module= :module AND name= :name";
-		$stmt = $this->get('connection')->prepare($sql);
+		$stmt = $this->container->get('connection')->prepare($sql);
 		$stmt->bindValue("module", $module);
 		$stmt->bindValue("name", $name);
 		$stmt->execute();
@@ -38,7 +38,7 @@ class ParamManager extends ModelManager
 	public function getValue($module, $name) {
 		if(!isset($this->params[$module]) || !isset($this->params[$module][$name])) {
 			$sql = "SELECT * FROM ".$this->entityTable." WHERE module= :module AND name= :name";
-			$stmt = $this->get('connection')->prepare($sql);
+			$stmt = $this->container->get('connection')->prepare($sql);
 			$stmt->bindValue("module", $module);
 			$stmt->bindValue("name", $name);
 			$stmt->execute();

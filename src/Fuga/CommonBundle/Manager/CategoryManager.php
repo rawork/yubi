@@ -6,7 +6,7 @@ class CategoryManager extends ModelManager {
 	
 	public function getPathNodes($id = 0){
 		$nodes = array();
-		if ($this->get('router')->getParam('action') == 'product') {
+		if ($this->container->get('router')->getParam('action') == 'product') {
 			$node = $this->getTable('catalog_product')->getItem($id);
 			if ($node) {
 				$nodes = $this->getTable('catalog_category')->getPrev($node['category_id']);
@@ -17,7 +17,7 @@ class CategoryManager extends ModelManager {
 		}
 		foreach ($nodes as &$node) {
 			$node['title'] = $node['name'];
-			$node['ref'] = $this->get('router')->generateUrl($this->get('router')->getParam('node'), 'index', array($node['id']));
+			$node['ref'] = $this->container->get('router')->generateUrl($this->container->get('router')->getParam('node'), 'index', array($node['id']));
 		}
 		
 		return $nodes;

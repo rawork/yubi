@@ -49,18 +49,18 @@ class UserManager extends ModelManager {
 					'is_active' => 1,
 				);
 			} else {
-				$login = $this->get('session')->get('fuga_user');
+				$login = $this->container->get('session')->get('fuga_user');
 				$sql = "
 					SELECT u.*, g.name as group_id_name, g.title as group_id_title FROM user u
 					JOIN user_group g ON u.group_id=g.id
 					WHERE u.login = :login OR u.email = :login LIMIT 1";
-				$stmt = $this->get('connection')->prepare($sql);
+				$stmt = $this->container->get('connection')->prepare($sql);
 				$stmt->bindValue('login', $login);
 				$stmt->execute();
 				$this->user = $stmt->fetch();
 				if ($this->user) {
 					$sql = 'SELECT module_id, group_id FROM user_group_module WHERE group_id= :id';
-					$stmt = $this->get('connection')->prepare($sql);
+					$stmt = $this->container->get('connection')->prepare($sql);
 					$stmt->bindValue('id', $this->user['group_id']);
 					$stmt->execute();
 					$modules = $stmt->fetchAll();
@@ -97,12 +97,12 @@ class UserManager extends ModelManager {
 
 	private function check()
 	{
-		$login = $this->get('session')->get('fuga_user');
-		$token = $this->get('session')->get('fuga_key');
+		$login = $this->container->get('session')->get('fuga_user');
+		$token = $this->container->get('session')->get('fuga_key');
 
 		if (!$login && !$token) {
-			$login = $this->get('request')->cookies->get('fuga_user');
-			$token = $this->get('request')->cookies->get('fuga_key');
+			$login = $this->container->get('request')->cookies->get('fuga_user');
+			$token = $this->container->get('request')->cookies->get('fuga_key');
 		}
 		if ($login && $token) {
 			if ($token == $this->token(DEV_USER, DEV_PASS)) {
@@ -113,8 +113,8 @@ class UserManager extends ModelManager {
 
 			if ($user) {
 				$this->hash = $token;
-				$this->get('session')->set('fuga_user', $login);
-				$this->get('session')->set('fuga_key', $token);
+				$this->container->get('session')->set('fuga_user', $login);
+				$this->container->get('session')->set('fuga_key', $token);
 
 				return true;
 			}
@@ -125,7 +125,7 @@ class UserManager extends ModelManager {
 
 	public function unlock()
 	{
-		$this->get('session')->remove('bruteforce');
+		$this->container->get('session')->remove('bruteforce');
 
 		return true;
 	}
@@ -134,13 +134,13 @@ class UserManager extends ModelManager {
 	{
 		$times = 1;
 
-		if ($this->get('session')->has('bruteforce')) {
-			$times = $this->get('session')->get('bruteforce');
+		if ($this->container->get('session')->has('bruteforce')) {
+			$times = $this->container->get('session')->get('bruteforce');
 			$times++;
 			if ($times >= $this->loginTries) {
-				$this->get('session')->remove('bruteforce');
+				$this->container->get('session')->remove('bruteforce');
 
-				$this->get('connection')->insert(
+				$this->container->get('connection')->insert(
 					'user_secure',
 					[
 						'ip_addr' => ip2long($_SERVER['REMOTE_ADDR']),
@@ -158,7 +158,7 @@ class UserManager extends ModelManager {
 			}
 		}
 
-		$this->get('session')->set('bruteforce', $times);
+		$this->container->get('session')->set('bruteforce', $times);
 
 		return false;
 	}
@@ -166,7 +166,7 @@ class UserManager extends ModelManager {
 	public function isLocked()
 	{
 		$sql = 'SELECT * FROM user_secure WHERE ip_addr = :ip_addr AND unlocktime > :ctime LIMIT 1';
-		$stmt = $this->get('connection')->prepare($sql);
+		$stmt = $this->container->get('connection')->prepare($sql);
 		$stmt->bindValue('ip_addr', ip2long($_SERVER['REMOTE_ADDR']));
 		$stmt->bindValue('ctime', time());
 		$stmt->execute();
@@ -177,7 +177,7 @@ class UserManager extends ModelManager {
 
 	public function logout()
 	{
-		$this->get('session')->invalidate();
+		$this->container->get('session')->invalidate();
 	}
 
 	public function login($login, $password, $isRemember = false)
@@ -187,7 +187,7 @@ class UserManager extends ModelManager {
 			$user = array('login' => $login, 'id' => 0);
 		} else {
 			$sql = "SELECT id, login FROM user WHERE login= :login AND password= :password AND is_active=1 AND group_id<>0 LIMIT 1";
-			$stmt = $this->get('connection')->prepare($sql);
+			$stmt = $this->container->get('connection')->prepare($sql);
 			$stmt->bindValue("login", $login);
 			$stmt->bindValue("password", $passwordHash);
 			$stmt->execute();
@@ -196,9 +196,9 @@ class UserManager extends ModelManager {
 		if ($user){
 			$this->unlock();
 			$token = $this->token($login, $passwordHash);
-			$response = new RedirectResponse($this->get('request')->getRequestUri());
-			$this->get('session')->set('fuga_user', $user['login']);
-			$this->get('session')->set('fuga_key', $token);
+			$response = new RedirectResponse($this->container->get('request')->getRequestUri());
+			$this->container->get('session')->set('fuga_user', $user['login']);
+			$this->container->get('session')->set('fuga_key', $token);
 			$this->getTable('user')->update(
 				array('token' => $token),
 				array('id' => $user['id'])
@@ -223,7 +223,7 @@ class UserManager extends ModelManager {
 
 	private function token($login, $password)
 	{
-		return hash('sha512', $password.$login.$this->get('request')->getClientIp());
+		return hash('sha512', $password.$login.$this->container->get('request')->getClientIp());
 	}
 
 	public function getGroup($name)
@@ -241,12 +241,12 @@ class UserManager extends ModelManager {
 
 	public function isAdmin()
 	{
-		return $this->get('session')->get('fuga_user') == 'admin';
+		return $this->container->get('session')->get('fuga_user') == 'admin';
 	}
 
 	public function isDeveloper()
 	{
-		return $this->get('session')->get('fuga_user') == 'dev';
+		return $this->container->get('session')->get('fuga_user') == 'dev';
 	}
 
 	public function isSuperuser()
@@ -256,7 +256,7 @@ class UserManager extends ModelManager {
 
 	public function isLocal()
 	{
-		return $this->get('request')->getClientIp() == gethostbyname($this->get('request')->server->get('SERVER_NAME'));
+		return $this->container->get('request')->getClientIp() == gethostbyname($this->container->get('request')->server->get('SERVER_NAME'));
 	}
 
 	public function isServer()

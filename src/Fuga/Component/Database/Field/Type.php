@@ -95,7 +95,7 @@ class Type
 	{
 		$name = $name ?: $this->getName();
 //		$value = isset($_REQUEST[$name]) ? $_REQUEST[$name] : ($this->dbValue ?: null);
-		$value = $this->get('request')->request->get($name, $this->dbValue);
+		$value = $this->container->get('request')->request->get($name, $this->dbValue);
 
 		return $value;
 	}
@@ -157,15 +157,6 @@ class Type
 	public function setContainer(Container &$container)
 	{
 		$this->container = $container;
-	}
-
-	public function get($name)
-	{
-		if (!$name || 'container' == $name) {
-			return $this->container;
-		}
-
-		return $this->container->get($name);
 	}
 
 	public function getType()
