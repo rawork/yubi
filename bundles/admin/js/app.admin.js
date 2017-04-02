@@ -570,30 +570,6 @@
 
         var $dateFields = $('.field-date');
         if ($dateFields.length > 0) {
-            // $.cachedScript( prj_ref + '/bundles/calendar/calendar.js' ).done(function( script, textStatus ) {
-            //     //console.log('calendar.js');
-            // });
-            // $.cachedScript( prj_ref + '/bundles/calendar/calendar-ru.js' ).done(function( script, textStatus ) {
-            //     //console.log('calendar-ru.js');
-            // });;
-            // $.cachedScript( prj_ref + '/bundles/calendar/calendar-setup.js' ).done(function( script, textStatus ) {
-            //     //console.log('calendar-setup.js');
-            //     dateFields.each(function() {
-            //         var name = $(this).attr('data-name');
-            //         var time = $(this).attr('data-time');
-            //         time = (time ? ' ' + time : '');
-            //         Calendar.setup({
-            //             inputField : name,
-            //             ifFormat : "%d.%m.%Y" + time,
-            //             showsTime : time ? true : false,
-            //             button : "trigger_" + name,
-            //             align : "Br",
-            //             singleClick : true,
-            //             timeFormat : 24,
-            //             firstDay : 1
-            //         });
-            //     });
-            // });
             $.cachedScript( prj_ref + '/bundles/pickadate/picker.js' ).done(function( script, textStatus ) {
 
             });

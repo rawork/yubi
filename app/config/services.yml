@@ -76,7 +76,7 @@ services:
         - [addExtension, ['@template_debug']]
         - [addExtension, ['@template_fuga']]
         - [addGlobal, ['prj_ref', '%global.prj_ref%']]
-        - [addGlobal, ['prj_ref', '%global.theme_ref%']]
+        - [addGlobal, ['theme_ref', '%global.theme_ref%']]
         - [addGlobal, ['prj_name', '%global.prj_name%']]
         - [addGlobal, ['prj_zone', '%global.prj_zone%']]
   templating:
