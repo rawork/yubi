@@ -18,9 +18,9 @@ class GalleryType extends ImageType
 
 		foreach ($files as $file) {
 			if (isset($file['extra']['default'])) {
-				$content[] = '<div id="file_'.$file['id'].'"><a target="_blank" href="'.$file['file'].'"><img width="50" src="'.$file['extra']['default']['path'].'"></a><a class="delete" href="#" data-url="'.$this->container->get('router')->getGenerator()->generate('admin_gallery_delete').'" data-id="'.$file['id'].'"><i class="fa fa-times-circle" aria-hidden="true"></i></div>';
+				$content[] = '<div id="file_'.$file['id'].'"><a target="_blank" href="'.$file['file'].'"><img width="50" src="'.$file['extra']['default']['path'].'"></a><a class="delete" href="#" data-url="'.$this->container->get('router')->getGenerator()->generate('admin_gallery_delete').'" data-id="'.$file['id'].'"><i class="fa fa-times-circle" aria-hidden="true"></i></a></div>';
 			} else {
-				$content[] = '<div id="file_'.$file['id'].'"><a target="_blank" href="'.$file['file'].'"><img width="50" src="'.$file['file'].'"></a><a class="delete" href="#" data-url="'.$this->container->get('router')->getGenerator()->generate('admin_gallery_delete').'" data-id="'.$file['id'].'"><i class="fa fa-times-circle" aria-hidden="true"></i></div>';
+				$content[] = '<div id="file_'.$file['id'].'"><a target="_blank" href="'.$file['file'].'"><img width="50" src="'.$file['file'].'"></a><a class="delete" href="#" data-url="'.$this->container->get('router')->getGenerator()->generate('admin_gallery_delete').'" data-id="'.$file['id'].'"><i class="fa fa-times-circle" aria-hidden="true"></i></a></div>';
 			}
 		}
 
