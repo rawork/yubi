@@ -7,9 +7,22 @@ class ImageType extends FileType
 	public function __construct($params, $entity = null)
 	{
 		parent::__construct($params, $entity);
+	}
+
+	public function setParams($params = [])
+	{
+		parent::setParams($params);
+
+		if ($sizes = $this->getParam('sizes')) {
+			$sizes["default"] = ["width" => 50, "height" => 50, "adaptive" => true];
+			$this->setParam('sizes', $sizes);
+		} else {
+			$this->setParam('sizes', []);
+		}
+
 		$this->setParam('allowed', ['image/gif', 'image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml']);
 	}
-	
+
 	public function getStatic()
 	{
 		$value = $this->getNativeValue();

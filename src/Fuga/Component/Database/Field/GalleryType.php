@@ -9,7 +9,6 @@ class GalleryType extends ImageType
 	public function __construct($params, $entity = null)
 	{
 		parent::__construct($params, $entity);
-		$this->setParam('allowed', ['image/gif', 'image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml']);
 	}
 
 	public function getStatic()
@@ -38,7 +37,7 @@ class GalleryType extends ImageType
 		if (!empty($_FILES[$inputName]) && !empty($_FILES[$inputName]['name'])) {
 			foreach ($_FILES[$inputName]["name"] as $i => $file) {
 				if (empty($_FILES[$inputName]['name'][$i])
-					|| !in_array($_FILES[$inputName]['type'], $this->getParam('allowed'))
+					|| !in_array($_FILES[$inputName]['type'][$i], $this->getParam('allowed'))
 				) {
 					continue;
 				}

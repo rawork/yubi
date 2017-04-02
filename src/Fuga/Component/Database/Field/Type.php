@@ -28,12 +28,6 @@ class Type
 		if ($this->getParam('l_field') && !$this->getParam('l_sort')) {
 			$this->setParam('l_sort', $this->getParam('l_field'));
 		}
-		if ($sizes = $this->getParam('sizes')) {
-			$sizes["default"] = ["width" => 50, "height" => 50, "adaptive" => true];
-			$this->setParam('sizes', $sizes);
-		} else {
-			$this->setParam('sizes', []);
-		}
 		if (!$this->getParam('link_type')) {
 			$this->setParam('link_type', 'one');
 		}
