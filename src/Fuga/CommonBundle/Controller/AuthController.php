@@ -13,8 +13,26 @@ class AuthController extends Controller
 		$message = null;
 		if ('POST' == $_SERVER['REQUEST_METHOD']) {
 			if ($this->get('security')->isLocked()) {
-				return $this->reload();
+				$data = [
+					'secret' => RECAPTCHA_SECRET_KEY,
+					'response' => $this->get('request')->request->get('g-recaptcha-response')
+				];
+
+				$verify = curl_init();
+				curl_setopt($verify, CURLOPT_URL, RECAPTCHA_URL);
+				curl_setopt($verify, CURLOPT_POST, true);
+				curl_setopt($verify, CURLOPT_POSTFIELDS, http_build_query($data));
+				curl_setopt($verify, CURLOPT_SSL_VERIFYPEER, false);
+				curl_setopt($verify, CURLOPT_RETURNTRANSFER, true);
+				$response = curl_exec($verify);
+
+				$json = json_decode($response);
+				if (!$json->success) {
+					$this->get('session')->set('danger', 'Докажите, что вы не робот.');
+					return $this->reload();
+				}
 			}
+
 			$login = $this->get('request')->request->get('_user');
 			$password = $this->get('request')->request->get('_password');
 			$is_remember = $this->get('request')->request->get('_remember_me');
@@ -39,7 +57,9 @@ class AuthController extends Controller
 
 		$locked = $this->get('security')->isLocked();
 
-		return new Response($this->render('@Admin/form/login', compact('message', 'locked')));
+		$recaptcha_key = RECAPTCHA_PUBLIC_KEY;
+
+		return new Response($this->render('@Admin/form/login', compact('message', 'locked', 'recaptcha_key')));
 	}
 	
 	public function forget()

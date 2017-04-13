@@ -10,8 +10,8 @@ class UserManager extends ModelManager {
 	protected $entityTable = 'user';
 	protected $user;
 	protected $hash;
-	protected $loginTries = 3;
-	protected $lockPeriod = 900; //seconds
+	protected $loginTries = 5;
+	protected $lockPeriod = 300; //seconds
 	protected $currentUser;
 
 

@@ -443,11 +443,11 @@
             duplicate:'Этот файл уже выбран:\n$file!'
         });
 
-        $("#waiting").ajaxStart(function(){
-            $(this).show();
+        $(document).ajaxStart(function(){
+            $('#waiting').show();
         })
             .ajaxComplete(function(){
-                $(this).hide();
+                $('#waiting').hide();
             });
 
         $('#uploadForm').ajaxForm({
