@@ -26,7 +26,8 @@
         "symfony/twig-bridge": "2.8.*",
         "symfony/translation": "2.8.*",
         "twitter/bootstrap": "3.3.7",
-        "components/jquery": "3.2.*"
+        "components/jquery": "3.2.*",
+        "doctrine/migrations": "^1.5"
     },
     "autoload": {
         "psr-4": {"Fuga\\": "src/Fuga/"}

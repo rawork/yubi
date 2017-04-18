@@ -3,15 +3,43 @@
 
 require_once 'init.php';
 
+use Doctrine\DBAL\Migrations\Configuration\Configuration;
+
 $app = new Symfony\Component\Console\Application('Fuga CMS Console');
 $app->setCatchExceptions(true);
 
 if (defined('DB_USER')) {
 	$helperSet = new \Symfony\Component\Console\Helper\HelperSet(array(
 		'connection' => new \Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper($container->get('connection')),
+		'db' => new \Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper($container->get('connection')),
 		'dm' => new \Doctrine\ODM\MongoDB\Tools\Console\Helper\DocumentManagerHelper($container->get('odm')),
 		'em' => new \Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper($container->get('em')),
+		'dialog' => new \Symfony\Component\Console\Helper\QuestionHelper(),
 	));
+
+
+
+	$configuration = new Configuration($container->get('connection'));
+	$configuration->setMigrationsTableName('migration_versions');
+	$configuration->setMigrationsDirectory(__DIR__.'/../src/Fuga/Migrations/');
+	$configuration->setMigrationsNamespace('Fuga\\Migrations');
+	$configuration->registerMigrationsFromDirectory(__DIR__.'/../src/Fuga/Migrations/');
+
+	$commands = array(
+		new \Doctrine\DBAL\Migrations\Tools\Console\Command\DiffCommand(),
+		new \Doctrine\DBAL\Migrations\Tools\Console\Command\ExecuteCommand(),
+		new \Doctrine\DBAL\Migrations\Tools\Console\Command\GenerateCommand(),
+		new \Doctrine\DBAL\Migrations\Tools\Console\Command\MigrateCommand(),
+		new \Doctrine\DBAL\Migrations\Tools\Console\Command\StatusCommand(),
+		new \Doctrine\DBAL\Migrations\Tools\Console\Command\VersionCommand(),
+    );
+
+	foreach ($commands as &$command) {
+        $command->setMigrationConfiguration($configuration);
+    }
+    unset($command);
+
+    $app->addCommands($commands);
 
 	$app->setHelperSet($helperSet);
 	$app->addCommands(array(

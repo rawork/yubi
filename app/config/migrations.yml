@@ -1,0 +1,4 @@
+name: Fuga Migrations
+migrations_namespace: Fuga/Migrations
+table_name: migration_versions
+migrations_directory: src/Fuga/Migrations
